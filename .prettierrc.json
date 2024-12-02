@@ -1,0 +1,24 @@
+{
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 80,
+    "overrides": [
+        {
+            "files": [
+                "*.json",
+                "*.js",
+                "*.ts",
+                "*.tsx",
+                "*.sol",
+                "*.config.js",
+                "*.html"
+            ],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ],
+    "arrowParens": "avoid"
+}
