@@ -5,7 +5,7 @@ async function main() {
   await Config.initConfig();
   const [deployer] = await hre.ethers.getSigners();
   console.log('Deploying contracts with the account:', deployer.address);
-  const mainContract = await hre.ethers.deployContract('GenArt');
+  const mainContract = await hre.ethers.deployContract('CharacterInfo');
   await mainContract.waitForDeployment();
   let contractAddress = await mainContract.getAddress();
   console.log('Contract address:', contractAddress);
