@@ -1,14 +1,14 @@
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 import ABI from '../../../Contract/artifacts/contracts/Cyanotype.sol/GenArt.json';
+// import ABI from '../contracts/ABI.json';
 import Web3 from 'web3';
 import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';
-import { useSDK } from "@metamask/sdk-react";
 import config from '../../../Contract/config.json';
-
 const { Meta } = Card;
 const { Title } = Typography;
 
 const contractAddress = config.contractAddress;
+// const contractAddress = '0x663E587e4988AF5798Fcb2eE13aDaBc5b39e8818';
 
 function Home() {
   const [loadings, setLoadings] = useState(false);
@@ -22,43 +22,15 @@ function Home() {
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
   const gasPrice = '50000000000';
 
-
   var web3 = new Web3(window.ethereum);
   var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
-
 
   const connectWallet = async () => {
     await window.ethereum.enable();
     const account = await web3.eth.requestAccounts();
-    console.log('account', account)
     setAcc(account);
     console.log('Wallet current: ', account[0]);
   };
-
-  // Attempt to connect to MetaMask
-  useEffect(() => {
-    const connectWallet = async () => {
-
-      // setIsConnecting(true);
-      try {
-        // await window.ethereum.enable();
-        const account = await web3.eth.requestAccounts();
-        console.log('account', account)
-        setAcc(account);
-        console.log('Wallet current: ', account[0]);
-      } catch (error) {
-        console.error("Failed to connect to MetaMask:", error);
-        // Handle errors here
-      } finally {
-        // setIsConnecting(false);
-      }
-    };
-
-    connectWallet();
-  }, []);
-
-
-
 
   const mint = async () => {
     await contractABI.methods
@@ -135,14 +107,23 @@ function Home() {
       const tokenURI = await contractABI.methods
           .tokenURI(tokenIdCurrent)
           .call()
-          .then(result => console.log(result))
+          .then(result => {
+            var cutString = result.substring(29);
+            console.log(cutString);
+            setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
+          })
           .catch(err => console.log(err));
-      // setDataJsonArray([...dataJsonArray, JSON.parse(atob(tokenURI))]);
+      console.log(tokenURI);
       setLoadingArt(false);
     } else {
       console.log("Don't have tokenId");
     }
   };
+
+  function base64ToJson(base64String) {
+    const json = Buffer.from(base64String, 'base64').toString();
+    return JSON.parse(json);
+  }
 
   const getBalance = async () => {
     if (acc) {
@@ -327,7 +308,7 @@ function Home() {
           Your Balance: {walletBalance ? walletBalance : 0} TC
         </Title>
         <Space size="middle">
-          <Button size="large" onClick={() => connectV2()}>
+          <Button size="large" onClick={() => connectWallet()}>
             Connet wallet
           </Button>
           <Button size="large" onClick={() => getBalance()}>
@@ -372,6 +353,17 @@ function Home() {
                         title={key ? key.name : ''}
                         description={key ? key.description : ''}
                     />
+                    {key.attributes.map((item, index2) => {
+                      return (
+                          <p key={index2}>
+                            <b>Trait-type:</b> {item.trait_type}
+                            <br />
+                            <b>Name:</b> {item.Name}
+                            <br />
+                            <b>Size:</b> {item.size}
+                          </p>
+                      );
+                    })}
                   </Card>
                 </Col>
             );
