@@ -6,6 +6,7 @@
         "start": "next start"
     },
     "dependencies": {
+        "@metamask/sdk-react": "^0.31.1",
         "antd": "^5.6.4",
         "next": "latest",
         "react": "18.2.0",

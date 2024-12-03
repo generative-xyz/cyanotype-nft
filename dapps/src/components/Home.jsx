@@ -2,7 +2,9 @@ import {useEffect, useState} from 'react';
 import ABI from '../../../Contract/artifacts/contracts/Cyanotype.sol/GenArt.json';
 import Web3 from 'web3';
 import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';
+import { useSDK } from "@metamask/sdk-react";
 import config from '../../../Contract/config.json';
+
 const { Meta } = Card;
 const { Title } = Typography;
 
@@ -20,8 +22,20 @@ function Home() {
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
   const gasPrice = '50000000000';
 
+  const [account, setAccount] = useState('');
+  const { sdk, connected, connecting, provider, chainId } = useSDK();
+
   var web3 = new Web3(window.ethereum);
   var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
+
+  const connectV2 = async () => {
+    try {
+      const accounts = await sdk?.connect();
+      setAccount(accounts?.[0]);
+    } catch (err) {
+      console.warn("failed to connect..", err);
+    }
+  };
 
   const connectWallet = async () => {
     await window.ethereum.enable();
@@ -30,29 +44,6 @@ function Home() {
     setAcc(account);
     console.log('Wallet current: ', account[0]);
   };
-
-  // Attempt to connect to MetaMask
-  useEffect(() => {
-    const connectWallet = async () => {
-
-      // setIsConnecting(true);
-      try {
-        // await window.ethereum.enable();
-        const account = await web3.eth.requestAccounts();
-        console.log('account', account)
-        setAcc(account);
-        console.log('Wallet current: ', account[0]);
-      } catch (error) {
-        console.error("Failed to connect to MetaMask:", error);
-        // Handle errors here
-      } finally {
-        // setIsConnecting(false);
-      }
-    };
-
-    connectWallet();
-  }, []);
-
 
   const mint = async () => {
     await contractABI.methods
@@ -321,7 +312,7 @@ function Home() {
           Your Balance: {walletBalance ? walletBalance : 0} TC
         </Title>
         <Space size="middle">
-          <Button size="large" onClick={() => connectWallet()}>
+          <Button size="large" onClick={() => connectV2()}>
             Connet wallet
           </Button>
           <Button size="large" onClick={() => getBalance()}>
