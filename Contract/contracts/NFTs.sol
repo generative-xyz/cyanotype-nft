@@ -331,4 +331,27 @@ contract CharacterInfo {
     function getEyesLength() public view returns (uint256) {
         return eyeCount;
     }
+
+    function getBodiesLength() public view returns (uint256) {
+        return bodyCount;
+    }
+
+    function getHeadsLength() public view returns (uint256) {
+        return headCount;
+    }
+    function getHandsLength() public view returns (uint256) {
+        return handCount;
+    }
+
+    function getFootersLength() public view returns (uint256) {
+        return footerCount;
+    }
+
+    function getHairsLength() public view returns (uint256) {
+        return hairCount;
+    }
+
+    function getGlassesLength() public view returns (uint256) {
+        return glassCount;
+    }
 }
