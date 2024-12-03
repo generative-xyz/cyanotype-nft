@@ -1,6 +1,6 @@
-import Install from '../src/components/Install.jsx';
 import Home from '../src/components/Home.jsx';
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
+import {MetaMaskProvider} from "@metamask/sdk-react";
 
 function App() {
   const [showChild, setShowChild] = useState(false);
@@ -14,11 +14,20 @@ function App() {
   if (typeof window === 'undefined') {
     return <></>;
   } else {
-    if (window.ethereum) {
-      return <Home />;
-    } else {
-      return <Install />;
-    }
+      return (
+          <MetaMaskProvider
+              sdkOptions={{
+                  dappMetadata: {
+                      name: "Example React Dapp",
+                      url: window.location.href,
+                  },
+                  infuraAPIKey: 'http://127.0.0.1:8545/',
+                  // Other options.
+              }}
+          >
+              <Home />
+          </MetaMaskProvider>
+      );
   }
 }
 
