@@ -54,6 +54,8 @@ function Home() {
   }, []);
 
 
+
+
   const mint = async () => {
     await contractABI.methods
         .mint(acc[0])
