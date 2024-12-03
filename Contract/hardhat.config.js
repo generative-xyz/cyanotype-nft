@@ -34,12 +34,10 @@ require('dotenv').config();
 module.exports = {
   solidity: '0.8.9',
   networks: {
-    nostest: {
-      // url: 'https://tc-node-manual.regtest.trustless.computer/',
-      url: 'https://tc-node-auto.regtest.trustless.computer',
-      // url: 'https://nos-testnet.trustless.computer/',
+    polygon: {
+      url: 'https://polygon-mainnet.infura.io',
       accounts: [`${process.env.PRIVATE_KEY}`],
-      chainId: 22215,
+      chainId: 137,
     },
     // hardhat: {
     //   allowUnlimitedContractSize: true,
