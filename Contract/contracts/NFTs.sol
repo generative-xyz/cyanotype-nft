@@ -20,10 +20,10 @@ contract CharacterInfo {
 
     // Color palette storage
     string[] private colors;
-    
+
     uint constant PIXEL_SIZE = 24;
     uint constant GRID_SIZE = 24;
-    
+
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint256 indexed itemId, string name, uint8 trait);
     event ColorAdded(uint256 indexed colorId, string color);
@@ -63,7 +63,7 @@ contract CharacterInfo {
         uint8[] memory _colorIdArray
     ) public validItemType(_itemType) returns (uint256) {
         require(
-            _xArray.length == _yArray.length && 
+            _xArray.length == _yArray.length &&
             _yArray.length == _colorIdArray.length,
             "Arrays must have same length"
         );
@@ -76,7 +76,7 @@ contract CharacterInfo {
         }
 
         uint256 itemId = itemCounts[_itemType]++;
-        
+
         items[_itemType][itemId].name = _name;
         items[_itemType][itemId].trait = _trait;
 
@@ -115,7 +115,7 @@ contract CharacterInfo {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
         ItemDetail memory item = items[_itemType][_itemId];
         require(_detailIndex < item.positions.length, "Detail index out of bounds");
-        
+
         PositionDetail memory position = item.positions[_detailIndex];
         return (position.x, position.y, position.colorId);
     }
@@ -130,8 +130,8 @@ contract CharacterInfo {
                 '<rect ',
                 'x="', toString(detail.x), '" ',
                 'y="', toString(detail.y), '" ',
-                'width="', toString(PIXEL_SIZE), '" ',
-                'height="', toString(PIXEL_SIZE), '" ',
+                'width="1"',
+                'height="1"',
                 'fill="', colors[detail.colorId], '" ',
                 '/>'
             )
@@ -148,18 +148,12 @@ contract CharacterInfo {
 
     function createFullSVGWithGrid(PositionDetail[] memory details) public view returns (string memory) {
         string memory pixels = createMultipleRects(details);
-        
+
         string memory svg = string(
             abi.encodePacked(
                 '<svg xmlns="http://www.w3.org/2000/svg" ',
                 'viewBox="0 0 ', toString(GRID_SIZE * PIXEL_SIZE), ' ', toString(GRID_SIZE * PIXEL_SIZE), '">',
-                '<style>',
-                '.pixel { transition: all 0.3s; }',
-                '.pixel:hover { filter: brightness(1.2); }',
-                '</style>',
-                '<g class="pixels">',
                 pixels,
-                '</g>',
                 '</svg>'
             )
         );
