@@ -79,7 +79,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         uint8[] memory _colorIdArray
     ) public validItemType(_itemType) returns (uint256) {
         require(
-            _xArray.length == _yArray.length && 
+            _xArray.length == _yArray.length &&
             _yArray.length == _colorIdArray.length,
             "Arrays must have same length"
         );
@@ -92,7 +92,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         }
 
         uint256 itemId = itemCounts[_itemType]++;
-        
+
         items[_itemType][itemId].name = _name;
         items[_itemType][itemId].trait = _trait;
 
@@ -131,7 +131,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
         ItemDetail memory item = items[_itemType][_itemId];
         require(_detailIndex < item.positions.length, "Detail index out of bounds");
-        
+
         PositionDetail memory position = item.positions[_detailIndex];
         return (position.x, position.y, position.colorId);
     }
@@ -146,8 +146,8 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                 '<rect ',
                 'x="', toString(detail.x), '" ',
                 'y="', toString(detail.y), '" ',
-                'width="', toString(PIXEL_SIZE), '" ',
-                'height="', toString(PIXEL_SIZE), '" ',
+                'width="1"',
+                'height="1"',
                 'fill="', colors[detail.colorId], '" ',
                 '/>'
             )
@@ -164,29 +164,22 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function createFullSVGWithGrid(PositionDetail[] memory details) public view returns (string memory) {
         string memory pixels = createMultipleRects(details);
-        
+
         string memory svg = string(
             abi.encodePacked(
                 '<svg xmlns="http://www.w3.org/2000/svg" ',
                 'viewBox="0 0 ', toString(GRID_SIZE * PIXEL_SIZE), ' ', toString(GRID_SIZE * PIXEL_SIZE), '">',
-                '<style>',
-                '.pixel { transition: all 0.3s; }',
-                '.pixel:hover { filter: brightness(1.2); }',
-                '</style>',
-                '<g class="pixels">',
                 pixels,
-                '</g>',
                 '</svg>'
             )
         );
 
         return svg;
     }
+
     function renderSVG(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (string memory) {
         return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
-
-
 
     // =============== Help function ===============
     function shuffleArray(uint256 tokenId, ItemDetail[] memory arrayToShuffle) public view returns (ItemDetail[] memory) {
