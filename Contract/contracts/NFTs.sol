@@ -9,13 +9,13 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 
 contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
-    uint16 public constant TOKEN_LIMIT = 256;
+    uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
 
     mapping(address => bool) public addressMint;
-    mapping(uint256 => bool) private tokenExists;
-    uint256 newTokenId;
+    mapping(uint16 => bool) private tokenExists; // Changed to uint16 since max is 10000
+    uint16 newTokenId; // Changed to uint16
 
-    uint256 private tokenIdCounter;
+    uint16 private tokenIdCounter; // Changed to uint16
 
     struct PositionDetail {
         uint8 x;      // 0-24
@@ -30,21 +30,21 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     // Mappings for each item type
-    mapping(string => mapping(uint256 => ItemDetail)) private items;
-    mapping(string => uint256) private itemCounts;
-    mapping(uint256 => uint256) public seedTokenId;
+    mapping(string => mapping(uint16 => ItemDetail)) private items; // Changed to uint16
+    mapping(string => uint16) private itemCounts; // Changed to uint16
+    mapping(uint16 => uint256) public seedTokenId; // First param changed to uint16
 
     // Color palette storage
     string[] private colors;
 
-    uint constant PIXEL_SIZE = 24;
-    uint constant GRID_SIZE = 24;
+    uint8 constant PIXEL_SIZE = 24; // Changed to uint8
+    uint8 constant GRID_SIZE = 24; // Changed to uint8
 
     event SVGGenerated(address indexed creator, uint timestamp);
-    event ItemAdded(string itemType, uint256 indexed itemId, string name, uint8 trait);
-    event ColorAdded(uint256 indexed colorId, string color);
- 	event TokenMinted(uint256 tokenId);
-    string[] private VALID_ITEM_TYPES = ["glass", "head", "body", "hand", "footer", "hair", "eye"];
+    event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait); // Changed to uint16
+    event ColorAdded(uint16 indexed colorId, string color); // Changed to uint16
+    event TokenMinted(uint16 tokenId); // Changed to uint16
+    string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -63,9 +63,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     // =============== Get, Add Traits function ===============
-    function addColor(string memory _color) public returns (uint256) {
+    function addColor(string memory _color) public returns (uint16) { // Changed return to uint16
         colors.push(_color);
-        uint256 colorId = colors.length - 1;
+        uint16 colorId = uint16(colors.length - 1);
         emit ColorAdded(colorId, _color);
         return colorId;
     }
@@ -90,7 +90,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         uint8[] memory _xArray,
         uint8[] memory _yArray,
         uint8[] memory _colorIdArray
-    ) public validItemType(_itemType) returns (uint256) {
+    ) public validItemType(_itemType) returns (uint16) { // Changed return to uint16
         require(
             _xArray.length == _yArray.length &&
             _yArray.length == _colorIdArray.length,
@@ -104,7 +104,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             require(_colorIdArray[i] < colors.length, "Invalid color ID");
         }
 
-        uint256 itemId = itemCounts[_itemType]++;
+        uint16 itemId = uint16(itemCounts[_itemType]++);
 
         items[_itemType][itemId].name = _name;
         items[_itemType][itemId].trait = _trait;
@@ -121,7 +121,72 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return itemId;
     }
 
-    function getItem(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (
+    function pickRandomItems(uint16 tokenId) public view returns (
+        string memory bodyType,
+        string memory mouthType, 
+        string memory shirtType,
+        string memory eyeType
+    ) {
+        require(tokenExists[tokenId], "Token does not exist");
+
+        // Cache counts to avoid multiple storage reads
+        uint16 bodyCount = itemCounts["body"];
+        uint16 mouthCount = itemCounts["mouth"]; 
+        uint16 shirtCount = itemCounts["shirt"];
+        uint16 eyeCount = itemCounts["eye"];
+
+        require(bodyCount * mouthCount * shirtCount * eyeCount > 0, "Not enough items");
+
+        // Pack tokenId with item type strings into single hash operation
+        bytes32 combinedHash = keccak256(abi.encodePacked(tokenId, "body", "mouth", "shirt", "eye"));
+        
+        // Get weighted random indices based on trait values
+        uint16 bodyIndex = getWeightedRandomIndex("body", combinedHash, bodyCount);
+        uint16 mouthIndex = getWeightedRandomIndex("mouth", combinedHash >> 64, mouthCount);
+        uint16 shirtIndex = getWeightedRandomIndex("shirt", combinedHash >> 128, shirtCount);
+        uint16 eyeIndex = getWeightedRandomIndex("eye", combinedHash >> 192, eyeCount);
+
+        // Cache storage reads
+        ItemDetail memory bodyItem = items["body"][bodyIndex];
+        ItemDetail memory mouthItem = items["mouth"][mouthIndex];
+        ItemDetail memory shirtItem = items["shirt"][shirtIndex];
+        ItemDetail memory eyeItem = items["eye"][eyeIndex];
+
+        // Return cached values
+        return (
+            bodyItem.name,
+            mouthItem.name,
+            shirtItem.name,
+            eyeItem.name
+        );
+    }
+
+    function getWeightedRandomIndex(string memory itemType, bytes32 hash, uint16 count) internal view returns (uint16) {
+        uint256 totalWeight = 0;
+        uint256[] memory weights = new uint256[](count);
+        
+        // Calculate weights based on trait values
+        for(uint16 i = 0; i < count; i++) {
+            weights[i] = 200 - items[itemType][i].trait; // Invert trait so lower values are more common
+            totalWeight += weights[i];
+        }
+
+        // Get random number from hash
+        uint256 random = uint256(hash) % totalWeight;
+        
+        // Find index based on cumulative weights
+        uint256 cumulative = 0;
+        for(uint16 i = 0; i < count; i++) {
+            cumulative += weights[i];
+            if(random < cumulative) {
+                return i;
+            }
+        }
+        
+        return count - 1; // Fallback to last index
+    }
+
+    function getItem(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns ( // Changed param to uint16
         string memory name,
         uint8 trait,
         PositionDetail[] memory positions
@@ -131,12 +196,12 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return (item.name, item.trait, item.positions);
     }
 
-    function getDetailCount(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (uint256) {
+    function getDetailCount(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (uint16) { // Changed param and return to uint16
         require(_itemId < itemCounts[_itemType], "Item does not exist");
-        return items[_itemType][_itemId].positions.length;
+        return uint16(items[_itemType][_itemId].positions.length);
     }
 
-    function getItemDetail(string memory _itemType, uint256 _itemId, uint256 _detailIndex) public view validItemType(_itemType) returns (
+    function getItemDetail(string memory _itemType, uint16 _itemId, uint16 _detailIndex) public view validItemType(_itemType) returns ( // Changed params to uint16
         uint8 x,
         uint8 y,
         uint8 colorId
@@ -149,7 +214,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return (position.x, position.y, position.colorId);
     }
 
-    function getItemCount(string memory _itemType) public view validItemType(_itemType) returns (uint256) {
+    function getItemCount(string memory _itemType) public view validItemType(_itemType) returns (uint16) { // Changed return to uint16
         return itemCounts[_itemType];
     }
 
@@ -191,12 +256,12 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return svg;
     }
 
-    function renderSVG(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (string memory) {
+    function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) { // Changed param to uint16
         return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
     // =============== Help function ===============
-    function shuffleArray(uint256 tokenId, ItemDetail[] memory arrayToShuffle) public view returns (ItemDetail[] memory) {
+    function shuffleArray(uint16 tokenId, ItemDetail[] memory arrayToShuffle) public view returns (ItemDetail[] memory) { // Changed param to uint16
         uint256 seed = seedTokenId[tokenId];
         ItemDetail[] memory shuffledArray = arrayToShuffle;
         uint256 n = shuffledArray.length;
@@ -240,7 +305,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         }
         return string(buffer);
     }
-
     function randomIndex(uint256 maxLength, uint256 tokenId, uint16 i) internal view returns (uint) {
         uint256 seed = seedTokenId[tokenId];
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(seed, i)));
@@ -256,7 +320,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return super.supportsInterface(interfaceId);
     }
 
-    function transferNFT(uint256 tokenId, address to) public {
+    function transferNFT(uint16 tokenId, address to) public { // Changed param to uint16
         require(ownerOf(tokenId) == msg.sender, "You are not the owner of this NFT");
         _transfer(msg.sender, to, tokenId);
     }
