@@ -153,13 +153,7 @@ contract CharacterInfo {
             abi.encodePacked(
                 '<svg xmlns="http://www.w3.org/2000/svg" ',
                 'viewBox="0 0 ', toString(GRID_SIZE), ' ', toString(GRID_SIZE), '">',
-                '<style>',
-                '.pixel { transition: all 0.3s; }',
-                '.pixel:hover { filter: brightness(1.2); }',
-                '</style>',
-                '<g class="pixels">',
                 pixels,
-                '</g>',
                 '</svg>'
             )
         );
