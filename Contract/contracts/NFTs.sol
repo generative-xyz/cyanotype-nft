@@ -62,6 +62,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         tokenIdCounter = 0;
     }
 
+    // =============== Get, Add Traits function ===============
     function addColor(string memory _color) public returns (uint256) {
         colors.push(_color);
         uint256 colorId = colors.length - 1;
@@ -144,6 +145,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return itemCounts[_itemType];
     }
 
+    // =============== Draw Art function ===============
     function createRect(PositionDetail memory detail) public view returns (string memory) {
         return string(
             abi.encodePacked(
@@ -184,6 +186,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     function renderSVG(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (string memory) {
         return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
+
 
     // =============== Help function ===============
     function shuffleArray(uint256 tokenId, ItemDetail[] memory arrayToShuffle) public view returns (ItemDetail[] memory) {
@@ -231,6 +234,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return string(buffer);
     }
 
+
     //=============== Core function ===============
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
@@ -244,9 +248,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         require(ownerOf(tokenId) == msg.sender, "You are not the owner of this NFT");
         _transfer(msg.sender, to, tokenId);
     }
-    //=================================================
 
 
+    //=============== ERC721 function ===============
     function mint(address to) public payable {
         require(to != address(0));
         require(tokenIdCounter < TOKEN_LIMIT, 'Mints have exceeded the limit');
