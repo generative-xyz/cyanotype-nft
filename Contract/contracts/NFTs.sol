@@ -36,10 +36,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     // Color palette storage
     string[] private colors;
-    
+
     uint constant PIXEL_SIZE = 24;
     uint constant GRID_SIZE = 24;
-    
+
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint256 indexed itemId, string name, uint8 trait);
     event ColorAdded(uint256 indexed colorId, string color);
@@ -146,8 +146,8 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                 '<rect ',
                 'x="', toString(detail.x), '" ',
                 'y="', toString(detail.y), '" ',
-                'width="1"',
-                'height="1"',
+                'width="1" ',
+                'height="1" ',
                 'fill="', colors[detail.colorId], '" ',
                 '/>'
             )
@@ -168,7 +168,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         string memory svg = string(
             abi.encodePacked(
                 '<svg xmlns="http://www.w3.org/2000/svg" ',
-                'viewBox="0 0 ', toString(GRID_SIZE * PIXEL_SIZE), ' ', toString(GRID_SIZE * PIXEL_SIZE), '">',
+                'viewBox="0 0 ', toString(GRID_SIZE), ' ', toString(GRID_SIZE), '">',
                 pixels,
                 '</svg>'
             )
