@@ -3,18 +3,17 @@ pragma solidity ^0.8.0;
 
 contract CharacterInfo {
     struct PositionDetail {
-        string x;      // độ cầu
-        string y;      // độ loạn
-        string color;  // màu sắc
+        string x;
+        string y;
+        string color;
     }
 
     struct ItemDetail {
-        string name;           // tên mẫu
-        string trait;          // đặc điểm
-        PositionDetail[] positions;   // mảng chứa thông tin chi tiết
+        string name;
+        string trait;
+        PositionDetail[] positions;
     }
 
-    // Mapping để lưu trữ thông tin các bộ phận theo ID
     mapping(uint256 => ItemDetail) public glasses;
     mapping(uint256 => ItemDetail) public heads;
     mapping(uint256 => ItemDetail) public bodies;
@@ -31,14 +30,11 @@ contract CharacterInfo {
     uint256 public hairCount;
     uint256 public eyeCount;
 
-    // Constant values
     uint constant PIXEL_SIZE = 24;
     uint constant GRID_SIZE = 24;
     
-    // Events
     event SVGGenerated(address indexed creator, uint timestamp);
 
-    // Events
     event ItemAdded(
         string itemType,
         uint256 indexed itemId,
@@ -46,7 +42,6 @@ contract CharacterInfo {
         string trait
     );
 
-    // Hàm helper để thêm mới thông tin
     function addItem(
         string memory _itemType,
         string memory _name,
@@ -92,7 +87,6 @@ contract CharacterInfo {
         item.name = _name;
         item.trait = _trait;
 
-        // Thêm thông tin chi tiết
         for(uint i = 0; i < _xArray.length; i++) {
             item.positions.push(PositionDetail({
                 x: _xArray[i],
@@ -105,7 +99,6 @@ contract CharacterInfo {
         return itemId;
     }
 
-    // Các hàm thêm mới cho từng loại
     function addGlass(string memory _name, string memory _trait, string[] memory _xArray, string[] memory _yArray, string[] memory _colorArray) public returns (uint256) {
         return addItem("glass", _name, _trait, _xArray, _yArray, _colorArray);
     }
@@ -134,7 +127,6 @@ contract CharacterInfo {
         return addItem("eye", _name, _trait, _xArray, _yArray, _colorArray);
     }
 
-    // Hàm helper để lấy thông tin
     function getItem(string memory _itemType, uint256 _itemId) internal view returns (
         string memory name,
         string memory trait,
@@ -172,7 +164,6 @@ contract CharacterInfo {
         return (item.name, item.trait, item.positions);
     }
 
-    // Các hàm lấy thông tin cho từng loại
     function getGlass(uint256 _glassId) public view returns (string memory name, string memory trait, PositionDetail[] memory positions) {
         return getItem("glass", _glassId);
     }
@@ -201,7 +192,6 @@ contract CharacterInfo {
         return getItem("eye", _eyeId);
     }
 
-    // Hàm helper để lấy số lượng chi tiết
     function getDetailCount(string memory _itemType, uint256 _itemId) internal view returns (uint256) {
         ItemDetail storage item;
         uint256 count;
@@ -235,7 +225,6 @@ contract CharacterInfo {
         return item.positions.length;
     }
 
-    // Các hàm lấy số lượng chi tiết cho từng loại
     function getGlassDetailCount(uint256 _glassId) public view returns (uint256) {
         return getDetailCount("glass", _glassId);
     }
@@ -264,7 +253,6 @@ contract CharacterInfo {
         return getDetailCount("eye", _eyeId);
     }
 
-    // Hàm helper để lấy thông tin chi tiết cụ thể
     function getItemDetail(string memory _itemType, uint256 _itemId, uint256 _detailIndex) internal view returns (
         string memory x,
         string memory y,
@@ -305,7 +293,6 @@ contract CharacterInfo {
         return (position.x, position.y, position.color);
     }
 
-    // Các hàm lấy thông tin chi tiết cụ thể cho từng loại
     function getGlassDetail(uint256 _glassId, uint256 _detailIndex) public view returns (string memory x, string memory y, string memory color) {
         return getItemDetail("glass", _glassId, _detailIndex);
     }
@@ -334,7 +321,6 @@ contract CharacterInfo {
         return getItemDetail("eye", _eyeId, _detailIndex);
     }
 
-    // Function to get the length of eyes
     function getEyesLength() public view returns (uint256) {
         return eyeCount;
     }
@@ -362,7 +348,6 @@ contract CharacterInfo {
         return glassCount;
     }
 
-    // Function to create multiple rectangles from position details
     function createMultipleRects(PositionDetail[] memory details) internal pure returns (string memory) {
         string memory rects = "";
         for(uint i = 0; i < details.length; i++) {
@@ -371,7 +356,6 @@ contract CharacterInfo {
         return rects;
     }
 
-    // Hàm tạo rect với nhiều thuộc tính hơn
     function createRect(PositionDetail memory detail) public pure returns (string memory) {
         return string(
             abi.encodePacked(
@@ -386,7 +370,6 @@ contract CharacterInfo {
         );
     }
 
-    // Tạo SVG với grid background
     function createFullSVGWithGrid(PositionDetail[] memory details) public returns (string memory) {
         string memory pixels = createMultipleRects(details);
         
@@ -409,7 +392,6 @@ contract CharacterInfo {
         return svg;
     }
 
-    // Helper functions...
     function toString(uint256 value) internal pure returns (string memory) {
         if (value == 0) {
             return "0";
