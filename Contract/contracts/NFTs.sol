@@ -44,7 +44,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     event ItemAdded(string itemType, uint256 indexed itemId, string name, uint8 trait);
     event ColorAdded(uint256 indexed colorId, string color);
  	event TokenMinted(uint256 tokenId);
-    string[] private VALID_ITEM_TYPES = ["glass", "head", "body", "hand", "footer", "hair", "eye"];
+    string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
