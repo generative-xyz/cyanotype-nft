@@ -1,7 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/utils/Base64.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import '@openzeppelin/contracts/utils/Counters.sol';
 
-contract CharacterInfo {
+contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
+    uint16 public constant TOKEN_LIMIT = 256;
+
+    mapping(address => bool) public addressMint;
+    mapping(uint256 => bool) private tokenExists;
+    uint256 newTokenId;
+
+    uint256 private tokenIdCounter;
+
     struct PositionDetail {
         string x;      // độ cầu
         string y;      // độ loạn
@@ -40,6 +55,8 @@ contract CharacterInfo {
         string name,
         string trait
     );
+    event TokenMinted(uint256 tokenId);
+
 
     // Hàm helper để thêm mới thông tin
     function addItem(
@@ -382,5 +399,76 @@ contract CharacterInfo {
             str[3 + i * 2] = alphabet[uint8(value[i + 12] & 0x0f)];
         }
         result = string(str);
+    }
+
+    //=============== Core function ===============
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function transferNFT(uint256 tokenId, address to) public {
+        require(ownerOf(tokenId) == msg.sender, "You are not the owner of this NFT");
+        _transfer(msg.sender, to, tokenId);
+    }
+    //=================================================
+
+
+    function mint(address to) public payable {
+        require(to != address(0));
+        require(tokenIdCounter < TOKEN_LIMIT, 'Mints have exceeded the limit');
+        newTokenId = tokenIdCounter;
+        tokenExists[newTokenId] = true;
+        _safeMint(to, newTokenId);
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, newTokenId)));
+        seedTokenId[newTokenId] = seed;
+        emit TokenMinted(newTokenId);
+        tokenIdCounter += 1;
+    }
+
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
+        require(_exists(tokenId), 'ERC721: Token does not exist');
+        string memory name = '"name": "Cyanotype #';
+        string memory tokenID = Strings.toString(tokenId);
+        string memory desc = '"description": "Cyanotype NFT Art"';
+        string memory getOwner = addressToString(_ownerOf(tokenId));
+
+       /* result = string(
+            abi.encodePacked(
+                'data:application/json;base64,',
+                Base64.encode(
+                    abi.encodePacked(
+                        '{',
+                        name,
+                        tokenID,
+                        '"',
+                        ',',
+                        desc,
+                        ',',
+                        '"owner": "',
+                        getOwner,
+                        '"',
+                        ',',
+                        '"edition": "',
+                        tokenID,
+                        '"',
+                        ',',
+                        '"image": "',
+//                        this.svgToImageURI(getSvg(tokenId)),
+                        '"',
+                        ',',
+                        '"attributes": [',
+//                        this.generateTraits(tokenId),
+                        ']',
+                        '}'
+                    )
+                )
+            )
+        );*/
+
+        result = '"description": "Cyanotype NFT Art"';
     }
 }
