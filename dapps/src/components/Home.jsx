@@ -1,374 +1,249 @@
-import { useState } from 'react';
-import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
-// import ABI from '../contracts/ABI.json';
-import Web3 from 'web3';
-import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';
-import config from '../../../Contract/config.json';
-const { Meta } = Card;
-const { Title } = Typography;
+import { useEffect, useRef } from 'react';
+import { decodeBinary, encodeToBinary, renderSVG, varCont } from '../../encode';
+// import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
+// // import ABI from '../contracts/ABI.json';
+// import { Button, Card, Col, Input, Row, Space, Typography, Upload } from 'antd';
+// import Web3 from 'web3';
+// import config from '../../../Contract/config.json';
+// const { Meta } = Card;
+// const { Title } = Typography;
 
-const contractAddress = config.contractAddress;
-// const contractAddress = '0x663E587e4988AF5798Fcb2eE13aDaBc5b39e8818';
+// const contractAddress = config.contractAddress;
+// // const contractAddress = '0x663E587e4988AF5798Fcb2eE13aDaBc5b39e8818';
 
 function Home() {
-  const [loadings, setLoadings] = useState(false);
-  const [loadingArt, setLoadingArt] = useState(false);
-  const [inputAddress, setInputAddress] = useState('');
-  const [removeAddress, setRemoveAddress] = useState('');
-  const [checkAddress, setCheckAddress] = useState('');
-  const [walletBalance, setWalletBalance] = useState('');
-  const [acc, setAcc] = useState('');
-  const [dataJsonArray, setDataJsonArray] = useState([]);
-  const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
-  const gasPrice = '50000000000';
+  // const [loadings, setLoadings] = useState(false);
+  // const [loadingArt, setLoadingArt] = useState(false);
+  // const [inputAddress, setInputAddress] = useState('');
+  // const [removeAddress, setRemoveAddress] = useState('');
+  // const [checkAddress, setCheckAddress] = useState('');
+  // const [walletBalance, setWalletBalance] = useState('');
+  // const [acc, setAcc] = useState('');
+  // const [dataJsonArray, setDataJsonArray] = useState([]);
+  // const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
+  // const gasPrice = '50000000000';
 
-  var web3 = new Web3(window.ethereum);
-  var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
+  const reftContent= useRef();
 
-  const connectWallet = async () => {
-    await window.ethereum.enable();
-    const account = await web3.eth.requestAccounts();
-    setAcc(account);
-    console.log('Wallet current: ', account[0]);
-  };
 
-  const mint = async () => {
-    await contractABI.methods
-        .mint(acc[0])
-        .send({
-          from: acc[0],
-          gasPrice,
-        })
-        .then(() => {
-          contractABI
-              .getPastEvents(
-                  'TokenMinted',
-                  {
-                    // fromBlock: 0,
-                    toBlock: 'latest',
-                  },
-                  function (error, events) {
-                    console.log(events);
-                  }
-              )
-              .then(async function (events) {
-                let tokenID = events[0].returnValues.tokenId;
-                const tokenIdConvert = Number(tokenID);
-                setTokenIdCurrent(tokenIdConvert);
-                setLoadings(false);
-              });
-        })
-        .catch(err => {
-          console.error(err.message);
-        });
+  useEffect(() => {
+    const binary = encodeToBinary(varCont);
+    console.log(binary);
+    const svg = renderSVG(decodeBinary(binary));
+    console.log();
+    reftContent.current.innerHTML = svg;
+  }, [])
 
-    // if (result) {
-    //   console.log('tokenIdConvert', tokenIdConvert);
-    //   setLoadings(false);
-    //   const tokenURI = await contractABI.methods
-    //     .tokenURI(tokenIdConvert)
-    //     .call();
-    //   setDataJsonArray([...dataJsonArray, JSON.parse(atob(tokenURI))]);
-    // }
-  };
+  
 
-  async function addAdressMint(add) {
-    await contractABI.methods.addAdressMint(add).send({
-      from: acc[0],
-      gasPrice,
-    });
-    setInputAddress('');
-  }
+  // var web3 = new Web3(window.ethereum);
+  // var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
 
-  async function removeAdressMint(add) {
-    await contractABI.methods.removeAdressMint(add).send({
-      from: acc[0],
-      gasPrice,
-    });
-    setRemoveAddress('');
-  }
+  // const connectWallet = async () => {
+  //   await window.ethereum.enable();
+  //   const account = await web3.eth.requestAccounts();
+  //   setAcc(account);
+  //   console.log('Wallet current: ', account[0]);
+  // };
 
-  async function checkAdressMint(add) {
-    await contractABI.methods
-        .checkPermissionAddress(add)
-        .call()
-        .then(result => console.log(result));
-    setCheckAddress('');
-  }
+  // const mint = async () => {
+  //   await contractABI.methods
+  //       .mint(acc[0])
+  //       .send({
+  //         from: acc[0],
+  //         gasPrice,
+  //       })
+  //       .then(() => {
+  //         contractABI
+  //             .getPastEvents(
+  //                 'TokenMinted',
+  //                 {
+  //                   // fromBlock: 0,
+  //                   toBlock: 'latest',
+  //                 },
+  //                 function (error, events) {
+  //                   console.log(events);
+  //                 }
+  //             )
+  //             .then(async function (events) {
+  //               let tokenID = events[0].returnValues.tokenId;
+  //               const tokenIdConvert = Number(tokenID);
+  //               setTokenIdCurrent(tokenIdConvert);
+  //               setLoadings(false);
+  //             });
+  //       })
+  //       .catch(err => {
+  //         console.error(err.message);
+  //       });
 
-  function cutString(str) {
-    const getName = str.match(/[a-zA-Z]+/g).join('');
-    const getRate = str.match(/\d+/g).join('');
-    return { getName, getRate };
-  }
+  //   // if (result) {
+  //   //   console.log('tokenIdConvert', tokenIdConvert);
+  //   //   setLoadings(false);
+  //   //   const tokenURI = await contractABI.methods
+  //   //     .tokenURI(tokenIdConvert)
+  //   //     .call();
+  //   //   setDataJsonArray([...dataJsonArray, JSON.parse(atob(tokenURI))]);
+  //   // }
+  // };
 
-  const showArt = async () => {
-    if (tokenIdCurrent == 0 || tokenIdCurrent) {
-      const tokenURI = await contractABI.methods
-          .tokenURI(tokenIdCurrent)
-          .call()
-          .then(result => {
-            var cutString = result.substring(29);
-            console.log(cutString);
-            setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
-          })
-          .catch(err => console.log(err));
-      console.log(tokenURI);
-      setLoadingArt(false);
-    } else {
-      console.log("Don't have tokenId");
-    }
-  };
+  // async function addAdressMint(add) {
+  //   await contractABI.methods.addAdressMint(add).send({
+  //     from: acc[0],
+  //     gasPrice,
+  //   });
+  //   setInputAddress('');
+  // }
 
-  function base64ToJson(base64String) {
-    const json = Buffer.from(base64String, 'base64').toString();
-    return JSON.parse(json);
-  }
+  // async function removeAdressMint(add) {
+  //   await contractABI.methods.removeAdressMint(add).send({
+  //     from: acc[0],
+  //     gasPrice,
+  //   });
+  //   setRemoveAddress('');
+  // }
 
-  const getBalance = async () => {
-    if (acc) {
-      const balance = await web3.eth.getBalance(acc[0]);
-      const balanceInEther = web3.utils.fromWei(balance, 'ether');
-      setWalletBalance(balanceInEther);
-    } else {
-      console.log('No account');
-    }
-  };
+  // async function checkAdressMint(add) {
+  //   await contractABI.methods
+  //       .checkPermissionAddress(add)
+  //       .call()
+  //       .then(result => console.log(result));
+  //   setCheckAddress('');
+  // }
 
-  async function addBackground(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Background',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }
+  // function cutString(str) {
+  //   const getName = str.match(/[a-zA-Z]+/g).join('');
+  //   const getRate = str.match(/\d+/g).join('');
+  //   return { getName, getRate };
+  // }
 
-  async function addFlower(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Flower',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }
+  // const showArt = async () => {
+  //   if (tokenIdCurrent == 0 || tokenIdCurrent) {
+  //     const tokenURI = await contractABI.methods
+  //         .tokenURI(tokenIdCurrent)
+  //         .call()
+  //         .then(result => {
+  //           var cutString = result.substring(29);
+  //           console.log(cutString);
+  //           setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
+  //         })
+  //         .catch(err => console.log(err));
+  //     console.log(tokenURI);
+  //     setLoadingArt(false);
+  //   } else {
+  //     console.log("Don't have tokenId");
+  //   }
+  // };
 
-  async function addLeaf(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Leaf',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }
+  // function base64ToJson(base64String) {
+  //   const json = Buffer.from(base64String, 'base64').toString();
+  //   return JSON.parse(json);
+  // }
 
-  async function addInsect(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Insect',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }
+  // const getBalance = async () => {
+  //   if (acc) {
+  //     const balance = await web3.eth.getBalance(acc[0]);
+  //     const balanceInEther = web3.utils.fromWei(balance, 'ether');
+  //     setWalletBalance(balanceInEther);
+  //   } else {
+  //     console.log('No account');
+  //   }
+  // };
+
+  // async function addBackground(info) {
+  //   let name, image;
+  //   if (info.file.status === 'done') {
+  //     const reader = new FileReader();
+  //     name = info.file.name;
+  //     name = name.slice(0, name.lastIndexOf('.'));
+  //     let formatString = cutString(name);
+  //     reader.onload = async e => {
+  //       image = e.target.result;
+  //       let obj = {
+  //         name: formatString.getName,
+  //         image,
+  //         ele_type: 'Background',
+  //         rate: formatString.getRate,
+  //       };
+  //       await contractABI.methods
+  //           .addElements(obj)
+  //           .send({ from: acc[0], gasPrice });
+  //     };
+  //     reader.readAsText(info.file.originFileObj);
+  //   }
+  // }
+
+  // async function addFlower(info) {
+  //   let name, image;
+  //   if (info.file.status === 'done') {
+  //     const reader = new FileReader();
+  //     name = info.file.name;
+  //     name = name.slice(0, name.lastIndexOf('.'));
+  //     let formatString = cutString(name);
+  //     reader.onload = async e => {
+  //       image = e.target.result;
+  //       let obj = {
+  //         name: formatString.getName,
+  //         image,
+  //         ele_type: 'Flower',
+  //         rate: formatString.getRate,
+  //       };
+  //       await contractABI.methods
+  //           .addElements(obj)
+  //           .send({ from: acc[0], gasPrice });
+  //     };
+  //     reader.readAsText(info.file.originFileObj);
+  //   }
+  // }
+
+  // async function addLeaf(info) {
+  //   let name, image;
+  //   if (info.file.status === 'done') {
+  //     const reader = new FileReader();
+  //     name = info.file.name;
+  //     name = name.slice(0, name.lastIndexOf('.'));
+  //     let formatString = cutString(name);
+  //     reader.onload = async e => {
+  //       image = e.target.result;
+  //       let obj = {
+  //         name: formatString.getName,
+  //         image,
+  //         ele_type: 'Leaf',
+  //         rate: formatString.getRate,
+  //       };
+  //       await contractABI.methods
+  //           .addElements(obj)
+  //           .send({ from: acc[0], gasPrice });
+  //     };
+  //     reader.readAsText(info.file.originFileObj);
+  //   }
+  // }
+
+  // async function addInsect(info) {
+  //   let name, image;
+  //   if (info.file.status === 'done') {
+  //     const reader = new FileReader();
+  //     name = info.file.name;
+  //     name = name.slice(0, name.lastIndexOf('.'));
+  //     let formatString = cutString(name);
+  //     reader.onload = async e => {
+  //       image = e.target.result;
+  //       let obj = {
+  //         name: formatString.getName,
+  //         image,
+  //         ele_type: 'Insect',
+  //         rate: formatString.getRate,
+  //       };
+  //       await contractABI.methods
+  //           .addElements(obj)
+  //           .send({ from: acc[0], gasPrice });
+  //     };
+  //     reader.readAsText(info.file.originFileObj);
+  //   }
+  // }
 
   return (
-      <div>
-        <div className="">
-          <Space size="middle">
-            <Upload onChange={addBackground}>
-              <Button size="large" type="primary">
-                Add Background
-              </Button>
-            </Upload>
-            <Upload onChange={addFlower}>
-              <Button size="large" type="primary">
-                Add Flower
-              </Button>
-            </Upload>
-            <Upload onChange={addLeaf}>
-              <Button size="large" type="primary">
-                Add Leaf
-              </Button>
-            </Upload>
-            <Upload onChange={addInsect}>
-              <Button size="large" type="primary">
-                Add Insect
-              </Button>
-            </Upload>
-          </Space>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                placeholder="Input address"
-                value={inputAddress}
-                onChange={e => setInputAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => addAdressMint(inputAddress)}
-            >
-              Add address
-            </Button>
-          </Space.Compact>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                value={removeAddress}
-                placeholder="Remove address"
-                onChange={e => setRemoveAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => removeAdressMint(removeAddress)}
-            >
-              Remove address
-            </Button>
-          </Space.Compact>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                value={checkAddress}
-                placeholder="Check address have permission mint"
-                onChange={e => setCheckAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => checkAdressMint(checkAddress)}
-            >
-              Check address
-            </Button>
-          </Space.Compact>
-        </div>
-        <Title level={4}>
-          Your Balance: {walletBalance ? walletBalance : 0} TC
-        </Title>
-        <Space size="middle">
-          <Button size="large" onClick={() => connectWallet()}>
-            Connet wallet
-          </Button>
-          <Button size="large" onClick={() => getBalance()}>
-            Show My Balance
-          </Button>
-        </Space>
-        <div style={{ marginTop: '2%' }}>
-          <Space size="middle">
-            <Button
-                size="large"
-                loading={loadingArt}
-                onClick={() => {
-                  setLoadingArt(true);
-                  showArt();
-                }}
-            >
-              TokenURI({tokenIdCurrent})
-            </Button>
-            <Button
-                type="primary"
-                size="large"
-                loading={loadings}
-                onClick={() => {
-                  setLoadings(true);
-                  mint();
-                }}
-            >
-              Mint
-            </Button>
-          </Space>
-        </div>
-        <Row gutter={16} style={{ marginTop: '5%' }}>
-          {dataJsonArray.map((key, index) => {
-            return (
-                <Col span={6} key={index}>
-                  <Card
-                      hoverable
-                      style={{ width: 350 }}
-                      cover={<img alt="image" src={key ? key.image : ''} />}
-                  >
-                    <Meta
-                        title={key ? key.name : ''}
-                        description={key ? key.description : ''}
-                    />
-                    {key.attributes.map((item, index2) => {
-                      return (
-                          <p key={index2}>
-                            <b>Trait-type:</b> {item.trait_type}
-                            <br />
-                            <b>Name:</b> {item.Name}
-                            <br />
-                            <b>Size:</b> {item.size}
-                          </p>
-                      );
-                    })}
-                  </Card>
-                </Col>
-            );
-          })}
-        </Row>
+      <div ref={reftContent}>
+        
       </div>
   );
 }
