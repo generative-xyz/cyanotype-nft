@@ -76,10 +76,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function addColorArray(string[] memory _colors) public {
-        for (uint i = 0; i < _colors.length; i++) {
+        for (uint16 i = 0; i < _colors.length; i++) {
             colors.push(_colors[i]);
-            uint256 colorId = colors.length - 1;
-            emit ColorAdded(colorId, _colors[i]);
+            emit ColorAdded(i, _colors[i]);
         }
     }
 
@@ -121,45 +120,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return itemId;
     }
 
-    function pickRandomItems(uint16 tokenId) public view returns (
-        string memory bodyType,
-        string memory mouthType, 
-        string memory shirtType,
-        string memory eyeType
-    ) {
-        require(tokenExists[tokenId], "Token does not exist");
-
-        // Cache counts to avoid multiple storage reads
-        uint16 bodyCount = itemCounts["body"];
-        uint16 mouthCount = itemCounts["mouth"]; 
-        uint16 shirtCount = itemCounts["shirt"];
-        uint16 eyeCount = itemCounts["eye"];
-
-        require(bodyCount * mouthCount * shirtCount * eyeCount > 0, "Not enough items");
-
-        // Pack tokenId with item type strings into single hash operation
-        bytes32 combinedHash = keccak256(abi.encodePacked(tokenId, "body", "mouth", "shirt", "eye"));
-        
-        // Get weighted random indices based on trait values
-        uint16 bodyIndex = getWeightedRandomIndex("body", combinedHash, bodyCount);
-        uint16 mouthIndex = getWeightedRandomIndex("mouth", combinedHash >> 64, mouthCount);
-        uint16 shirtIndex = getWeightedRandomIndex("shirt", combinedHash >> 128, shirtCount);
-        uint16 eyeIndex = getWeightedRandomIndex("eye", combinedHash >> 192, eyeCount);
-
-        // Cache storage reads
-        ItemDetail memory bodyItem = items["body"][bodyIndex];
-        ItemDetail memory mouthItem = items["mouth"][mouthIndex];
-        ItemDetail memory shirtItem = items["shirt"][shirtIndex];
-        ItemDetail memory eyeItem = items["eye"][eyeIndex];
-
-        // Return cached values
-        return (
-            bodyItem.name,
-            mouthItem.name,
-            shirtItem.name,
-            eyeItem.name
-        );
-    }
 
     function getWeightedRandomIndex(string memory itemType, bytes32 hash, uint16 count) internal view returns (uint16) {
         uint256 totalWeight = 0;
@@ -305,7 +265,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         }
         return string(buffer);
     }
-    function randomIndex(uint256 maxLength, uint256 tokenId, uint16 i) internal view returns (uint) {
+    function randomIndex(uint256 maxLength, uint16 tokenId, uint16 i) internal view returns (uint) {
         uint256 seed = seedTokenId[tokenId];
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(seed, i)));
         return randomNumber % maxLength;

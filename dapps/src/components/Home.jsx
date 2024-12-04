@@ -123,50 +123,23 @@ function Home() {
         });
   }
 
-  async function addFlower(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Flower',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }
-
-  async function addLeaf(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Leaf',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
+  async function addBody() {
+    let obj = {
+      "_itemType": 'body',
+      "_name": DATA_INPUT.bodies[0].name,
+      "_trait":  DATA_INPUT.bodies[0].traits,
+      "_xArray": DATA_INPUT.bodies[0].x,
+      "_yArray": DATA_INPUT.bodies[0].y,
+      "_colorIdArray": DATA_INPUT.bodies[0].color,
+    };
+    await contractABI.methods
+        .addItem(obj._itemType, obj._name, obj._trait, obj._xArray, obj._yArray, obj._colorIdArray)
+        .send({ from: acc[0], gasPrice }).then(result => {
+          console.log('success', result);
+        })
+        .catch(err => {
+          console.log(err);
+        });
   }
 
   async function addInsect(info) {
@@ -199,21 +172,9 @@ function Home() {
             <Button size="large" type="primary" onClick={addColorsArray}>
               Add Colors
             </Button>
-            <Upload onChange={addFlower}>
-              <Button size="large" type="primary">
-                Add Flower
-              </Button>
-            </Upload>
-            <Upload onChange={addLeaf}>
-              <Button size="large" type="primary">
-                Add Leaf
-              </Button>
-            </Upload>
-            <Upload onChange={addInsect}>
-              <Button size="large" type="primary">
-                Add Insect
-              </Button>
-            </Upload>
+            <Button size="large" type="primary" onClick={addBody}>
+              Add Body
+            </Button>
           </Space>
         </div>
         <div style={{ marginTop: '3%' }}>
