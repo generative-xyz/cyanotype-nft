@@ -57,6 +57,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     );
     event TokenMinted(uint256 tokenId);
 
+    constructor() ERC721('CharacterInfo', 'NFTs') {
+        tokenIdCounter = 0;
+    }
+
 
     // Hàm helper để thêm mới thông tin
     function addItem(
@@ -436,7 +440,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         string memory desc = '"description": "Cyanotype NFT Art"';
         string memory getOwner = addressToString(_ownerOf(tokenId));
 
-       /* result = string(
+        result = string(
             abi.encodePacked(
                 'data:application/json;base64,',
                 Base64.encode(
@@ -455,20 +459,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"edition": "',
                         tokenID,
                         '"',
-                        ',',
-                        '"image": "',
-//                        this.svgToImageURI(getSvg(tokenId)),
-                        '"',
-                        ',',
-                        '"attributes": [',
-//                        this.generateTraits(tokenId),
-                        ']',
                         '}'
                     )
                 )
             )
-        );*/
-
-        result = '"description": "Cyanotype NFT Art"';
+        );
     }
 }
