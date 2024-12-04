@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ABI from '../../../Contract/artifacts/contracts/Cyanotype.sol/GenArt.json';
+import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 // import ABI from '../contracts/ABI.json';
 import Web3 from 'web3';
 import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';

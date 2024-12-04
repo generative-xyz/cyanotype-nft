@@ -509,9 +509,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
         require(_exists(tokenId), 'ERC721: Token does not exist');
-        string memory name = '"name": "Cyanotype #';
+        string memory name = '"name": "Robot #';
         string memory tokenID = Strings.toString(tokenId);
-        string memory desc = '"description": "Cyanotype NFT Art"';
+        string memory desc = '"description": "Robot NFT Art"';
         string memory getOwner = addressToString(_ownerOf(tokenId));
 
         result = string(
