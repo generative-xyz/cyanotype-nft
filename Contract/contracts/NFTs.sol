@@ -75,6 +75,14 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return colors[_colorId];
     }
 
+    function addColorArray(string[] memory _colors) public {
+        for (uint i = 0; i < _colors.length; i++) {
+            colors.push(_colors[i]);
+            uint256 colorId = colors.length - 1;
+            emit ColorAdded(colorId, _colors[i]);
+        }
+    }
+
     function addItem(
         string memory _itemType,
         string memory _name,

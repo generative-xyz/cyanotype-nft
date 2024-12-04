@@ -4,6 +4,7 @@ import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.js
 import Web3 from 'web3';
 import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';
 import config from '../../../Contract/config.json';
+import {DATA_INPUT} from "./data";
 const { Meta } = Card;
 const { Title } = Typography;
 
@@ -72,30 +73,6 @@ function Home() {
     // }
   };
 
-  async function addAdressMint(add) {
-    await contractABI.methods.addAdressMint(add).send({
-      from: acc[0],
-      gasPrice,
-    });
-    setInputAddress('');
-  }
-
-  async function removeAdressMint(add) {
-    await contractABI.methods.removeAdressMint(add).send({
-      from: acc[0],
-      gasPrice,
-    });
-    setRemoveAddress('');
-  }
-
-  async function checkAdressMint(add) {
-    await contractABI.methods
-        .checkPermissionAddress(add)
-        .call()
-        .then(result => console.log(result));
-    setCheckAddress('');
-  }
-
   function cutString(str) {
     const getName = str.match(/[a-zA-Z]+/g).join('');
     const getRate = str.match(/\d+/g).join('');
@@ -135,27 +112,15 @@ function Home() {
     }
   };
 
-  async function addBackground(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Background',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
+  async function addColorsArray() {
+    await contractABI.methods
+        .addColorArray(DATA_INPUT.colors)
+        .send({ from: acc[0], gasPrice }).then(result => {
+          console.log('success', result);
+        })
+        .catch(err => {
+          console.log(err);
+        });
   }
 
   async function addFlower(info) {
@@ -231,11 +196,9 @@ function Home() {
       <div>
         <div className="">
           <Space size="middle">
-            <Upload onChange={addBackground}>
-              <Button size="large" type="primary">
-                Add Background
-              </Button>
-            </Upload>
+            <Button size="large" type="primary" onClick={addColorsArray}>
+              Add Colors
+            </Button>
             <Upload onChange={addFlower}>
               <Button size="large" type="primary">
                 Add Flower
