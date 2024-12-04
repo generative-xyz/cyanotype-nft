@@ -249,7 +249,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         _transfer(msg.sender, to, tokenId);
     }
 
-
     //=============== ERC721 function ===============
     function mint(address to) public payable {
         require(to != address(0));
