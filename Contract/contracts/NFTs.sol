@@ -58,6 +58,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         _;
     }
 
+    constructor() ERC721('CharacterInfo', 'NFTs') {
+        tokenIdCounter = 0;
+    }
+
     function addColor(string memory _color) public returns (uint256) {
         colors.push(_color);
         uint256 colorId = colors.length - 1;
