@@ -18,14 +18,14 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     uint256 private tokenIdCounter;
 
     struct PositionDetail {
-        string x;
-        string y; 
-        string color;
+        uint8 x;      // 0-24
+        uint8 y;      // 0-24
+        uint8 colorId; // Index into colors array
     }
 
     struct ItemDetail {
         string name;
-        string trait;
+        uint8 trait;  // 0-200
         PositionDetail[] positions;
     }
 
@@ -34,13 +34,16 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     mapping(string => uint256) private itemCounts;
     mapping(uint256 => uint256) public seedTokenId;
 
+    // Color palette storage
+    string[] private colors;
+    
     uint constant PIXEL_SIZE = 24;
     uint constant GRID_SIZE = 24;
     
     event SVGGenerated(address indexed creator, uint timestamp);
-    event ItemAdded(string itemType, uint256 indexed itemId, string name, string trait);
-    event TokenMinted(uint256 tokenId);
-
+    event ItemAdded(string itemType, uint256 indexed itemId, string name, uint8 trait);
+    event ColorAdded(uint256 indexed colorId, string color);
+ 	event TokenMinted(uint256 tokenId);
     string[] private VALID_ITEM_TYPES = ["glass", "head", "body", "hand", "footer", "hair", "eye"];
 
     modifier validItemType(string memory _itemType) {
@@ -55,31 +58,49 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         _;
     }
 
+    function addColor(string memory _color) public returns (uint256) {
+        colors.push(_color);
+        uint256 colorId = colors.length - 1;
+        emit ColorAdded(colorId, _color);
+        return colorId;
+    }
+
+    function getColor(uint8 _colorId) public view returns (string memory) {
+        require(_colorId < colors.length, "Color does not exist");
+        return colors[_colorId];
+    }
+
     function addItem(
         string memory _itemType,
         string memory _name,
-        string memory _trait,
-        string[] memory _xArray,
-        string[] memory _yArray,
-        string[] memory _colorArray
+        uint8 _trait,
+        uint8[] memory _xArray,
+        uint8[] memory _yArray,
+        uint8[] memory _colorIdArray
     ) public validItemType(_itemType) returns (uint256) {
         require(
             _xArray.length == _yArray.length && 
-            _yArray.length == _colorArray.length,
+            _yArray.length == _colorIdArray.length,
             "Arrays must have same length"
         );
-
-        uint256 itemId = itemCounts[_itemType]++;
-        ItemDetail storage item = items[_itemType][itemId];
-        
-        item.name = _name;
-        item.trait = _trait;
+        require(_trait <= 200, "Trait must be <= 200");
 
         for(uint i = 0; i < _xArray.length; i++) {
-            item.positions.push(PositionDetail({
+            require(_xArray[i] <= 24, "X coordinate must be <= 24");
+            require(_yArray[i] <= 24, "Y coordinate must be <= 24");
+            require(_colorIdArray[i] < colors.length, "Invalid color ID");
+        }
+
+        uint256 itemId = itemCounts[_itemType]++;
+        
+        items[_itemType][itemId].name = _name;
+        items[_itemType][itemId].trait = _trait;
+
+        for(uint i = 0; i < _xArray.length; i++) {
+            items[_itemType][itemId].positions.push(PositionDetail({
                 x: _xArray[i],
                 y: _yArray[i],
-                color: _colorArray[i]
+                colorId: _colorIdArray[i]
             }));
         }
 
@@ -89,11 +110,11 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function getItem(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (
         string memory name,
-        string memory trait,
+        uint8 trait,
         PositionDetail[] memory positions
     ) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
-        ItemDetail storage item = items[_itemType][_itemId];
+        ItemDetail memory item = items[_itemType][_itemId];
         return (item.name, item.trait, item.positions);
     }
 
@@ -103,37 +124,37 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function getItemDetail(string memory _itemType, uint256 _itemId, uint256 _detailIndex) public view validItemType(_itemType) returns (
-        string memory x,
-        string memory y,
-        string memory color
+        uint8 x,
+        uint8 y,
+        uint8 colorId
     ) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
-        ItemDetail storage item = items[_itemType][_itemId];
+        ItemDetail memory item = items[_itemType][_itemId];
         require(_detailIndex < item.positions.length, "Detail index out of bounds");
         
-        PositionDetail storage position = item.positions[_detailIndex];
-        return (position.x, position.y, position.color);
+        PositionDetail memory position = item.positions[_detailIndex];
+        return (position.x, position.y, position.colorId);
     }
 
     function getItemCount(string memory _itemType) public view validItemType(_itemType) returns (uint256) {
         return itemCounts[_itemType];
     }
 
-    function createRect(PositionDetail memory detail) public pure returns (string memory) {
+    function createRect(PositionDetail memory detail) public view returns (string memory) {
         return string(
             abi.encodePacked(
                 '<rect ',
-                'x="', detail.x, '" ',
-                'y="', detail.y, '" ',
+                'x="', toString(detail.x), '" ',
+                'y="', toString(detail.y), '" ',
                 'width="', toString(PIXEL_SIZE), '" ',
                 'height="', toString(PIXEL_SIZE), '" ',
-                'fill="', detail.color, '" ',
+                'fill="', colors[detail.colorId], '" ',
                 '/>'
             )
         );
     }
 
-    function createMultipleRects(PositionDetail[] memory details) internal pure returns (string memory) {
+    function createMultipleRects(PositionDetail[] memory details) internal view returns (string memory) {
         string memory rects = "";
         for(uint i = 0; i < details.length; i++) {
             rects = string(abi.encodePacked(rects, createRect(details[i])));
@@ -141,7 +162,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return rects;
     }
 
-    function createFullSVGWithGrid(PositionDetail[] memory details) public returns (string memory) {
+    function createFullSVGWithGrid(PositionDetail[] memory details) public view returns (string memory) {
         string memory pixels = createMultipleRects(details);
         
         string memory svg = string(
@@ -159,8 +180,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             )
         );
 
-        emit SVGGenerated(msg.sender, block.timestamp);
         return svg;
+    }
+    function renderSVG(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (string memory) {
+        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
     function toString(uint256 value) internal pure returns (string memory) {
