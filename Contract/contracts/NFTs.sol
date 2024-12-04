@@ -76,13 +76,12 @@ contract CharacterInfo {
         }
 
         uint256 itemId = itemCounts[_itemType]++;
-        ItemDetail storage item = items[_itemType][itemId];
         
-        item.name = _name;
-        item.trait = _trait;
+        items[_itemType][itemId].name = _name;
+        items[_itemType][itemId].trait = _trait;
 
         for(uint i = 0; i < _xArray.length; i++) {
-            item.positions.push(PositionDetail({
+            items[_itemType][itemId].positions.push(PositionDetail({
                 x: _xArray[i],
                 y: _yArray[i],
                 colorId: _colorIdArray[i]
@@ -99,7 +98,7 @@ contract CharacterInfo {
         PositionDetail[] memory positions
     ) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
-        ItemDetail storage item = items[_itemType][_itemId];
+        ItemDetail memory item = items[_itemType][_itemId];
         return (item.name, item.trait, item.positions);
     }
 
@@ -114,10 +113,10 @@ contract CharacterInfo {
         uint8 colorId
     ) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
-        ItemDetail storage item = items[_itemType][_itemId];
+        ItemDetail memory item = items[_itemType][_itemId];
         require(_detailIndex < item.positions.length, "Detail index out of bounds");
         
-        PositionDetail storage position = item.positions[_detailIndex];
+        PositionDetail memory position = item.positions[_detailIndex];
         return (position.x, position.y, position.colorId);
     }
 
