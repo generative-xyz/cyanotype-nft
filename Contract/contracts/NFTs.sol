@@ -146,7 +146,7 @@ contract CharacterInfo {
         return rects;
     }
 
-    function createFullSVGWithGrid(PositionDetail[] memory details) public returns (string memory) {
+    function createFullSVGWithGrid(PositionDetail[] memory details) public view returns (string memory) {
         string memory pixels = createMultipleRects(details);
         
         string memory svg = string(
@@ -164,8 +164,10 @@ contract CharacterInfo {
             )
         );
 
-        emit SVGGenerated(msg.sender, block.timestamp);
         return svg;
+    }
+    function renderSVG(string memory _itemType, uint256 _itemId) public view validItemType(_itemType) returns (string memory) {
+        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
     function toString(uint256 value) internal pure returns (string memory) {
