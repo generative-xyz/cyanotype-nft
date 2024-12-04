@@ -32,12 +32,14 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     // Mappings for each item type
     mapping(string => mapping(uint256 => ItemDetail)) private items;
     mapping(string => uint256) private itemCounts;
+    mapping(uint256 => uint256) public seedTokenId;
 
     uint constant PIXEL_SIZE = 24;
     uint constant GRID_SIZE = 24;
     
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint256 indexed itemId, string name, string trait);
+    event TokenMinted(uint256 tokenId);
 
     string[] private VALID_ITEM_TYPES = ["glass", "head", "body", "hand", "footer", "hair", "eye"];
 
