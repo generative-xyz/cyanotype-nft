@@ -186,26 +186,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
-    function toString(uint256 value) internal pure returns (string memory) {
-        if (value == 0) {
-            return "0";
-        }
-        uint256 temp = value;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
-        }
-        bytes memory buffer = new bytes(digits);
-        while (value != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
-            value /= 10;
-        }
-        return string(buffer);
-    }
 
-    // Handle shuffle element in Array
+
+    // =============== Help function ===============
     function shuffleArray(uint256 tokenId, ItemDetail[] memory arrayToShuffle) public view returns (ItemDetail[] memory) {
         uint256 seed = seedTokenId[tokenId];
         ItemDetail[] memory shuffledArray = arrayToShuffle;
@@ -230,6 +213,25 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             str[3 + i * 2] = alphabet[uint8(value[i + 12] & 0x0f)];
         }
         result = string(str);
+    }
+
+    function toString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
+        }
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        return string(buffer);
     }
 
     //=============== Core function ===============
