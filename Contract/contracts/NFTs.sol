@@ -118,7 +118,7 @@ contract CharacterInfo  {
     }
 
     function createMultipleRects(uint8[] memory positions) internal pure returns (bytes memory) {
-        bytes memory pixels = new bytes(2304); // 24x24x4 (RGBA)
+        bytes memory pixels = new bytes(2304);
         
         for(uint i = 0; i < positions.length; i += 5) {
             uint8 x = positions[i];
@@ -147,8 +147,8 @@ contract CharacterInfo  {
         string memory rects;
         for(uint i = 0; i < pixelBytes.length; i += 4) {
             if(pixelBytes[i+3] > 0) { // Only render if alpha > 0
-                uint8 x = uint8(i/4 % 24);
-                uint8 y = uint8(i/4 / 24);
+                uint8 x = (uint8(i/4 % 24));
+                uint8 y = (uint8(i/4 / 24));
                 rects = string(abi.encodePacked(
                     rects,
                     createRect(
@@ -205,12 +205,12 @@ contract CharacterInfo  {
         result = string(str);
     }
 
-    function toString(uint256 value) internal pure returns (string memory) {
+    function toString(uint8 value) internal pure returns (string memory) {
         if (value == 0) {
             return "0";
         }
-        uint256 temp = value;
-        uint256 digits;
+        uint8 temp = value;
+        uint8 digits;
         while (temp != 0) {
             digits++;
             temp /= 10;
@@ -218,7 +218,7 @@ contract CharacterInfo  {
         bytes memory buffer = new bytes(digits);
         while (value != 0) {
             digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            buffer[digits] = bytes1(uint8(48 + uint8(value % 10)));
             value /= 10;
         }
         return string(buffer);
