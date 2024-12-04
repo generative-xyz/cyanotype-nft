@@ -297,6 +297,11 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         }
         return string(buffer);
     }
+    function randomIndex(uint256 maxLength, uint256 tokenId, uint16 i) internal view returns (uint) {
+        uint256 seed = seedTokenId[tokenId];
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(seed, i)));
+        return randomNumber % maxLength;
+    }
 
     //=============== Core function ===============
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
