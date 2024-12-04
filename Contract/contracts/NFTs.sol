@@ -206,7 +206,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
         string memory svg = string(
             abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg" ',
+                '<svg xmlns="http://www.w3.org/2000/svg"',
                 'viewBox="0 0 ', toString(GRID_SIZE), ' ', toString(GRID_SIZE), '">',
                 pixels,
                 '</svg>'

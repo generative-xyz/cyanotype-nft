@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 // import ABI from '../contracts/ABI.json';
 import Web3 from 'web3';
-import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';
+import {Button, Card, Col, Row, Space, Typography} from 'antd';
 import config from '../../../Contract/config.json';
 import {DATA_INPUT} from "./data";
+
 const { Meta } = Card;
 const { Title } = Typography;
 
@@ -123,6 +124,19 @@ function Home() {
         });
   }
 
+  async function renderSVG() {
+    await contractABI.methods
+        .renderSVG('body', 0)
+        .call().then(result => {
+            var cutString = result.substring(29);
+            console.log(cutString);
+            console.log(JSON.parse(atob(cutString)));
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  }
+
   async function addBody() {
     let obj = {
       "_itemType": 'body',
@@ -175,65 +189,17 @@ function Home() {
             <Button size="large" type="primary" onClick={addBody}>
               Add Body
             </Button>
+              <Button size="large" type="primary" onClick={renderSVG}>
+                  Render SVG
+            </Button>
           </Space>
         </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                placeholder="Input address"
-                value={inputAddress}
-                onChange={e => setInputAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => addAdressMint(inputAddress)}
-            >
-              Add address
-            </Button>
-          </Space.Compact>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                value={removeAddress}
-                placeholder="Remove address"
-                onChange={e => setRemoveAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => removeAdressMint(removeAddress)}
-            >
-              Remove address
-            </Button>
-          </Space.Compact>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                value={checkAddress}
-                placeholder="Check address have permission mint"
-                onChange={e => setCheckAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => checkAdressMint(checkAddress)}
-            >
-              Check address
-            </Button>
-          </Space.Compact>
-        </div>
         <Title level={4}>
-          Your Balance: {walletBalance ? walletBalance : 0} TC
+          Your Balance: {walletBalance ? walletBalance : 0} USDT
         </Title>
         <Space size="middle">
           <Button size="large" onClick={() => connectWallet()}>
-            Connet wallet
+            Connect wallet
           </Button>
           <Button size="large" onClick={() => getBalance()}>
             Show My Balance
