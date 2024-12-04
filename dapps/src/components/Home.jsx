@@ -17,7 +17,7 @@ function Home() {
   const [removeAddress, setRemoveAddress] = useState('');
   const [checkAddress, setCheckAddress] = useState('');
   const [walletBalance, setWalletBalance] = useState('');
-  const [acc, setAcc] = useState();
+  const [acc, setAcc] = useState('');
   const [dataJsonArray, setDataJsonArray] = useState([]);
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
   const gasPrice = '50000000000';

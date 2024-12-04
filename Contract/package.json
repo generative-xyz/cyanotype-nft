@@ -6,7 +6,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "hh-node": "npx hardhat node",
-        "hh-deploy": "npx hardhat compile & npx hardhat run --network polygon scripts/deploy.js"
+        "hh-deploy": "npx hardhat compile & npx hardhat run --network testChain scripts/deploy.js"
     },
     "keywords": [],
     "author": "",
