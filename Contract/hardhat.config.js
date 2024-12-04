@@ -48,6 +48,20 @@ module.exports = {
       allowUnlimitedContractSize: true,
     },
   },
+  settings: {
+    optimizer: {
+      enabled: true,
+      runs: 1,
+    },
+    "viaIR": true,
+  },
+  contractSizer: {
+    alphaSort: true,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
+    only: [':ERC20$'],
+  },
   paths: {
     sources: './contracts',
     tests: './test',
