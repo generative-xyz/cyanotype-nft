@@ -27,6 +27,8 @@ function Home() {
 
 
   useEffect(() => {
+
+    console.log('____varCont', varCont.length);
     const binary = encodeToBinary(varCont);
     console.log(binary);
     const svg = renderSVG(decodeBinary(binary));

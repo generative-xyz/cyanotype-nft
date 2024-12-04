@@ -117,31 +117,56 @@ contract CharacterInfo  {
         );
     }
 
-    function createMultipleRects(uint8[] memory positions) internal pure returns (string memory) {
-        string memory rects = "";
+    function createMultipleRects(uint8[] memory positions) internal pure returns (bytes memory) {
+        bytes memory pixels = new bytes(2304); // 24x24x4 (RGBA)
+        
         for(uint i = 0; i < positions.length; i += 5) {
-            rects = string(abi.encodePacked(
-                rects,
-                createRect(
-                    positions[i],
-                    positions[i+1],
-                    positions[i+2],
-                    positions[i+3],
-                    positions[i+4]
-                )
-            ));
+            uint8 x = positions[i];
+            uint8 y = positions[i+1];
+            uint8 r = positions[i+2];
+            uint8 g = positions[i+3];
+            uint8 b = positions[i+4];
+            
+            // Calculate pixel position in byte array (x,y coordinates to linear RGBA array)
+            uint p = (y * 24 + x) * 4;
+            
+            // Set RGBA values
+            pixels[p] = bytes1(r);     // R
+            pixels[p+1] = bytes1(g);   // G 
+            pixels[p+2] = bytes1(b);   // B
+            pixels[p+3] = bytes1(0xFF); // A (fully opaque)
         }
-        return rects;
+        
+        return pixels;
     }
 
     function createFullSVGWithGrid(uint8[] memory positions) public pure returns (string memory) {
-        string memory pixels = createMultipleRects(positions);
+        bytes memory pixelBytes = createMultipleRects(positions);
+        
+        // Convert bytes to string of rect elements
+        string memory rects;
+        for(uint i = 0; i < pixelBytes.length; i += 4) {
+            if(pixelBytes[i+3] > 0) { // Only render if alpha > 0
+                uint8 x = uint8(i/4 % 24);
+                uint8 y = uint8(i/4 / 24);
+                rects = string(abi.encodePacked(
+                    rects,
+                    createRect(
+                        x,
+                        y, 
+                        uint8(pixelBytes[i]),
+                        uint8(pixelBytes[i+1]),
+                        uint8(pixelBytes[i+2])
+                    )
+                ));
+            }
+        }
 
         string memory svg = string(
             abi.encodePacked(
                 '<svg xmlns="http://www.w3.org/2000/svg" ',
                 'viewBox="0 0 24 24">',
-                pixels,
+                rects,
                 '</svg>'
             )
         );
