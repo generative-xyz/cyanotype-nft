@@ -48,6 +48,13 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     uint256 public hairCount;
     uint256 public eyeCount;
 
+    // Constant values
+    uint constant PIXEL_SIZE = 24;
+    uint constant GRID_SIZE = 24;
+    
+    // Events
+    event SVGGenerated(address indexed creator, uint timestamp);
+
     // Events
     event ItemAdded(
         string itemType,
@@ -376,6 +383,73 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function getGlassesLength() public view returns (uint256) {
         return glassCount;
+    }
+
+    // Function to create multiple rectangles from position details
+    function createMultipleRects(PositionDetail[] memory details) internal pure returns (string memory) {
+        string memory rects = "";
+        for(uint i = 0; i < details.length; i++) {
+            rects = string(abi.encodePacked(rects, createRect(details[i])));
+        }
+        return rects;
+    }
+
+    // Hàm tạo rect với nhiều thuộc tính hơn
+    function createRect(PositionDetail memory detail) public pure returns (string memory) {
+        return string(
+            abi.encodePacked(
+                '<rect ',
+                'x="', detail.x, '" ',
+                'y="', detail.y, '" ',
+                'width="', toString(PIXEL_SIZE), '" ',
+                'height="', toString(PIXEL_SIZE), '" ',
+                'fill="', detail.color, '" ',
+                '/>'
+            )
+        );
+    }
+
+    // Tạo SVG với grid background
+    function createFullSVGWithGrid(PositionDetail[] memory details) public returns (string memory) {
+        string memory pixels = createMultipleRects(details);
+        
+        string memory svg = string(
+            abi.encodePacked(
+                '<svg xmlns="http://www.w3.org/2000/svg" ',
+                'viewBox="0 0 ', toString(GRID_SIZE * PIXEL_SIZE), ' ', toString(GRID_SIZE * PIXEL_SIZE), '">',
+                '<style>',
+                '.pixel { transition: all 0.3s; }',
+                '.pixel:hover { filter: brightness(1.2); }',
+                '</style>',
+                '<g class="pixels">',
+                pixels,
+                '</g>',
+                '</svg>'
+            )
+        );
+
+        emit SVGGenerated(msg.sender, block.timestamp);
+        return svg;
+    }
+
+    // Helper functions...
+    function toString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
+        }
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        return string(buffer);
     }
 
     // Handle shuffle element in Array
