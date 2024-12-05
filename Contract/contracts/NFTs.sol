@@ -187,18 +187,23 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
         string memory svg = string(
             abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg" ',
-                'viewBox="0 0 24 24">',
-                rects,
-                '</svg>'
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#35D28E"/> </svg> '
             )
         );
 
         return svg;
     }
 
-    function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) {
-        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
+    function renderSVG() public view returns (string memory) {
+//        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
+        string memory svg = string(
+            abi.encodePacked(
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#35D28E"/></svg> '
+            )
+        );
+        string memory svgBase64 = svgToImageURI(svg);
+
+        return svgBase64;
     }
 
     // =============== Help function ===============
@@ -246,10 +251,17 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         }
         return string(buffer);
     }
+
     function randomIndex(uint256 maxLength, uint16 tokenId, uint16 i) internal view returns (uint) {
         uint256 seed = seedTokenId[tokenId];
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(seed, i)));
         return randomNumber % maxLength;
+    }
+
+    function svgToImageURI(string memory svg) public pure returns (string memory) {
+        string memory baseURL = 'data:image/svg+xml;base64,';
+        string memory svgBase64Encoded = Base64.encode(bytes(svg));
+        return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
     //=============== Core function ===============
@@ -307,7 +319,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        renderSVG('body', 0),
+                        renderSVG(),
                         '"',
                         '}'
                     )

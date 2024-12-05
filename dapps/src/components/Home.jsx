@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
-// import ABI from '../contracts/ABI.json';
 import Web3 from 'web3';
 import {Button, Card, Col, Row, Space, Typography} from 'antd';
 import config from '../../../Contract/config.json';
@@ -10,14 +9,11 @@ const { Meta } = Card;
 const { Title } = Typography;
 
 const contractAddress = config.contractAddress;
-// const contractAddress = '0x663E587e4988AF5798Fcb2eE13aDaBc5b39e8818';
 
 function Home() {
   const [loadings, setLoadings] = useState(false);
   const [loadingArt, setLoadingArt] = useState(false);
-  const [inputAddress, setInputAddress] = useState('');
-  const [removeAddress, setRemoveAddress] = useState('');
-  const [checkAddress, setCheckAddress] = useState('');
+
   const [walletBalance, setWalletBalance] = useState('');
   const [acc, setAcc] = useState('');
   const [dataJsonArray, setDataJsonArray] = useState([]);
@@ -63,15 +59,6 @@ function Home() {
         .catch(err => {
           console.error(err.message);
         });
-
-    // if (result) {
-    //   console.log('tokenIdConvert', tokenIdConvert);
-    //   setLoadings(false);
-    //   const tokenURI = await contractABI.methods
-    //     .tokenURI(tokenIdConvert)
-    //     .call();
-    //   setDataJsonArray([...dataJsonArray, JSON.parse(atob(tokenURI))]);
-    // }
   };
 
   function cutString(str) {
@@ -87,11 +74,9 @@ function Home() {
           .call()
           .then(result => {
             var cutString = result.substring(29);
-            console.log(cutString);
-            setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
+            console.log(JSON.parse(atob(cutString)));
           })
           .catch(err => console.log(err));
-      console.log(tokenURI);
       setLoadingArt(false);
     } else {
       console.log("Don't have tokenId");
@@ -126,11 +111,11 @@ function Home() {
 
   async function renderSVG() {
     await contractABI.methods
-        .renderSVG('body', 0)
+        .renderSVG()
         .call().then(result => {
-            // var cutString = result.substring(29);
-            // console.log(cutString);
-            console.log(JSON.parse(atob(result)));
+            // var cutString = result.substring(0);
+            console.log(result);
+            // console.log(JSON.parse(atob(cutString)));
         })
         .catch(err => {
           console.log(err);
@@ -221,7 +206,7 @@ function Home() {
             </Button>
           </Space>
         </div>
-        <Row gutter={16} style={{ marginTop: '5%' }}>
+        {/*<Row gutter={16} style={{ marginTop: '5%' }}>
           {dataJsonArray.map((key, index) => {
             return (
                 <Col span={6} key={index}>
@@ -249,7 +234,7 @@ function Home() {
                 </Col>
             );
           })}
-        </Row>
+        </Row>*/}
       </div>
   );
 }
