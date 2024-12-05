@@ -165,9 +165,8 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function createFullSVGWithGrid(uint8[] memory positions) public pure returns (string memory) {
         bytes memory pixelBytes = createMultipleRects(positions);
-
         // Convert bytes to string of rect elements
-        string memory rects;
+        string memory rects = '';
         for(uint i = 0; i < pixelBytes.length; i += 4) {
             if(pixelBytes[i+3] > 0) { // Only render if alpha > 0
                 uint8 x = (uint8(i/4 % 24));
@@ -187,23 +186,24 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
         string memory svg = string(
             abi.encodePacked(
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#35D28E"/> </svg> '
+                '<svg xmlns="http://www.w3.org/2000/svg" ',
+                'viewBox="0 0 24 24">',
+                rects,
+                '</svg>'
             )
         );
 
         return svg;
     }
 
-    function renderSVG() public view returns (string memory) {
-//        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
-        string memory svg = string(
+    function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) {
+/*        string memory svg = string(
             abi.encodePacked(
                 '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#35D28E"/></svg> '
             )
-        );
-        string memory svgBase64 = svgToImageURI(svg);
-
-        return svgBase64;
+        );*/
+//        return svgToImageURI( createFullSVGWithGrid(items[_itemType][_itemId].positions));
+        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
     // =============== Help function ===============
@@ -319,7 +319,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        renderSVG(),
+                        renderSVG("body", 0),
                         '"',
                         '}'
                     )

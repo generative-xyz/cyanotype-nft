@@ -1,11 +1,10 @@
 import {useState} from 'react';
 import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 import Web3 from 'web3';
-import {Button, Card, Col, Row, Space, Typography} from 'antd';
+import {Button, Space, Typography} from 'antd';
 import config from '../../../Contract/config.json';
 import {DATA_INPUT} from "./data";
 
-const { Meta } = Card;
 const { Title } = Typography;
 
 const contractAddress = config.contractAddress;
@@ -13,12 +12,9 @@ const contractAddress = config.contractAddress;
 function Home() {
   const [loadings, setLoadings] = useState(false);
   const [loadingArt, setLoadingArt] = useState(false);
-
   const [walletBalance, setWalletBalance] = useState('');
   const [acc, setAcc] = useState('');
-  const [dataJsonArray, setDataJsonArray] = useState([]);
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
-  const gasPrice = '50000000000';
 
   var web3 = new Web3(window.ethereum);
   var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
@@ -35,7 +31,6 @@ function Home() {
         .mint(acc[0])
         .send({
           from: acc[0],
-          gasPrice,
         })
         .then(() => {
           contractABI
@@ -83,10 +78,10 @@ function Home() {
     }
   };
 
-  function base64ToJson(base64String) {
+ /* function base64ToJson(base64String) {
     const json = Buffer.from(base64String, 'base64').toString();
     return JSON.parse(json);
-  }
+  }*/
 
   const getBalance = async () => {
     if (acc) {
@@ -98,7 +93,7 @@ function Home() {
     }
   };
 
-  async function addColorsArray() {
+  /*async function addColorsArray() {
     await contractABI.methods
         .addColorArray(DATA_INPUT.colors)
         .send({ from: acc[0], gasPrice }).then(result => {
@@ -107,11 +102,11 @@ function Home() {
         .catch(err => {
           console.log(err);
         });
-  }
+  }*/
 
   async function renderSVG() {
     await contractABI.methods
-        .renderSVG()
+        .renderSVG('body', 0)
         .call().then(result => {
             // var cutString = result.substring(0);
             console.log(result);
@@ -122,10 +117,22 @@ function Home() {
         });
   }
 
-  async function addItem() {
+    async function getItem() {
+        await contractABI.methods
+            .getItem('body', 0)
+            .call().then(result => {
+                // var cutString = result.substring(0);
+                console.log(result);
+                // console.log(JSON.parse(atob(cutString)));
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 
+  async function addItem() {
     await contractABI.methods
-        .addItem('body','body01', 20, DATA_INPUT)
+        .addItem('body', 'body01', 20, DATA_INPUT)
         .send({ from: acc[0] }).then(result => {
           console.log('success', result);
         })
@@ -134,7 +141,7 @@ function Home() {
         });
   }
 
-  async function addInsect(info) {
+  /*async function addInsect(info) {
     let name, image;
     if (info.file.status === 'done') {
       const reader = new FileReader();
@@ -155,7 +162,7 @@ function Home() {
       };
       reader.readAsText(info.file.originFileObj);
     }
-  }
+  }*/
 
   return (
       <div>
@@ -163,6 +170,9 @@ function Home() {
           <Space size="middle">
             <Button size="large" type="primary" onClick={addItem}>
               Add Item
+            </Button>
+              <Button size="large" type="primary" onClick={getItem}>
+              Get Item
             </Button>
 
               <Button size="large" type="primary" onClick={renderSVG}>
