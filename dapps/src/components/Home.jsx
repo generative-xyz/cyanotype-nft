@@ -126,7 +126,7 @@ function Home() {
 
     await contractABI.methods
         .addItem('body','body01', 20, DATA_INPUT)
-        .send({ from: acc[0], gasPrice }).then(result => {
+        .send({ from: acc[0] }).then(result => {
           console.log('success', result);
         })
         .catch(err => {
