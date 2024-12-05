@@ -205,8 +205,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                 '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#35D28E"/></svg> '
             )
         );*/
-//        return svgToImageURI( createFullSVGWithGrid(items[_itemType][_itemId].positions));
-        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
+        return svgToImageURI( createFullSVGWithGrid(items[_itemType][_itemId].positions));
     }
 
     // =============== Help function ===============
