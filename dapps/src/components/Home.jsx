@@ -128,26 +128,19 @@ function Home() {
     await contractABI.methods
         .renderSVG('body', 0)
         .call().then(result => {
-            var cutString = result.substring(29);
-            console.log(cutString);
-            console.log(JSON.parse(atob(cutString)));
+            // var cutString = result.substring(29);
+            // console.log(cutString);
+            console.log(JSON.parse(atob(result)));
         })
         .catch(err => {
           console.log(err);
         });
   }
 
-  async function addBody() {
-    let obj = {
-      "_itemType": 'body',
-      "_name": DATA_INPUT.bodies[0].name,
-      "_trait":  DATA_INPUT.bodies[0].traits,
-      "_xArray": DATA_INPUT.bodies[0].x,
-      "_yArray": DATA_INPUT.bodies[0].y,
-      "_colorIdArray": DATA_INPUT.bodies[0].color,
-    };
+  async function addItem() {
+
     await contractABI.methods
-        .addItem(obj._itemType, obj._name, obj._trait, obj._xArray, obj._yArray, obj._colorIdArray)
+        .addItem('body','body01', 20, DATA_INPUT)
         .send({ from: acc[0], gasPrice }).then(result => {
           console.log('success', result);
         })
@@ -183,12 +176,10 @@ function Home() {
       <div>
         <div className="">
           <Space size="middle">
-            <Button size="large" type="primary" onClick={addColorsArray}>
-              Add Colors
+            <Button size="large" type="primary" onClick={addItem}>
+              Add Item
             </Button>
-            <Button size="large" type="primary" onClick={addBody}>
-              Add Body
-            </Button>
+
               <Button size="large" type="primary" onClick={renderSVG}>
                   Render SVG
             </Button>

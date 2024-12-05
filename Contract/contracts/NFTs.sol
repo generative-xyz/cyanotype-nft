@@ -26,24 +26,20 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     struct ItemDetail {
         string name;
         uint8 trait;  // 0-200
-        PositionDetail[] positions;
+        uint8[] positions; // x,y,r,g,b stored sequentially
     }
 
     // Mappings for each item type
-    mapping(string => mapping(uint16 => ItemDetail)) private items; // Changed to uint16
-    mapping(string => uint16) private itemCounts; // Changed to uint16
-    mapping(uint16 => uint256) public seedTokenId; // First param changed to uint16
+    mapping(string => mapping(uint16 => ItemDetail)) private items;
+    mapping(string => uint16) private itemCounts;
+    mapping(uint16 => uint256) public seedTokenId;
 
-    // Color palette storage
-    string[] private colors;
-
-    uint8 constant PIXEL_SIZE = 24; // Changed to uint8
-    uint8 constant GRID_SIZE = 24; // Changed to uint8
+    uint8 constant PIXEL_SIZE = 24;
+    uint8 constant GRID_SIZE = 24;
 
     event SVGGenerated(address indexed creator, uint timestamp);
-    event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait); // Changed to uint16
-    event ColorAdded(uint16 indexed colorId, string color); // Changed to uint16
-    event TokenMinted(uint16 tokenId); // Changed to uint16
+    event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait);
+    event TokenMinted(uint16 tokenId);
     string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
 
     modifier validItemType(string memory _itemType) {
@@ -63,152 +59,137 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     // =============== Get, Add Traits function ===============
-    function addColor(string memory _color) public returns (uint16) { // Changed return to uint16
-        colors.push(_color);
-        uint16 colorId = uint16(colors.length - 1);
-        emit ColorAdded(colorId, _color);
-        return colorId;
-    }
-
-    function getColor(uint8 _colorId) public view returns (string memory) {
-        require(_colorId < colors.length, "Color does not exist");
-        return colors[_colorId];
-    }
-
-    function addColorArray(string[] memory _colors) public {
-        for (uint16 i = 0; i < _colors.length; i++) {
-            colors.push(_colors[i]);
-            emit ColorAdded(i, _colors[i]);
-        }
-    }
-
     function addItem(
         string memory _itemType,
         string memory _name,
         uint8 _trait,
-        uint8[] memory _xArray,
-        uint8[] memory _yArray,
-        uint8[] memory _colorIdArray
-    ) public validItemType(_itemType) returns (uint16) { // Changed return to uint16
-        require(
-            _xArray.length == _yArray.length &&
-            _yArray.length == _colorIdArray.length,
-            "Arrays must have same length"
-        );
+        uint8[] memory _positions
+    ) public validItemType(_itemType) returns (uint16) {
+        require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
 
-        for(uint i = 0; i < _xArray.length; i++) {
-            require(_xArray[i] <= 24, "X coordinate must be <= 24");
-            require(_yArray[i] <= 24, "Y coordinate must be <= 24");
-            require(_colorIdArray[i] < colors.length, "Invalid color ID");
+        uint16 numPixels = uint16(_positions.length / 5);
+        for(uint i = 0; i < numPixels; i++) {
+            uint index = i * 5;
+            require(_positions[index] <= 24, "X coordinate must be <= 24");
+            require(_positions[index + 1] <= 24, "Y coordinate must be <= 24");
         }
 
         uint16 itemId = uint16(itemCounts[_itemType]++);
 
         items[_itemType][itemId].name = _name;
         items[_itemType][itemId].trait = _trait;
-
-        for(uint i = 0; i < _xArray.length; i++) {
-            items[_itemType][itemId].positions.push(PositionDetail({
-                x: _xArray[i],
-                y: _yArray[i],
-                colorId: _colorIdArray[i]
-            }));
-        }
+        items[_itemType][itemId].positions = _positions;
 
         emit ItemAdded(_itemType, itemId, _name, _trait);
         return itemId;
     }
 
-
-    function getWeightedRandomIndex(string memory itemType, bytes32 hash, uint16 count) internal view returns (uint16) {
-        uint256 totalWeight = 0;
-        uint256[] memory weights = new uint256[](count);
-        
-        // Calculate weights based on trait values
-        for(uint16 i = 0; i < count; i++) {
-            weights[i] = 200 - items[itemType][i].trait; // Invert trait so lower values are more common
-            totalWeight += weights[i];
-        }
-
-        // Get random number from hash
-        uint256 random = uint256(hash) % totalWeight;
-        
-        // Find index based on cumulative weights
-        uint256 cumulative = 0;
-        for(uint16 i = 0; i < count; i++) {
-            cumulative += weights[i];
-            if(random < cumulative) {
-                return i;
-            }
-        }
-        
-        return count - 1; // Fallback to last index
-    }
-
-    function getItem(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns ( // Changed param to uint16
+    function getItem(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (
         string memory name,
         uint8 trait,
-        PositionDetail[] memory positions
+        uint8[] memory positions
     ) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
         ItemDetail memory item = items[_itemType][_itemId];
         return (item.name, item.trait, item.positions);
     }
 
-    function getDetailCount(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (uint16) { // Changed param and return to uint16
+    function getDetailCount(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (uint16) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
-        return uint16(items[_itemType][_itemId].positions.length);
+        return uint16(items[_itemType][_itemId].positions.length / 5); // Divide by 5 since each detail has 5 values
     }
 
-    function getItemDetail(string memory _itemType, uint16 _itemId, uint16 _detailIndex) public view validItemType(_itemType) returns ( // Changed params to uint16
+    function getItemDetail(string memory _itemType, uint16 _itemId, uint16 _detailIndex) public view validItemType(_itemType) returns (
         uint8 x,
         uint8 y,
-        uint8 colorId
+        uint8 r,
+        uint8 g,
+        uint8 b
     ) {
         require(_itemId < itemCounts[_itemType], "Item does not exist");
         ItemDetail memory item = items[_itemType][_itemId];
-        require(_detailIndex < item.positions.length, "Detail index out of bounds");
+        uint16 baseIndex = _detailIndex * 5;
+        require(baseIndex + 4 < item.positions.length, "Detail index out of bounds");
 
-        PositionDetail memory position = item.positions[_detailIndex];
-        return (position.x, position.y, position.colorId);
+        return (
+            item.positions[baseIndex],
+            item.positions[baseIndex + 1],
+            item.positions[baseIndex + 2],
+            item.positions[baseIndex + 3],
+            item.positions[baseIndex + 4]
+        );
     }
 
-    function getItemCount(string memory _itemType) public view validItemType(_itemType) returns (uint16) { // Changed return to uint16
+    function getItemCount(string memory _itemType) public view validItemType(_itemType) returns (uint16) {
         return itemCounts[_itemType];
     }
 
     // =============== Draw Art function ===============
-    function createRect(PositionDetail memory detail) public view returns (string memory) {
+    function createRect(uint8 x, uint8 y, uint8 r, uint8 g, uint8 b) public pure returns (string memory) {
         return string(
             abi.encodePacked(
                 '<rect ',
-                'x="', toString(detail.x), '" ',
-                'y="', toString(detail.y), '" ',
+                'x="', toString(x), '" ',
+                'y="', toString(y), '" ',
                 'width="1" ',
                 'height="1" ',
-                'fill="', colors[detail.colorId], '" ',
+                'fill="rgb(', toString(r), ',', toString(g), ',', toString(b), ')" ',
                 '/>'
             )
         );
     }
 
-    function createMultipleRects(PositionDetail[] memory details) internal view returns (string memory) {
-        string memory rects = "";
-        for(uint i = 0; i < details.length; i++) {
-            rects = string(abi.encodePacked(rects, createRect(details[i])));
+    function createMultipleRects(uint8[] memory positions) internal pure returns (bytes memory) {
+        bytes memory pixels = new bytes(2304);
+
+        for(uint i = 0; i < positions.length; i += 5) {
+            uint8 x = positions[i];
+            uint8 y = positions[i+1];
+            uint8 r = positions[i+2];
+            uint8 g = positions[i+3];
+            uint8 b = positions[i+4];
+
+            // Calculate pixel position in byte array (x,y coordinates to linear RGBA array)
+            uint p = (y * 24 + x) * 4;
+
+            // Set RGBA values
+            pixels[p] = bytes1(r);     // R
+            pixels[p+1] = bytes1(g);   // G
+            pixels[p+2] = bytes1(b);   // B
+            pixels[p+3] = bytes1(0xFF); // A (fully opaque)
         }
-        return rects;
+
+        return pixels;
     }
 
-    function createFullSVGWithGrid(PositionDetail[] memory details) public view returns (string memory) {
-        string memory pixels = createMultipleRects(details);
+    function createFullSVGWithGrid(uint8[] memory positions) public pure returns (string memory) {
+        bytes memory pixelBytes = createMultipleRects(positions);
+
+        // Convert bytes to string of rect elements
+        string memory rects;
+        for(uint i = 0; i < pixelBytes.length; i += 4) {
+            if(pixelBytes[i+3] > 0) { // Only render if alpha > 0
+                uint8 x = (uint8(i/4 % 24));
+                uint8 y = (uint8(i/4 / 24));
+                rects = string(abi.encodePacked(
+                    rects,
+                    createRect(
+                        x,
+                        y,
+                        uint8(pixelBytes[i]),
+                        uint8(pixelBytes[i+1]),
+                        uint8(pixelBytes[i+2])
+                    )
+                ));
+            }
+        }
 
         string memory svg = string(
             abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg"',
-                'viewBox="0 0 ', toString(GRID_SIZE), ' ', toString(GRID_SIZE), '">',
-                pixels,
+                '<svg xmlns="http://www.w3.org/2000/svg" ',
+                'viewBox="0 0 24 24">',
+                rects,
                 '</svg>'
             )
         );
@@ -216,7 +197,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return svg;
     }
 
-    function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) { // Changed param to uint16
+    function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) {
         return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
@@ -323,6 +304,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         ',',
                         '"edition": "',
                         tokenID,
+                        '"',
+                        ',',
+                        '"image": "',
+                        renderSVG('body', 0),
                         '"',
                         '}'
                     )
