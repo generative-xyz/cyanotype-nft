@@ -151,7 +151,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             uint8 b = positions[i+4];
 
             // Calculate pixel position in byte array (x,y coordinates to linear RGBA array)
-            uint16 p = uint16((uint16(y) * 24 + uint16(x)) * 3);
+            uint16 p = uint16((uint16(y) * 24 + uint16(x)) * 4); // Changed from *3 to *4 to account for alpha
 
             // Set RGBA values
             pixels[p] = bytes1(r);     // R
@@ -169,18 +169,20 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         string memory rects = '';
         for(uint i = 0; i < pixelBytes.length; i += 4) {
             if(pixelBytes[i+3] > 0) { // Only render if alpha > 0
-                uint8 x = (uint8(i/4 % 24));
-                uint8 y = (uint8(i/4 / 24));
-                rects = string(abi.encodePacked(
-                    rects,
-                    createRect(
-                        x,
-                        y,
-                        uint8(pixelBytes[i]),
-                        uint8(pixelBytes[i+1]),
-                        uint8(pixelBytes[i+2])
-                    )
-                ));
+                uint8 x = uint8((i/4) % 24);
+                uint8 y = uint8((i/4) / 24);
+                if(x < 24 && y < 24) { // Add bounds check
+                    rects = string(abi.encodePacked(
+                        rects,
+                        createRect(
+                            x,
+                            y,
+                            uint8(pixelBytes[i]),
+                            uint8(pixelBytes[i+1]),
+                            uint8(pixelBytes[i+2])
+                        )
+                    ));
+                }
             }
         }
 
@@ -195,6 +197,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
         return svg;
     }
+
 
     function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) {
 /*        string memory svg = string(
