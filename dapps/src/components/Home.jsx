@@ -3,7 +3,7 @@ import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.js
 import Web3 from 'web3';
 import {Button, Space, Typography} from 'antd';
 import config from '../../../Contract/config.json';
-import {DATA_INPUT} from "./data";
+import {DATA_INPUT, DATA_INPUT_2} from "./data";
 
 const { Title } = Typography;
 
@@ -132,7 +132,7 @@ function Home() {
 
   async function addItem() {
     await contractABI.methods
-        .addItem('body', 'body01', 20, DATA_INPUT)
+        .addItem('body', 'body01', 20, DATA_INPUT_2)
         .send({ from: acc[0] }).then(result => {
           console.log('success', result);
         })

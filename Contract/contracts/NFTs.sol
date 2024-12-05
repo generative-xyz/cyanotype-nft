@@ -7,7 +7,7 @@ import '@openzeppelin/contracts/utils/Base64.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
-
+import 'hardhat/console.sol';
 contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
 
@@ -151,7 +151,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             uint8 b = positions[i+4];
 
             // Calculate pixel position in byte array (x,y coordinates to linear RGBA array)
-            uint p = (y * 24 + x) * 4;
+            uint16 p = uint16((uint16(y) * 24 + uint16(x)) * 3);
 
             // Set RGBA values
             pixels[p] = bytes1(r);     // R
