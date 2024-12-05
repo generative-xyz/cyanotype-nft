@@ -1,11 +1,10 @@
-import {useEffect, useState} from 'react';
-import ABI from '../../../Contract/artifacts/contracts/Cyanotype.sol/GenArt.json';
+import {useState} from 'react';
+import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 import Web3 from 'web3';
-import { Button, Typography, Space, Col, Row, Card, Upload, Input } from 'antd';
-import { useSDK } from "@metamask/sdk-react";
+import {Button, Space, Typography} from 'antd';
 import config from '../../../Contract/config.json';
+import {DATA_INPUT, DATA_INPUT_2} from "./data";
 
-const { Meta } = Card;
 const { Title } = Typography;
 
 const contractAddress = config.contractAddress;
@@ -13,59 +12,25 @@ const contractAddress = config.contractAddress;
 function Home() {
   const [loadings, setLoadings] = useState(false);
   const [loadingArt, setLoadingArt] = useState(false);
-  const [inputAddress, setInputAddress] = useState('');
-  const [removeAddress, setRemoveAddress] = useState('');
-  const [checkAddress, setCheckAddress] = useState('');
   const [walletBalance, setWalletBalance] = useState('');
-  const [acc, setAcc] = useState();
-  const [dataJsonArray, setDataJsonArray] = useState([]);
+  const [acc, setAcc] = useState('');
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
-  const gasPrice = '50000000000';
-
 
   var web3 = new Web3(window.ethereum);
   var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
 
-
   const connectWallet = async () => {
     await window.ethereum.enable();
     const account = await web3.eth.requestAccounts();
-    console.log('account', account)
     setAcc(account);
     console.log('Wallet current: ', account[0]);
   };
-
-  // Attempt to connect to MetaMask
-  useEffect(() => {
-    const connectWallet = async () => {
-
-      // setIsConnecting(true);
-      try {
-        // await window.ethereum.enable();
-        const account = await web3.eth.requestAccounts();
-        console.log('account', account)
-        setAcc(account);
-        console.log('Wallet current: ', account[0]);
-      } catch (error) {
-        console.error("Failed to connect to MetaMask:", error);
-        // Handle errors here
-      } finally {
-        // setIsConnecting(false);
-      }
-    };
-
-    connectWallet();
-  }, []);
-
-
-
 
   const mint = async () => {
     await contractABI.methods
         .mint(acc[0])
         .send({
           from: acc[0],
-          gasPrice,
         })
         .then(() => {
           contractABI
@@ -89,40 +54,7 @@ function Home() {
         .catch(err => {
           console.error(err.message);
         });
-
-    // if (result) {
-    //   console.log('tokenIdConvert', tokenIdConvert);
-    //   setLoadings(false);
-    //   const tokenURI = await contractABI.methods
-    //     .tokenURI(tokenIdConvert)
-    //     .call();
-    //   setDataJsonArray([...dataJsonArray, JSON.parse(atob(tokenURI))]);
-    // }
   };
-
-  async function addAdressMint(add) {
-    await contractABI.methods.addAdressMint(add).send({
-      from: acc[0],
-      gasPrice,
-    });
-    setInputAddress('');
-  }
-
-  async function removeAdressMint(add) {
-    await contractABI.methods.removeAdressMint(add).send({
-      from: acc[0],
-      gasPrice,
-    });
-    setRemoveAddress('');
-  }
-
-  async function checkAdressMint(add) {
-    await contractABI.methods
-        .checkPermissionAddress(add)
-        .call()
-        .then(result => console.log(result));
-    setCheckAddress('');
-  }
 
   function cutString(str) {
     const getName = str.match(/[a-zA-Z]+/g).join('');
@@ -135,14 +67,21 @@ function Home() {
       const tokenURI = await contractABI.methods
           .tokenURI(tokenIdCurrent)
           .call()
-          .then(result => console.log(result))
+          .then(result => {
+            var cutString = result.substring(29);
+            console.log(JSON.parse(atob(cutString)));
+          })
           .catch(err => console.log(err));
-      // setDataJsonArray([...dataJsonArray, JSON.parse(atob(tokenURI))]);
       setLoadingArt(false);
     } else {
       console.log("Don't have tokenId");
     }
   };
+
+ /* function base64ToJson(base64String) {
+    const json = Buffer.from(base64String, 'base64').toString();
+    return JSON.parse(json);
+  }*/
 
   const getBalance = async () => {
     if (acc) {
@@ -154,76 +93,55 @@ function Home() {
     }
   };
 
-  async function addBackground(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Background',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
+  /*async function addColorsArray() {
+    await contractABI.methods
+        .addColorArray(DATA_INPUT.colors)
+        .send({ from: acc[0], gasPrice }).then(result => {
+          console.log('success', result);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  }*/
+
+  async function renderSVG() {
+    await contractABI.methods
+        .renderSVG('body', 0)
+        .call().then(result => {
+            // var cutString = result.substring(0);
+            console.log(result);
+            // console.log(JSON.parse(atob(cutString)));
+        })
+        .catch(err => {
+          console.log(err);
+        });
   }
 
-  async function addFlower(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Flower',
-          rate: formatString.getRate,
-        };
+    async function getItem() {
         await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
+            .getItem('body', 0)
+            .call().then(result => {
+                // var cutString = result.substring(0);
+                console.log(result);
+                // console.log(JSON.parse(atob(cutString)));
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
+
+  async function addItem() {
+    await contractABI.methods
+        .addItem('body', 'body01', 20, DATA_INPUT)
+        .send({ from: acc[0] }).then(result => {
+          console.log('success', result);
+        })
+        .catch(err => {
+          console.log(err);
+        });
   }
 
-  async function addLeaf(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Leaf',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }
-
-  async function addInsect(info) {
+  /*async function addInsect(info) {
     let name, image;
     if (info.file.status === 'done') {
       const reader = new FileReader();
@@ -244,91 +162,30 @@ function Home() {
       };
       reader.readAsText(info.file.originFileObj);
     }
-  }
+  }*/
 
   return (
       <div>
         <div className="">
           <Space size="middle">
-            <Upload onChange={addBackground}>
-              <Button size="large" type="primary">
-                Add Background
-              </Button>
-            </Upload>
-            <Upload onChange={addFlower}>
-              <Button size="large" type="primary">
-                Add Flower
-              </Button>
-            </Upload>
-            <Upload onChange={addLeaf}>
-              <Button size="large" type="primary">
-                Add Leaf
-              </Button>
-            </Upload>
-            <Upload onChange={addInsect}>
-              <Button size="large" type="primary">
-                Add Insect
-              </Button>
-            </Upload>
+            <Button size="large" type="primary" onClick={addItem}>
+              Add Item
+            </Button>
+              <Button size="large" type="primary" onClick={getItem}>
+              Get Item
+            </Button>
+
+              <Button size="large" type="primary" onClick={renderSVG}>
+                  Render SVG
+            </Button>
           </Space>
         </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                placeholder="Input address"
-                value={inputAddress}
-                onChange={e => setInputAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => addAdressMint(inputAddress)}
-            >
-              Add address
-            </Button>
-          </Space.Compact>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                value={removeAddress}
-                placeholder="Remove address"
-                onChange={e => setRemoveAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => removeAdressMint(removeAddress)}
-            >
-              Remove address
-            </Button>
-          </Space.Compact>
-        </div>
-        <div style={{ marginTop: '3%' }}>
-          <Space.Compact style={{ width: '50%' }}>
-            <Input
-                size="large"
-                value={checkAddress}
-                placeholder="Check address have permission mint"
-                onChange={e => setCheckAddress(e.target.value)}
-            />
-            <Button
-                size="large"
-                type="primary"
-                onClick={() => checkAdressMint(checkAddress)}
-            >
-              Check address
-            </Button>
-          </Space.Compact>
-        </div>
         <Title level={4}>
-          Your Balance: {walletBalance ? walletBalance : 0} TC
+          Your Balance: {walletBalance ? walletBalance : 0} USDT
         </Title>
         <Space size="middle">
-          <Button size="large" onClick={() => connectV2()}>
-            Connet wallet
+          <Button size="large" onClick={() => connectWallet()}>
+            Connect wallet
           </Button>
           <Button size="large" onClick={() => getBalance()}>
             Show My Balance
@@ -359,7 +216,7 @@ function Home() {
             </Button>
           </Space>
         </div>
-        <Row gutter={16} style={{ marginTop: '5%' }}>
+        {/*<Row gutter={16} style={{ marginTop: '5%' }}>
           {dataJsonArray.map((key, index) => {
             return (
                 <Col span={6} key={index}>
@@ -372,11 +229,22 @@ function Home() {
                         title={key ? key.name : ''}
                         description={key ? key.description : ''}
                     />
+                    {key.attributes.map((item, index2) => {
+                      return (
+                          <p key={index2}>
+                            <b>Trait-type:</b> {item.trait_type}
+                            <br />
+                            <b>Name:</b> {item.Name}
+                            <br />
+                            <b>Size:</b> {item.size}
+                          </p>
+                      );
+                    })}
                   </Card>
                 </Col>
             );
           })}
-        </Row>
+        </Row>*/}
       </div>
   );
 }
