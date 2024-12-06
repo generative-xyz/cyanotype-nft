@@ -10,12 +10,11 @@ import '@openzeppelin/contracts/utils/Counters.sol';
 import 'hardhat/console.sol';
 contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
-
-    mapping(address => bool) public addressMint;
-    mapping(uint16 => bool) private tokenExists; // Changed to uint16 since max is 10000
     uint16 newTokenId; // Changed to uint16
-
     uint16 private tokenIdCounter; // Changed to uint16
+
+    uint8 constant PIXEL_SIZE = 24;
+    uint8 constant GRID_SIZE = 24;
 
     struct PositionDetail {
         uint8 x;      // 0-24
@@ -33,14 +32,16 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     mapping(string => mapping(uint16 => ItemDetail)) private items;
     mapping(string => uint16) private itemCounts;
     mapping(uint16 => uint256) public seedTokenId;
-
-    uint8 constant PIXEL_SIZE = 24;
-    uint8 constant GRID_SIZE = 24;
+    mapping(uint16 => bool) private tokenExists; // Changed to uint16 since max is 10000
+    mapping(address => bool) public addressMint;
 
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait);
     event TokenMinted(uint16 tokenId);
+
     string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
+    string internal constant SVG_HEADER = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">';
+    string internal constant SVG_FOOTER = '</svg>';
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -188,24 +189,17 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
         string memory svg = string(
             abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg" ',
-                'viewBox="0 0 24 24">',
+                SVG_HEADER,
                 rects,
-                '</svg>'
+                SVG_FOOTER
             )
         );
 
         return svg;
     }
 
-
     function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) {
-/*        string memory svg = string(
-            abi.encodePacked(
-                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="#35D28E"/></svg> '
-            )
-        );*/
-        return svgToImageURI( createFullSVGWithGrid(items[_itemType][_itemId].positions));
+        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
     // =============== Help function ===============
@@ -321,7 +315,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        renderSVG("body", 0),
+                        svgToImageURI(renderSVG("body", 0)),
                         '"',
                         '}'
                     )
