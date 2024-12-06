@@ -1,11 +1,12 @@
 import {useState} from 'react';
 import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 import Web3 from 'web3';
-import {Button, Space, Typography} from 'antd';
+import {Button, Card, Col, Row, Space, Typography} from 'antd';
 import config from '../../../Contract/config.json';
-import {DATA_INPUT, DATA_INPUT_2} from "./data";
-
+import {DATA_INPUT} from "./data";
+const { Meta } = Card;
 const { Title } = Typography;
+
 
 const contractAddress = config.contractAddress;
 
@@ -15,6 +16,7 @@ function Home() {
   const [walletBalance, setWalletBalance] = useState('');
   const [acc, setAcc] = useState('');
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
+    const [dataJsonArray, setDataJsonArray] = useState([]);
 
   var web3 = new Web3(window.ethereum);
   var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
@@ -70,6 +72,7 @@ function Home() {
           .then(result => {
             var cutString = result.substring(29);
             console.log(JSON.parse(atob(cutString)));
+            setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
           })
           .catch(err => console.log(err));
       setLoadingArt(false);
@@ -216,7 +219,7 @@ function Home() {
             </Button>
           </Space>
         </div>
-        {/*<Row gutter={16} style={{ marginTop: '5%' }}>
+        <Row gutter={16} style={{ marginTop: '5%' }}>
           {dataJsonArray.map((key, index) => {
             return (
                 <Col span={6} key={index}>
@@ -229,22 +232,20 @@ function Home() {
                         title={key ? key.name : ''}
                         description={key ? key.description : ''}
                     />
-                    {key.attributes.map((item, index2) => {
-                      return (
-                          <p key={index2}>
-                            <b>Trait-type:</b> {item.trait_type}
-                            <br />
-                            <b>Name:</b> {item.Name}
-                            <br />
-                            <b>Size:</b> {item.size}
-                          </p>
-                      );
-                    })}
+                    {/*{key.attributes.map((item, index2) => {*/}
+                    {/*  return (*/}
+                    {/*      <p key={index2}>*/}
+                    {/*        <b>Name:</b> {item.Name}*/}
+                    {/*        <br />*/}
+                    {/*        <b>Size:</b> {item.size}*/}
+                    {/*      </p>*/}
+                    {/*  );*/}
+                    {/*})}*/}
                   </Card>
                 </Col>
             );
           })}
-        </Row>*/}
+        </Row>
       </div>
   );
 }
