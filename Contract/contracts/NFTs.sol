@@ -143,14 +143,29 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         );
     }*/
 
-    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2) internal pure returns (bytes memory) {
+    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
         uint8 x; uint8 y; uint8 r; uint8 g; uint8 b;
         uint16 p;
+        uint totalLength = positions.length | positions2.length | positions3.length | positions4.length;
 
-        for(uint i = 0; i < positions.length + positions2.length; i += 5) {
-            uint8[] memory pos = i < positions.length ? positions : positions2;
-            uint idx = i < positions.length ? i : i - positions.length;
+        for(uint i = 0; i < totalLength; i += 5) {
+            uint8[] memory pos;
+            uint idx;
+            
+            uint posLen = positions.length;
+            uint pos2Len = posLen | positions2.length;
+            uint pos3Len = pos2Len | positions3.length;
+            
+            pos = i < posLen ? positions :
+                  i < pos2Len ? positions2 :
+                  i < pos3Len ? positions3 :
+                  positions4;
+                  
+            idx = i < posLen ? i :
+                  i < pos2Len ? i - posLen :
+                  i < pos3Len ? i - pos2Len :
+                  i - pos3Len;
             
             x = pos[idx];
             y = pos[idx+1];
@@ -158,7 +173,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             g = pos[idx+3];
             b = pos[idx+4];
 
-            p = (uint16(y) * 24 + uint16(x)) * 4;
+            p = (uint16(y) * 24 | uint16(x)) * 4;
             pixels[p] = bytes1(r);
             pixels[p+1] = bytes1(g);
             pixels[p+2] = bytes1(b);
@@ -168,8 +183,11 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return pixels;
     }
 
-    function renderSVG(uint8[] memory positions, uint8[] memory positions2) public view returns (string memory) {
-        bytes memory pixel = createMultipleRects(positions, positions2);
+
+    function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
+        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+
+        bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
 
         string memory rects = '';
         uint temp = 0;
@@ -198,22 +216,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             }
         }
 
-        return rects;
-    }
-
-    function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
-        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        string memory body = renderSVG(items['body'][0].positions, items['mouth'][0].positions);
-//        string memory mouth = renderSVG(items['mouth'][0].positions);
-//        string memory shirt = renderSVG(items['shirt'][0].positions);
-//        string memory eye = renderSVG(items['eye'][0].positions);
         string memory svg = string(
             abi.encodePacked(
                 SVG_HEADER,
-                body,
-//                mouth,
-                /*shirt,
-                eye,*/
+                rects,
                 SVG_FOOTER
             )
         );
