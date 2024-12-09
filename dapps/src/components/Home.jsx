@@ -1,14 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 import Web3 from 'web3';
 import {Button, Card, Col, Row, Space, Typography} from 'antd';
-import config from '../../../Contract/config.json';
 import {DATA_INPUT} from "./data";
+import {contractAddress, PRIVATE_KEY} from "../../constant/config";
+
 const { Meta } = Card;
 const { Title } = Typography;
 
-
-const contractAddress = config.contractAddress;
 
 function Home() {
   const [loadings, setLoadings] = useState(false);
@@ -16,23 +15,22 @@ function Home() {
   const [walletBalance, setWalletBalance] = useState('');
   const [acc, setAcc] = useState('');
   const [tokenIdCurrent, setTokenIdCurrent] = useState(0);
-    const [dataJsonArray, setDataJsonArray] = useState([]);
+  const [dataJsonArray, setDataJsonArray] = useState([]);
 
   var web3 = new Web3(window.ethereum);
   var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
 
-  const connectWallet = async () => {
-    await window.ethereum.enable();
-    const account = await web3.eth.requestAccounts();
-    setAcc(account);
-    console.log('Wallet current: ', account[0]);
-  };
+    useEffect(() => {
+        web3.eth.accounts.wallet.add(PRIVATE_KEY)
+        const account = web3.eth.accounts.wallet[0].address
+        setAcc(account)
+    }, []);
 
   const mint = async () => {
     await contractABI.methods
-        .mint(acc[0])
+        .mint(acc)
         .send({
-          from: acc[0],
+          from: acc,
         })
         .then(() => {
           contractABI
@@ -58,11 +56,7 @@ function Home() {
         });
   };
 
-  function cutString(str) {
-    const getName = str.match(/[a-zA-Z]+/g).join('');
-    const getRate = str.match(/\d+/g).join('');
-    return { getName, getRate };
-  }
+
 
   const showArt = async () => {
     if (tokenIdCurrent == 0 || tokenIdCurrent) {
@@ -81,14 +75,9 @@ function Home() {
     }
   };
 
- /* function base64ToJson(base64String) {
-    const json = Buffer.from(base64String, 'base64').toString();
-    return JSON.parse(json);
-  }*/
-
   const getBalance = async () => {
     if (acc) {
-      const balance = await web3.eth.getBalance(acc[0]);
+      const balance = await web3.eth.getBalance(acc);
       const balanceInEther = web3.utils.fromWei(balance, 'ether');
       setWalletBalance(balanceInEther);
     } else {
@@ -96,20 +85,9 @@ function Home() {
     }
   };
 
-  /*async function addColorsArray() {
-    await contractABI.methods
-        .addColorArray(DATA_INPUT.colors)
-        .send({ from: acc[0], gasPrice }).then(result => {
-          console.log('success', result);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-  }*/
-
   async function renderSVG() {
     await contractABI.methods
-        .renderSVG('body', 0)
+        .renderFullSVGWithGrid(0)
         .call().then(result => {
             // var cutString = result.substring(0);
             console.log(result);
@@ -134,38 +112,28 @@ function Home() {
     }
 
   async function addItem() {
-    await contractABI.methods
-        .addItem('body', 'body01', 20, DATA_INPUT)
-        .send({ from: acc[0] }).then(result => {
-          console.log('success', result);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-  }
+      /*await web3.eth.accounts.signTransaction({
+          from: acc,
+          gasPrice: "20000000000",
+          gas: "21000",
+          value: "1000000000000000000",
+            gasLimit: "53000",
+      }, PRIVATE_KEY).then(async () => {
 
-  /*async function addInsect(info) {
-    let name, image;
-    if (info.file.status === 'done') {
-      const reader = new FileReader();
-      name = info.file.name;
-      name = name.slice(0, name.lastIndexOf('.'));
-      let formatString = cutString(name);
-      reader.onload = async e => {
-        image = e.target.result;
-        let obj = {
-          name: formatString.getName,
-          image,
-          ele_type: 'Insect',
-          rate: formatString.getRate,
-        };
-        await contractABI.methods
-            .addElements(obj)
-            .send({ from: acc[0], gasPrice });
-      };
-      reader.readAsText(info.file.originFileObj);
-    }
-  }*/
+      });*/
+
+      for (let i = 0; i < DATA_INPUT.length; i++) {
+          await contractABI.methods
+              .addItem(DATA_INPUT[i].key,  DATA_INPUT[i].name,  DATA_INPUT[i].rate, DATA_INPUT[i].position)
+              .send({ from: acc }).then(result => {
+                  console.log('success', result);
+              })
+              .catch(err => {
+                  console.log(err);
+              });
+      }
+
+  }
 
   return (
       <div>
@@ -177,7 +145,6 @@ function Home() {
               <Button size="large" type="primary" onClick={getItem}>
               Get Item
             </Button>
-
               <Button size="large" type="primary" onClick={renderSVG}>
                   Render SVG
             </Button>
@@ -187,9 +154,6 @@ function Home() {
           Your Balance: {walletBalance ? walletBalance : 0} USDT
         </Title>
         <Space size="middle">
-          <Button size="large" onClick={() => connectWallet()}>
-            Connect wallet
-          </Button>
           <Button size="large" onClick={() => getBalance()}>
             Show My Balance
           </Button>
