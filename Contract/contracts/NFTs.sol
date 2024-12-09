@@ -40,9 +40,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     event TokenMinted(uint16 tokenId);
 
     string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
-    string internal constant SVG_HEADER = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">';
+    string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
-    string internal constant SVG_WIDTH = 'width="1" height="1"';
+    string internal constant SVG_WIDTH = ' width="1" height="1" ';
     string internal constant SVG_RECT = '<rect ';
     string internal constant SVG_CLOSE_RECT = '/>';
 
@@ -293,7 +293,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
-        return result = '';
         require(_exists(tokenId), 'ERC721: Token does not exist');
         string memory name = '"name": "Robot #';
         string memory tokenID = Strings.toString(tokenId);
