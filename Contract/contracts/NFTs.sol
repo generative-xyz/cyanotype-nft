@@ -168,7 +168,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-
         bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
 
         string memory rects = '';
@@ -294,7 +293,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
-//        return svgToImageURI(renderSVG(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions));
         return result = '';
         require(_exists(tokenId), 'ERC721: Token does not exist');
         string memory name = '"name": "Robot #';
@@ -323,7 +321,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        svgToImageURI(renderFullSVGWithGrid( 0)),
+                        svgToImageURI(renderFullSVGWithGrid( tokenId)),
                         '"',
                         '}'
                     )
