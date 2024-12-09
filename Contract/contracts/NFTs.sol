@@ -175,11 +175,11 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         uint8 x; uint8 y;
         for(uint i = 0; i < pixel.length; i += 4) {
 
-            if(pixel[i+3] > 0) { // Only render if alpha > 0
+            if(pixel[i+3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % 24);
                 y = uint8(temp / 24);
-                if(x < 24 && y < 24) { // Add bounds check
+                if(x < 24 && y < 24) {
                     rects = string(abi.encodePacked(
                         rects,
                         string(
