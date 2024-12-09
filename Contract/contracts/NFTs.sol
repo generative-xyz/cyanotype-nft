@@ -130,7 +130,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
-        bytes memory pixels = new bytes(2304);
+        bytes memory pixels = new bytes(1728); // 24 * 24 * 3 for RGB only
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length;
         
         for(uint i = 0; i < totalLength; i += 5) {
@@ -153,13 +153,12 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             }
 
             // Calculate pixel position
-            uint16 p = (uint16(pos[idx+1]) * 24 + uint16(pos[idx])) * 4;
+            uint16 p = (uint16(pos[idx+1]) * 24 + uint16(pos[idx])) * 3; // Multiply by 3 for RGB
             
-            // Set RGBA values directly
+            // Set RGB values directly
             pixels[p] = bytes1(pos[idx+2]);     // R
             pixels[p+1] = bytes1(pos[idx+3]);   // G 
             pixels[p+2] = bytes1(pos[idx+4]);   // B
-            pixels[p+3] = bytes1(0xFF);         // A
         }
 
         return pixels;
