@@ -58,13 +58,27 @@ function Home() {
 
 
 
-  const showArt = async () => {
-    if (tokenIdCurrent == 0 || tokenIdCurrent) {
+  const showArt = async (tokenIdCurrent) => {
+       await contractABI.methods
+          .tokenURI(tokenIdCurrent)
+          .call()
+          .then(result => {
+              console.log('result', result)
+              var cutString = result.substring(29);
+              console.log(cutString)
+              console.log(JSON.parse(atob(cutString)));
+              setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
+          })
+          .catch(err => console.log(err));
+      setLoadingArt(false);
+
+ /*   if (tokenIdCurrent == 0 || tokenIdCurrent) {
       const tokenURI = await contractABI.methods
           .tokenURI(tokenIdCurrent)
           .call()
           .then(result => {
             var cutString = result.substring(29);
+              console.log(cutString)
             console.log(JSON.parse(atob(cutString)));
             setDataJsonArray([...dataJsonArray, JSON.parse(atob(cutString))]);
           })
@@ -72,7 +86,7 @@ function Home() {
       setLoadingArt(false);
     } else {
       console.log("Don't have tokenId");
-    }
+    }*/
   };
 
   const getBalance = async () => {
@@ -163,9 +177,9 @@ function Home() {
             <Button
                 size="large"
                 loading={loadingArt}
-                onClick={() => {
+                onClick={async () => {
                   setLoadingArt(true);
-                  showArt();
+                  await showArt(0);
                 }}
             >
               TokenURI({tokenIdCurrent})

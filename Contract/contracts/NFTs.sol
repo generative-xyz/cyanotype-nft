@@ -40,9 +40,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     event TokenMinted(uint16 tokenId);
 
     string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
-    string internal constant SVG_HEADER = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">';
+    string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
-    string internal constant SVG_WIDTH = 'width="1" height="1"';
+    string internal constant SVG_WIDTH = ' width="1" height="1" ';
     string internal constant SVG_RECT = '<rect ';
     string internal constant SVG_CLOSE_RECT = '/>';
 
@@ -129,6 +129,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return itemCounts[_itemType];
     }
 
+    // =============== Draw Art function ===============
     function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length;
@@ -167,7 +168,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-
         bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
 
         string memory rects = '';
@@ -175,11 +175,11 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         uint8 x; uint8 y;
         for(uint i = 0; i < pixel.length; i += 4) {
 
-            if(pixel[i+3] > 0) { // Only render if alpha > 0
+            if(pixel[i+3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % 24);
                 y = uint8(temp / 24);
-                if(x < 24 && y < 24) { // Add bounds check
+                if(x < 24 && y < 24) {
                     rects = string(abi.encodePacked(
                         rects,
                         string(
@@ -293,9 +293,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
-//        return svgToImageURI(renderSVG(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions));
-        return result = '';
-        /*require(_exists(tokenId), 'ERC721: Token does not exist');
+        require(_exists(tokenId), 'ERC721: Token does not exist');
         string memory name = '"name": "Robot #';
         string memory tokenID = Strings.toString(tokenId);
         string memory desc = '"description": "Robot NFT Art"';
@@ -322,12 +320,12 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        svgToImageURI(renderSVG("body", 0)),
+                        svgToImageURI(renderFullSVGWithGrid( tokenId)),
                         '"',
                         '}'
                     )
                 )
             )
-        );*/
+        );
     }
 }
