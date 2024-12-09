@@ -42,6 +42,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
     string internal constant SVG_HEADER = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">';
     string internal constant SVG_FOOTER = '</svg>';
+    string internal constant SVG_WIDTH = 'width="1" height="1"';
+    string internal constant SVG_RECT = '<rect ';
+    string internal constant SVG_CLOSE_RECT = '/>';
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -127,32 +130,32 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     // =============== Draw Art function ===============
-    function createRect(uint8 x, uint8 y, uint8 r, uint8 g, uint8 b) public pure returns (string memory) {
+/*    function createRect(uint8 x, uint8 y, uint8 r, uint8 g, uint8 b) public pure returns (string memory) {
         return string(
             abi.encodePacked(
-                '<rect ',
+                SVG_RECT,
                 'x="', toString(x), '" ',
                 'y="', toString(y), '" ',
-                'width="1" ',
-                'height="1" ',
+                SVG_WIDTH,
                 'fill="rgb(', toString(r), ',', toString(g), ',', toString(b), ')" ',
-                '/>'
+                SVG_CLOSE_RECT
             )
         );
-    }
+    }*/
 
     function createMultipleRects(uint8[] memory positions) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
-
+        uint8 x; uint8 y; uint8 r ;uint8 g;  uint8 b;
+        uint16 p;
         for(uint i = 0; i < positions.length; i += 5) {
-            uint8 x = positions[i];
-            uint8 y = positions[i+1];
-            uint8 r = positions[i+2];
-            uint8 g = positions[i+3];
-            uint8 b = positions[i+4];
+            x = positions[i];
+            y = positions[i+1];
+            r = positions[i+2];
+            g = positions[i+3];
+            b = positions[i+4];
 
             // Calculate pixel position in byte array (x,y coordinates to linear RGBA array)
-            uint16 p = uint16((uint16(y) * 24 + uint16(x)) * 4); // Changed from *3 to *4 to account for alpha
+            p = (uint16(y) * 24 + uint16(x)) * 4; // Changed from *3 to *4 to account for alpha
 
             // Set RGBA values
             pixels[p] = bytes1(r);     // R
@@ -164,42 +167,56 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return pixels;
     }
 
-    function createFullSVGWithGrid(uint8[] memory positions) public pure returns (string memory) {
-        bytes memory pixelBytes = createMultipleRects(positions);
-        // Convert bytes to string of rect elements
+    function renderSVG(uint8[] memory positions) public view returns (string memory) {
+        bytes memory pixel = createMultipleRects(positions);
+
         string memory rects = '';
-        for(uint i = 0; i < pixelBytes.length; i += 4) {
-            if(pixelBytes[i+3] > 0) { // Only render if alpha > 0
-                uint8 x = uint8((i/4) % 24);
-                uint8 y = uint8((i/4) / 24);
+        uint temp = 0;
+        uint8 x; uint8 y;
+        for(uint i = 0; i < pixel.length; i += 4) {
+
+            if(pixel[i+3] > 0) { // Only render if alpha > 0
+                temp = i >> 2;
+                x = uint8(temp % 24);
+                y = uint8(temp / 24);
                 if(x < 24 && y < 24) { // Add bounds check
                     rects = string(abi.encodePacked(
                         rects,
-                        createRect(
-                            x,
-                            y,
-                            uint8(pixelBytes[i]),
-                            uint8(pixelBytes[i+1]),
-                            uint8(pixelBytes[i+2])
+                        string(
+                            abi.encodePacked(
+                                SVG_RECT,
+                                'x="', toString(x), '" ',
+                                'y="', toString(y), '" ',
+                                SVG_WIDTH,
+                                'fill="rgb(', toString(uint8(pixel[i])), ',', toString(uint8(pixel[i+1])), ',', toString(uint8(pixel[i+2])),')" ',
+                                SVG_CLOSE_RECT
+                            )
                         )
                     ));
                 }
             }
         }
 
+        return rects;
+    }
+
+    function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
+        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+        string memory body = renderSVG(items['body'][0].positions);
+//        string memory mouth = renderSVG(items['mouth'][0].positions);
+//        string memory shirt = renderSVG(items['shirt'][0].positions);
+//        string memory eye = renderSVG(items['eye'][0].positions);
         string memory svg = string(
             abi.encodePacked(
                 SVG_HEADER,
-                rects,
+                body,
+//                mouth,
+                /*shirt,
+                eye,*/
                 SVG_FOOTER
             )
         );
-
         return svg;
-    }
-
-    function renderSVG(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (string memory) {
-        return createFullSVGWithGrid(items[_itemType][_itemId].positions);
     }
 
     // =============== Help function ===============
@@ -288,7 +305,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
-        require(_exists(tokenId), 'ERC721: Token does not exist');
+//        return svgToImageURI(renderSVG(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions));
+        return result = '';
+        /*require(_exists(tokenId), 'ERC721: Token does not exist');
         string memory name = '"name": "Robot #';
         string memory tokenID = Strings.toString(tokenId);
         string memory desc = '"description": "Robot NFT Art"';
@@ -321,6 +340,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                     )
                 )
             )
-        );
+        );*/
     }
 }

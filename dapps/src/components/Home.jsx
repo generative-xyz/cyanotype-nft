@@ -87,7 +87,7 @@ function Home() {
 
   async function renderSVG() {
     await contractABI.methods
-        .renderSVG('body', 0)
+        .renderFullSVGWithGrid(0)
         .call().then(result => {
             // var cutString = result.substring(0);
             console.log(result);
@@ -112,24 +112,26 @@ function Home() {
     }
 
   async function addItem() {
-      await web3.eth.accounts.signTransaction({
+      /*await web3.eth.accounts.signTransaction({
           from: acc,
           gasPrice: "20000000000",
           gas: "21000",
           value: "1000000000000000000",
             gasLimit: "53000",
       }, PRIVATE_KEY).then(async () => {
-          for (let i = 0; i < DATA_INPUT.length; i++) {
-              await contractABI.methods
-                  .addItem('body', 'body01', 20, DATA_INPUT[i])
-                  .send({ from: acc }).then(result => {
-                      console.log('success', result);
-                  })
-                  .catch(err => {
-                      console.log(err);
-                  });
-          }
-      });
+
+      });*/
+
+      for (let i = 0; i < DATA_INPUT.length; i++) {
+          await contractABI.methods
+              .addItem(DATA_INPUT[i].key,  DATA_INPUT[i].name,  DATA_INPUT[i].rate, DATA_INPUT[i].position)
+              .send({ from: acc }).then(result => {
+                  console.log('success', result);
+              })
+              .catch(err => {
+                  console.log(err);
+              });
+      }
 
   }
 
