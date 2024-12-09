@@ -130,19 +130,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     }
 
     // =============== Draw Art function ===============
-/*    function createRect(uint8 x, uint8 y, uint8 r, uint8 g, uint8 b) public pure returns (string memory) {
-        return string(
-            abi.encodePacked(
-                SVG_RECT,
-                'x="', toString(x), '" ',
-                'y="', toString(y), '" ',
-                SVG_WIDTH,
-                'fill="rgb(', toString(r), ',', toString(g), ',', toString(b), ')" ',
-                SVG_CLOSE_RECT
-            )
-        );
-    }*/
-
     function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length;
@@ -309,7 +296,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory result) {
 //        return svgToImageURI(renderSVG(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions));
         return result = '';
-        /*require(_exists(tokenId), 'ERC721: Token does not exist');
+        require(_exists(tokenId), 'ERC721: Token does not exist');
         string memory name = '"name": "Robot #';
         string memory tokenID = Strings.toString(tokenId);
         string memory desc = '"description": "Robot NFT Art"';
@@ -336,12 +323,12 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        svgToImageURI(renderSVG("body", 0)),
+                        svgToImageURI(renderFullSVGWithGrid( 0)),
                         '"',
                         '}'
                     )
                 )
             )
-        );*/
+        );
     }
 }
