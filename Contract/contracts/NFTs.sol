@@ -129,20 +129,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         return itemCounts[_itemType];
     }
 
-    // =============== Draw Art function ===============
-/*    function createRect(uint8 x, uint8 y, uint8 r, uint8 g, uint8 b) public pure returns (string memory) {
-        return string(
-            abi.encodePacked(
-                SVG_RECT,
-                'x="', toString(x), '" ',
-                'y="', toString(y), '" ',
-                SVG_WIDTH,
-                'fill="rgb(', toString(r), ',', toString(g), ',', toString(b), ')" ',
-                SVG_CLOSE_RECT
-            )
-        );
-    }*/
-
     function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length;
