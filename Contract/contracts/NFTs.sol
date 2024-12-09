@@ -145,44 +145,39 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
-        uint8 x; uint8 y; uint8 r; uint8 g; uint8 b;
-        uint16 p;
-        uint totalLength = positions.length | positions2.length | positions3.length | positions4.length;
-
+        uint totalLength = positions.length + positions2.length + positions3.length + positions4.length;
+        
         for(uint i = 0; i < totalLength; i += 5) {
             uint8[] memory pos;
             uint idx;
             
-            uint posLen = positions.length;
-            uint pos2Len = posLen | positions2.length;
-            uint pos3Len = pos2Len | positions3.length;
-            
-            pos = i < posLen ? positions :
-                  i < pos2Len ? positions2 :
-                  i < pos3Len ? positions3 :
-                  positions4;
-                  
-            idx = i < posLen ? i :
-                  i < pos2Len ? i - posLen :
-                  i < pos3Len ? i - pos2Len :
-                  i - pos3Len;
-            
-            x = pos[idx];
-            y = pos[idx+1];
-            r = pos[idx+2];
-            g = pos[idx+3];
-            b = pos[idx+4];
+            // Determine which array to use and calculate index
+            if(i < positions.length) {
+                pos = positions;
+                idx = i;
+            } else if(i < positions.length + positions2.length) {
+                pos = positions2;
+                idx = i - positions.length;
+            } else if(i < positions.length + positions2.length + positions3.length) {
+                pos = positions3;
+                idx = i - positions.length - positions2.length;
+            } else {
+                pos = positions4;
+                idx = i - positions.length - positions2.length - positions3.length;
+            }
 
-            p = (uint16(y) * 24 | uint16(x)) * 4;
-            pixels[p] = bytes1(r);
-            pixels[p+1] = bytes1(g);
-            pixels[p+2] = bytes1(b);
-            pixels[p+3] = bytes1(0xFF);
+            // Calculate pixel position
+            uint16 p = (uint16(pos[idx+1]) * 24 + uint16(pos[idx])) * 4;
+            
+            // Set RGBA values directly
+            pixels[p] = bytes1(pos[idx+2]);     // R
+            pixels[p+1] = bytes1(pos[idx+3]);   // G 
+            pixels[p+2] = bytes1(pos[idx+4]);   // B
+            pixels[p+3] = bytes1(0xFF);         // A
         }
 
         return pixels;
     }
-
 
     function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
