@@ -143,32 +143,33 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         );
     }*/
 
-    function createMultipleRects(uint8[] memory positions) internal pure returns (bytes memory) {
+    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
-        uint8 x; uint8 y; uint8 r ;uint8 g;  uint8 b;
+        uint8 x; uint8 y; uint8 r; uint8 g; uint8 b;
         uint16 p;
-        for(uint i = 0; i < positions.length; i += 5) {
-            x = positions[i];
-            y = positions[i+1];
-            r = positions[i+2];
-            g = positions[i+3];
-            b = positions[i+4];
 
-            // Calculate pixel position in byte array (x,y coordinates to linear RGBA array)
-            p = (uint16(y) * 24 + uint16(x)) * 4; // Changed from *3 to *4 to account for alpha
+        for(uint i = 0; i < positions.length + positions2.length; i += 5) {
+            uint8[] memory pos = i < positions.length ? positions : positions2;
+            uint idx = i < positions.length ? i : i - positions.length;
+            
+            x = pos[idx];
+            y = pos[idx+1];
+            r = pos[idx+2];
+            g = pos[idx+3];
+            b = pos[idx+4];
 
-            // Set RGBA values
-            pixels[p] = bytes1(r);     // R
-            pixels[p+1] = bytes1(g);   // G
-            pixels[p+2] = bytes1(b);   // B
-            pixels[p+3] = bytes1(0xFF); // A (fully opaque)
+            p = (uint16(y) * 24 + uint16(x)) * 4;
+            pixels[p] = bytes1(r);
+            pixels[p+1] = bytes1(g);
+            pixels[p+2] = bytes1(b);
+            pixels[p+3] = bytes1(0xFF);
         }
 
         return pixels;
     }
 
-    function renderSVG(uint8[] memory positions) public view returns (string memory) {
-        bytes memory pixel = createMultipleRects(positions);
+    function renderSVG(uint8[] memory positions, uint8[] memory positions2) public view returns (string memory) {
+        bytes memory pixel = createMultipleRects(positions, positions2);
 
         string memory rects = '';
         uint temp = 0;
@@ -202,7 +203,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        string memory body = renderSVG(items['body'][0].positions);
+        string memory body = renderSVG(items['body'][0].positions, items['mouth'][0].positions);
 //        string memory mouth = renderSVG(items['mouth'][0].positions);
 //        string memory shirt = renderSVG(items['shirt'][0].positions);
 //        string memory eye = renderSVG(items['eye'][0].positions);
