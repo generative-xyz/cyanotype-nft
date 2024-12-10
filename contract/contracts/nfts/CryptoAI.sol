@@ -25,6 +25,8 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     address public _randomizerAddr;
     // deployer
     address public _deployer;
+    // CryptoAIData
+    address public _cryptoAiDataAddr;
 
     bool private _contractSealed;
     uint256 public _indexMint;
@@ -75,6 +77,14 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         // change
         if (_paramsAddress != newAddr) {
             _paramsAddress = newAddr;
+        }
+    }
+
+    function changeCryptoAiAddress(address newAddr) external onlyAdmin {
+        require(newAddr != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
+
+        if (_cryptoAiDataAddr != newAddr) {
+            _cryptoAiDataAddr = newAddr;
         }
     }
 
