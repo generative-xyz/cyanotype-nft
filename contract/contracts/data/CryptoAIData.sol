@@ -10,9 +10,13 @@ import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
 
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
-    string private constant baseURL = 'data:image/svg+xml;base64,';
+    // super admin
+    address public _admin;
+    // deployer
+    address public _deployer;
 
-    string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
+    string private constant baseURL = 'data:image/svg+xml;base64,';
+    string[] private VALID_ITEM_TYPES;
     uint8 internal constant GRID_SIZE = 24;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
@@ -34,6 +38,42 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         }
         require(isValid, Errors.INVALID_ITEM_TYPE);
         _;
+    }
+
+    modifier onlyDeployer() {
+        require(msg.sender == _deployer, Errors.ONLY_DEPLOYER);
+        _;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == _deployer, Errors.ONLY_ADMIN_ALLOWED);
+        _;
+    }
+    function initialize(
+        address payable deployer,
+        address payable admin
+    ) initializer public {
+        VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
+        _deployer = deployer;
+        _admin = admin;
+
+        __Ownable_init();
+
+    }
+
+    function changeAdmin(address newAdm) external onlyAdmin {
+        require(msg.sender == _admin && newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
+        if (_admin != newAdm) {
+            address _previousAdmin = _admin;
+            _admin = newAdm;
+        }
+    }
+
+    function changeDeployer(address newAdm) external onlyAdmin {
+        require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
+        if (_deployer != newAdm) {
+            _deployer = newAdm;
+        }
     }
 
     ///////
@@ -61,6 +101,16 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         emit CryptoAIStructs.ItemAdded(_itemType, itemId, _name, _trait);
         return itemId;
+    }
+
+    function getItem(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (
+        string memory name,
+        uint8 trait,
+        uint8[] memory positions
+    ) {
+        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
+        CryptoAIStructs.ItemDetail memory item = items[_itemType][_itemId];
+        return (item.name, item.trait, item.positions);
     }
 
     //
