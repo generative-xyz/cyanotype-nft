@@ -50,8 +50,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         _;
     }
     function initialize(
-        address payable deployer,
-        address payable admin
+        address deployer,
+        address admin
     ) initializer public {
         VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
         _deployer = deployer;
@@ -82,7 +82,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         string memory _name,
         uint8 _trait,
         uint8[] memory _positions
-    ) public validItemType(_itemType) returns (uint16) {
+    ) public validItemType(_itemType)
+        //onlyDeployer
+    returns (uint16) {
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
 

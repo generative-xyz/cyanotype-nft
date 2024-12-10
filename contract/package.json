@@ -40,6 +40,7 @@
     "@nomiclabs/hardhat-etherscan": "^3.1.8",
     "@openzeppelin/contracts-upgradeable": "^4.6.0",
     "@openzeppelin/hardhat-upgrades": "^3.7.0",
+    "anvil": "^0.0.6",
     "chai": "^4.3.7",
     "dotenv": "^16.3.1",
     "ethereum-waffle": "^4.0.10",

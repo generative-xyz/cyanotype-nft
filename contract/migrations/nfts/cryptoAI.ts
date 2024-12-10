@@ -1,12 +1,7 @@
-import {createAlchemyWeb3} from "@alch/alchemy-web3";
-import * as path from "path";
-import {Bytes32Ty} from "hardhat/internal/hardhat-network/stack-traces/logger";
-import {ethers as eth1} from "ethers";
-
 const {ethers, upgrades} = require("hardhat");
 const hardhatConfig = require("../../hardhat.config");
 
-class CryptoAIData {
+class CryptoAI {
     network: string;
     senderPublicKey: string;
     senderPrivateKey: string;
@@ -20,15 +15,19 @@ class CryptoAIData {
         console.log("senderPublicKey", senderPublicKey);
     }
 
-    async deployUpgradeable(adminAddr: any,
-                            deployerAddr: any
+    async deployUpgradeable(name: string, symbol: string,
+                            adminAddr: any,
+                            deployerAddr: any,
+                            paramsAddress: any,
+                            random: any,
+                            cryptoAiData: any,
     ) {
         // if (this.network == "local") {
         //     console.log("not run local");
         //     return;
         // }
 
-        const contract = await ethers.getContractFactory("CryptoAIData");
+        const contract = await ethers.getContractFactory("CryptoAI");
         console.log("CryptoAIData.deploying ...")
         const proxy = await upgrades.deployProxy(contract, [adminAddr, deployerAddr], {
             initializer: 'initialize(address, address)',
@@ -40,4 +39,4 @@ class CryptoAIData {
     }
 }
 
-export {CryptoAIData};
+export {CryptoAI};

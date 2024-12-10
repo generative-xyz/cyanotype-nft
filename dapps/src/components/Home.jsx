@@ -1,9 +1,11 @@
 import {useEffect, useState} from 'react';
-import ABI from '../../../contract/artifacts/contracts/CharacterInfo.sol/CharacterInfo.json';
+// import ABI from '../../../contract/artifacts/contracts/CharacterInfo.sol/CharacterInfo.json';
+import CryptoAI from '../../../contract/artifacts/contracts/nfts/CryptoAI.sol/CryptoAI.json';
+import CryptoAIData from '../../../contract/artifacts/contracts/data/CryptoAIData.sol/CryptoAIData.json';
 import Web3 from 'web3';
 import {Button, Card, Col, Row, Space, Typography} from 'antd';
 import {DATA_INPUT} from "./data";
-import {contractAddress, PRIVATE_KEY} from "../../constant/config";
+import {contractAddress, dataContractAddress, PRIVATE_KEY} from "../../constant/config";
 
 const {Meta} = Card;
 const {Title} = Typography;
@@ -18,7 +20,9 @@ function Home() {
     const [dataJsonArray, setDataJsonArray] = useState([]);
 
     var web3 = new Web3(window.ethereum);
-    var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
+    // var contractABI = new web3.eth.Contract(ABI.abi, contractAddress);
+    var contractABI = new web3.eth.Contract(CryptoAI.abi, contractAddress);
+    var contractDataABI = new web3.eth.Contract(CryptoAIData.abi, dataContractAddress);
 
     useEffect(() => {
         web3.eth.accounts.wallet.add(PRIVATE_KEY)
@@ -136,7 +140,7 @@ function Home() {
         });*/
 
         for (let i = 0; i < DATA_INPUT.length; i++) {
-            await contractABI.methods
+            await contractDataABI.methods
                 .addItem(DATA_INPUT[i].key, DATA_INPUT[i].name, DATA_INPUT[i].rate, DATA_INPUT[i].position)
                 .send({from: acc}).then(result => {
                     console.log('success', result);

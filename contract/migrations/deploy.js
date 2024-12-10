@@ -1,5 +1,5 @@
 const hre = require('hardhat');
-const Config = require('../index');
+const Config = require('../index.bk');
 
 async function main() {
     await Config.initConfig();
