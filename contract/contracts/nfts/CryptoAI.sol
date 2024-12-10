@@ -10,6 +10,7 @@ import '@openzeppelin/contracts/utils/Base64.sol';
 
 import "../libs/helpers/Errors.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
+import "../interfaces/ICryptoAIData.sol";
 
 import 'hardhat/console.sol';
 
@@ -120,13 +121,19 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721Upgradeable, ERC721URIStorageUpgradeable) returns (string memory result) {
+        require(_exists(tokenId), 'ERC721: Token does not exist');
+        ICryptoAIData cryptoAIDataContract = ICryptoAIData(_cryptoAiDataAddr);
         result = string(
             abi.encodePacked(
                 'data:application/json;base64,',
-                Base64.encode(abi.encodePacked(
-                    '{',
-                    '}'
-                ))
+                Base64.encode(
+                    abi.encodePacked(
+                        '{',
+                        '"image": "',
+                        cryptoAIDataContract.svgToImageURI(cryptoAIDataContract.renderFullSVGWithGrid(tokenId)),
+                        '}'
+                    )
+                )
             )
         );
     }

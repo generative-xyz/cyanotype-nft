@@ -104,7 +104,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return pixels;
     }
 
-    function renderFullSVGWithGrid(uint256 tokenId) public view returns (string memory) {
+    function renderFullSVGWithGrid(uint256 tokenId) external view returns (string memory) {
         // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
         bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
 
