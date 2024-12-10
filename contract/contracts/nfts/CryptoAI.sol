@@ -9,17 +9,17 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import '@openzeppelin/contracts/utils/Base64.sol';
 
 import "../libs/helpers/Errors.sol";
+import "../libs/structs/CryptoAIStructsLibs.sol";
 
 contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable {
     uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
 
     address payable internal _deployer;
     bool private _contractSealed;
-    uint256 public _index;
-    uint256 public _adminIndex;
     uint256 public _indexMint;
-
     mapping(address => uint256) public _allowList;
+
+    mapping(uint256 => uint256) public seedTokenId;
 
     modifier unsealed() {
         require(!_contractSealed, Errors.CONTRACT_SEALED);
@@ -38,8 +38,7 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     ) initializer public {
         _deployer = deployer;
         _contractSealed = false;
-        _adminIndex = 0;
-        _index = 1000;
+        _indexMint = 1;
 
         __ERC721_init(name, symbol);
         __ERC721URIStorage_init();
@@ -54,21 +53,23 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     }
 
     function adminMint(address to) public {
-        require(_adminIndex < 1000);
-        //[6776, 3269, 1598, 4831, 6215, 6061, 1349, 8680, 6066]
-        if (_adminIndex == 6776 || _adminIndex == 3269 || _adminIndex == 1598 || _adminIndex == 4831 || _adminIndex == 6215 || _adminIndex == 6061 || _adminIndex == 1349 || _adminIndex == 8680 || _adminIndex == 6066) {
-            _adminIndex++;
-        }
+        require(_indexMint < 1000);
         require(msg.sender == _deployer);
-        require(to != address(0));
-        _safeMint(to, _adminIndex);
-        _adminIndex++;
+        require(to != Errors.ZERO_ADDR, Errors.INV_ADD);
+        _safeMint(to, _indexMint);
+        _indexMint++;
     }
 
     //@ERC721
     function mint(address to) public payable {
         require(to != Errors.ZERO_ADDR, Errors.INV_ADD);
-        require(_index <= TOKEN_LIMIT);
+        require(_indexMint <= TOKEN_LIMIT);
+
+        _safeMint(to, _indexMint);
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, _indexMint)));
+        seedTokenId[_indexMint] = seed;
+        emit CryptoAIStructs.TokenMinted(_indexMint);
+        _indexMint += 1;
     }
 
     function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
@@ -87,6 +88,12 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         );
     }
 
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC165Upgradeable) returns (bool) {
+        return
+            interfaceId == type(ERC721URIStorageUpgradeable).interfaceId || interfaceId == type(IERC2981Upgradeable).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+
     /* @dev EIP2981 royalties implementation.
     // EIP2981 standard royalties return.
     */
@@ -94,12 +101,6 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     returns (address receiver, uint256 royaltyAmount) {
         receiver = this.owner();
         royaltyAmount = _salePrice * 0 / 10000;
-    }
-
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC165Upgradeable) returns (bool) {
-        return
-            interfaceId == type(ERC721URIStorageUpgradeable).interfaceId || interfaceId == type(IERC2981Upgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
     }
 
     /* @CryptoAI */

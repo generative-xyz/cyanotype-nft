@@ -4,7 +4,7 @@ library CryptoAIStructs {
 
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait);
-    event TokenMinted(uint16 tokenId);
+    event TokenMinted(uint256 tokenId);
 
     struct PositionDetail {
         uint8 x;      // 0-24
