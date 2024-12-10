@@ -7,9 +7,11 @@ import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import '@openzeppelin/contracts/utils/Base64.sol';
-//import "../libs/helpers/Base64.sol";
+
+import "../libs/helpers/Errors.sol";
 
 contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable {
+    uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
 
     address payable internal _deployer;
     bool private _contractSealed;
@@ -20,12 +22,12 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     mapping(address => uint256) public _allowList;
 
     modifier unsealed() {
-        require(!_contractSealed, "Contract sealed.");
+        require(!_contractSealed, Errors.CONTRACT_SEALED);
         _;
     }
 
     modifier onlyDeployer() {
-        require(msg.sender == _deployer, "Only deployer.");
+        require(msg.sender == _deployer, Errors.ONLY_CREATOR);
         _;
     }
 
@@ -65,7 +67,8 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
 
     //@ERC721
     function mint(address to) public payable {
-
+        require(to != Errors.ZERO_ADDR, Errors.INV_ADD);
+        require(_index <= TOKEN_LIMIT);
     }
 
     function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
