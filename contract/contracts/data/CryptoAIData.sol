@@ -16,11 +16,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     uint8 internal constant GRID_SIZE = 24;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
-    string internal constant SVG_X = 'x="';
-    string internal constant SVG_Y = 'y="';
-    string internal constant SVG_WIDTH = ' width="1" height="1" ';
-    string internal constant SVG_RECT = '<rect ';
-    string internal constant SVG_CLOSE_RECT = '/>';
+    string internal constant SVG_Y = '" y="';
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
+    string internal constant SVG_RECT = '<rect x="';
+    string internal constant SVG_CLOSE_RECT = ')" />';
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => uint16) private itemCounts;
@@ -113,7 +112,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8 x;
         uint8 y;
         for (uint i = 0; i < pixel.length; i += 4) {
-
             if (pixel[i + 3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % GRID_SIZE);
@@ -124,12 +122,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                         string(
                             abi.encodePacked(
                                 SVG_RECT,
-                                SVG_X,
-                                StringsUpgradeable.toString(x), '" ',
+                                StringsUpgradeable.toString(x),
                                 SVG_Y,
-                                StringsUpgradeable.toString(y), '" ',
+                                StringsUpgradeable.toString(y),
                                 SVG_WIDTH,
-                                'fill="rgb(', StringsUpgradeable.toString(uint8(pixel[i])), ',', StringsUpgradeable.toString(uint8(pixel[i + 1])), ',', StringsUpgradeable.toString(uint8(pixel[i + 2])), ')" ',
+                                StringsUpgradeable.toString(uint8(pixel[i])), ',', StringsUpgradeable.toString(uint8(pixel[i + 1])), ',', StringsUpgradeable.toString(uint8(pixel[i + 2])),
                                 SVG_CLOSE_RECT
                             )
                         )
