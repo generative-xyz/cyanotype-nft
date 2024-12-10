@@ -14,6 +14,13 @@ async function main() {
     console.log('CryptoAIData contract address:', address);
     await updateConfig("dataContractAddress", address);
     console.log('Deploy succesful');
+
+    const deployer = await dataContract.getDeployer(address)
+    console.log("deployer", deployer);
+
+    await dataContract.addItem(address, 0)
+    const item = await dataContract.getItem(address, 0)
+    console.log("item", item)
 }
 
 main().catch(error => {
