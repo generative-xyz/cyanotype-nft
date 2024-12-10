@@ -12,10 +12,8 @@ import 'hardhat/console.sol';
 
 contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
-    uint16 newTokenId; // Changed to uint16
     uint16 private tokenIdCounter; // Changed to uint16
 
-    uint8 constant PIXEL_SIZE = 24;
     uint8 constant GRID_SIZE = 24;
 
     struct PositionDetail {
@@ -34,8 +32,6 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     mapping(string => mapping(uint16 => ItemDetail)) private items;
     mapping(string => uint16) private itemCounts;
     mapping(uint16 => uint256) public seedTokenId;
-    mapping(uint16 => bool) private tokenExists; // Changed to uint16 since max is 10000
-    mapping(address => bool) public addressMint;
 
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait);
@@ -79,8 +75,8 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         uint16 numPixels = uint16(_positions.length / 5);
         for (uint i = 0; i < numPixels; i++) {
             uint index = i * 5;
-            require(_positions[index] <= 24, "X coordinate must be <= 24");
-            require(_positions[index + 1] <= 24, "Y coordinate must be <= 24");
+            require(_positions[index] <= GRID_SIZE, "X coordinate must be <= 24");
+            require(_positions[index + 1] <= GRID_SIZE, "Y coordinate must be <= 24");
         }
 
         uint16 itemId = uint16(itemCounts[_itemType]++);
@@ -156,7 +152,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             }
 
             // Calculate pixel position
-            p = (uint16(pos[idx + 1]) * 24 + uint16(pos[idx])) * 4;
+            p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) * 4;
 
             // Set RGBA values directly
             pixels[p] = bytes1(pos[idx + 2]);     // R
@@ -180,9 +176,9 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
             if (pixel[i + 3] > 0) {
                 temp = i >> 2;
-                x = uint8(temp % 24);
-                y = uint8(temp / 24);
-                if (x < 24 && y < 24) {
+                x = uint8(temp % GRID_SIZE);
+                y = uint8(temp / GRID_SIZE);
+                if (x < GRID_SIZE && y < GRID_SIZE) {
                     rects = string(abi.encodePacked(
                         rects,
                         string(
@@ -288,12 +284,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     function mint(address to) public payable {
         require(to != address(0));
         require(tokenIdCounter < TOKEN_LIMIT, 'Mints have exceeded the limit');
-        newTokenId = tokenIdCounter;
-        tokenExists[newTokenId] = true;
-        _safeMint(to, newTokenId);
-        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, newTokenId)));
-        seedTokenId[newTokenId] = seed;
-        emit TokenMinted(newTokenId);
+        _safeMint(to, tokenIdCounter);
+        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, tokenIdCounter)));
+        seedTokenId[tokenIdCounter] = seed;
+        emit TokenMinted(tokenIdCounter);
         tokenIdCounter += 1;
     }
 
