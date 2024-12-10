@@ -11,7 +11,7 @@
         "hh:verify": "npx hardhat verify",
         "blockscout:verify": "npx hardhat blockscout-verify",
         "ts:run": "npx ts-node",
-        "hh:deploy": "npx hardhat compile & npx hardhat run --network testChain scripts/deploy.js"
+        "hh:deploy": "npx hardhat compile & npx hardhat run --network local scripts/deploy.js"
     },
     "keywords": [],
     "author": "",
