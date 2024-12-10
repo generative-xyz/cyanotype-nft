@@ -11,6 +11,8 @@ import '@openzeppelin/contracts/utils/Base64.sol';
 import "../libs/helpers/Errors.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 
+import 'hardhat/console.sol';
+
 contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable {
     uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
 
