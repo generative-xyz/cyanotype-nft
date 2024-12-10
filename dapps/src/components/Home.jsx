@@ -116,7 +116,7 @@ function Home() {
     }
 
     async function getItem() {
-        await contractABI.methods
+        await contractDataABI.methods
             .getItem('body', 0)
             .call().then(result => {
                 // var cutString = result.substring(0);
