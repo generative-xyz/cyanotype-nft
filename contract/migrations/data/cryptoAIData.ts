@@ -1,6 +1,6 @@
 import {createAlchemyWeb3} from "@alch/alchemy-web3";
 import * as path from "path";
-import {DATA_INPUT} from "./data";
+import {DATA_INPUT, DATA_VARIANT} from "./data";
 
 const {ethers, upgrades} = require("hardhat");
 const hardhatConfig = require("../../hardhat.config");
@@ -129,6 +129,80 @@ class CryptoAIData {
         const val: any = await temp?.nftContract.methods.getItem("body", index).call(tx);
         return val;
     }
+
+    async addDNA(contractAddress: any, gas: any, dna: string) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+
+        const fun = temp?.nftContract.methods.addDNA(dna)
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+            gas: gas,
+            data: fun.encodeABI(),
+        }
+
+        if (tx.gas == 0) {
+            tx.gas = await fun.estimateGas(tx);
+        }
+
+        return await this.signedAndSendTx(temp?.web3, tx);
+    }
+
+    async getDNA(contractAddress: any, index: number) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.getDNA(index).call(tx);
+        return val;
+    }
+
+    async addDNAVariant(contractAddress: any, gas: any) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        const fun = temp?.nftContract.methods.addDNAVariant(DATA_VARIANT.key, DATA_VARIANT.name, DATA_VARIANT.rate, DATA_VARIANT.position)
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+            gas: gas,
+            data: fun.encodeABI(),
+        }
+
+        if (tx.gas == 0) {
+            tx.gas = await fun.estimateGas(tx);
+        }
+
+        return await this.signedAndSendTx(temp?.web3, tx);
+    }
+
+    async getDNAVariant(contractAddress: any, index: number) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.getDNAVariant('monkey', index).call(tx);
+        return val;
+    }
+
 }
 
 export {CryptoAIData};

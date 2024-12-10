@@ -4,6 +4,7 @@ library CryptoAIStructs {
 
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, uint16 indexed itemId, string name, uint8 trait);
+    event DNAVariantAdded(string itemType, uint16 indexed itemId, string name, uint8 trait);
     event TokenMinted(uint256 tokenId);
 
     struct PositionDetail {

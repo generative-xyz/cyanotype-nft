@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "../interfaces/ICryptoAIData.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
+import "hardhat/console.sol";
 
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     // super admin
@@ -18,6 +19,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string private constant baseURL = 'data:image/svg+xml;base64,';
     string[] private VALID_ITEM_TYPES;
     uint8 internal constant GRID_SIZE = 24;
+//    uint8 internal constant DNA_SIZE;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
@@ -26,7 +28,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_CLOSE_RECT = ')" />';
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
+    mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
     mapping(string => uint16) private itemCounts;
+    mapping(string => uint16) private dnaCounts;
+
+    string[] public DNA_TYPE;
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -53,12 +59,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         address deployer,
         address admin
     ) initializer public {
-        VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
+        VALID_ITEM_TYPES = ["mouth", "cloth", "eye", "head"];
         _deployer = deployer;
         _admin = admin;
 
         __Ownable_init();
-
     }
 
     function changeAdmin(address newAdm) external onlyAdmin {
@@ -77,6 +82,50 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////
+    function addDNA(string memory dnaType) public returns (string memory dna) {
+        DNA_TYPE.push(dnaType);
+        return dnaType;
+    }
+
+    function getDNA(uint8 indexDNA) public view returns (string memory) {
+        return DNA_TYPE[indexDNA];
+    }
+
+    function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
+        //onlyDeployer
+    returns (uint16){
+        console.log("_DNAName", _DNAName);
+
+        require(_positions.length % 5 == 0, "Invalid positions array length");
+        require(_trait <= 200, "Trait must be <= 200");
+
+        uint16 numPixels = uint16(_positions.length / 5);
+        for (uint i = 0; i < numPixels; i++) {
+            uint index = i * 5;
+            require(_positions[index] <= GRID_SIZE, "X coordinate must be <= 24");
+            require(_positions[index + 1] <= GRID_SIZE, "Y coordinate must be <= 24");
+        }
+
+        uint16 itemId = uint16(dnaCounts[_DNAType]++);
+
+        DNA_Variants[_DNAType][itemId].name = _DNAName;
+        DNA_Variants[_DNAType][itemId].trait = _trait;
+        DNA_Variants[_DNAType][itemId].positions = _positions;
+
+        emit CryptoAIStructs.DNAVariantAdded(_DNAType, itemId, _DNAName, _trait);
+        return itemId;
+    }
+
+    function getDNAVariant(string memory _DNAType, uint16 _itemId) public view returns (
+        string memory name,
+        uint8 trait,
+        uint8[] memory positions
+    ) {
+        require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
+        CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType][_itemId];
+        return (item.name, item.trait, item.positions);
+    }
+
     function addItem(
         string memory _itemType,
         string memory _name,
