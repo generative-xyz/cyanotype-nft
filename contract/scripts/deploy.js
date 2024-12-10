@@ -8,7 +8,7 @@ async function main() {
   const mainContract = await hre.ethers.deployContract('CharacterInfo');
   await mainContract.waitForDeployment();
   let contractAddress = await mainContract.getAddress();
-  console.log('Contract address:', contractAddress);
+  console.log('contract address:', contractAddress);
   await Config.updateConfig(contractAddress);
   console.log('Deploy succesful');
 }

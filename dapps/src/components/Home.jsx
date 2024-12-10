@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import ABI from '../../../Contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
+import ABI from '../../../contract/artifacts/contracts/NFTs.sol/CharacterInfo.json';
 import Web3 from 'web3';
 import {Button, Card, Col, Row, Space, Typography} from 'antd';
 import {DATA_INPUT} from "./data";
