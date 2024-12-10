@@ -1,57 +1,143 @@
-// require('@nomicfoundation/hardhat-toolbox');
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
+require("dotenv").config();
+require("@nomiclabs/hardhat-ethers");
+require("hardhat-gas-reporter");
+require('hardhat-contract-sizer');
+require("@nomiclabs/hardhat-etherscan");
+require('@openzeppelin/hardhat-upgrades');
+var verify = require("@ericxstone/hardhat-blockscout-verify");
 
-// /** @type import('hardhat/config').HardhatUserConfig */
-// module.exports = {
-//   networks: {
-//     // hardhat: {
-//     //   allowUnlimitedContractSize: true,
-//     // },
-//     nos: {
-//       url: 'https://tc-node-manual.regtest.trustless.computer/',
-//       // chainId: 22215,
-//       accounts: [
-//         '8166f546bab6da521a8369cab06c5d2b9e46670292d85c875ee9ec20e84ffb61',
-//       ],
-//     },
-//   },
-//   solidity: '0.8.18',
-//   settings: {
-//     optimizer: {
-//       enabled: true,
-//       runs: 200,
-//     },
-//   },
-//   paths: {
-//     sources: './contracts',
-//     tests: './test',
-//     cache: './cache',
-//     artifacts: './artifacts',
-//   },
-// };
-
-require('@nomicfoundation/hardhat-toolbox');
-require('dotenv').config();
 module.exports = {
-  solidity: '0.8.9',
+  solidity: {
+    version: "0.8.12",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
+  defaultNetwork: process.env.NETWORK,
+  etherscan: {
+    apiKey: process.env.ETHSCAN_API_KEY,
+    customChains: [
+      {
+        network: "tc_mainnet",
+        chainId: 22213,
+        urls: {
+          apiURL: "https://explorer.trustless.computer/api",
+          browserURL: "https://explorer.trustless.computer/api"
+        }
+      },
+      {
+        network: "tc_testnet",
+        chainId: 22215,
+        urls: {
+          apiURL: "https://explorer.regtest.trustless.computer/api",
+          browserURL: "https://explorer.regtest.trustless.computer/api"
+        }
+      }
+    ]
+  },
   networks: {
-    polygon: {
-      url: 'https://polygon-mainnet.infura.io',
-      accounts: [`${process.env.PRIVATE_KEY}`],
-      chainId: 137,
-    },
-    testChain: {
-      url: 'http://127.0.0.1:8545/',
-      accounts: [`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`],
-      chainId: 31337,
-    },
     hardhat: {
       allowUnlimitedContractSize: true,
     },
+    local: {
+      url: process.env.LOCAL_API_URL,
+      accounts: [
+        `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`,
+      ],
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    goerli: {
+      url: process.env.GOERLI_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    ropsten: {
+      url: process.env.ROPSTEN_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+      gas: 500000,
+    },
+    mainnet: {
+      url: process.env.MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    polygon: {
+      url: process.env.POLYGON_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    mumbai: {
+      url: process.env.POLYGON_MUMBAI_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    fantom: {
+      url: process.env.FANTOM_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    fantom_testnet: {
+      url: process.env.FANTOM_TESTNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    harmony: {
+      url: process.env.HARMONY_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    harmony_testnet: {
+      url: process.env.HARMONY_TESTNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    kardia: {
+      url: process.env.KARDIA_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    kardia_testnet: {
+      url: process.env.KARDIA_TESTNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    aurora: {
+      url: process.env.AURORA_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    aurora_testnet: {
+      url: process.env.AURORA_TESTNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    bsc_mainnet: {
+      url: process.env.BSC_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    bsc_testnet: {
+      url: process.env.BSC_TESTNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    tc_testnet: {
+      url: process.env.TC_TESTNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    tc_mainnet: {
+      url: process.env.TC_MAINNET_API_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+      timeout: 100_000,
+    }
   },
-  paths: {
-    sources: './contracts',
-    tests: './test',
-    cache: './cache',
-    artifacts: './artifacts',
+  mocha: {
+    timeout: 40000000,
   },
+  blockscoutVerify: {
+    blockscoutURL: "https://explorer.regtest.trustless.computer/api",
+    contracts: {
+      "SOUL": {
+        compilerVersion: verify.SOLIDITY_VERSION.SOLIDITY_V_8_12,
+        optimization: false,
+        evmVersion: verify.EVM_VERSION.EVM_BERLIN,
+        optimizationRuns: 200,
+      },
+    }
+  }
 };

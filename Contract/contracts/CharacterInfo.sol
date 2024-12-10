@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
+
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
@@ -8,6 +9,7 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import 'hardhat/console.sol';
+
 contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
     uint16 newTokenId; // Changed to uint16
@@ -50,8 +52,8 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
-        for(uint i = 0; i < VALID_ITEM_TYPES.length; i++) {
-            if(keccak256(abi.encodePacked(_itemType)) == keccak256(abi.encodePacked(VALID_ITEM_TYPES[i]))) {
+        for (uint i = 0; i < VALID_ITEM_TYPES.length; i++) {
+            if (keccak256(abi.encodePacked(_itemType)) == keccak256(abi.encodePacked(VALID_ITEM_TYPES[i]))) {
                 isValid = true;
                 break;
             }
@@ -75,7 +77,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         require(_trait <= 200, "Trait must be <= 200");
 
         uint16 numPixels = uint16(_positions.length / 5);
-        for(uint i = 0; i < numPixels; i++) {
+        for (uint i = 0; i < numPixels; i++) {
             uint index = i * 5;
             require(_positions[index] <= 24, "X coordinate must be <= 24");
             require(_positions[index + 1] <= 24, "Y coordinate must be <= 24");
@@ -138,14 +140,14 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
         uint16 p;
         uint8[] memory pos;
         uint idx;
-        for(uint i = 0; i < totalLength; i += 5) {
-            if(i < positions.length) {
+        for (uint i = 0; i < totalLength; i += 5) {
+            if (i < positions.length) {
                 pos = positions;
                 idx = i;
-            } else if(i < positions.length + positions2.length) {
+            } else if (i < positions.length + positions2.length) {
                 pos = positions2;
                 idx = i - positions.length;
-            } else if(i < positions.length + positions2.length + positions3.length) {
+            } else if (i < positions.length + positions2.length + positions3.length) {
                 pos = positions3;
                 idx = i - positions.length - positions2.length;
             } else {
@@ -154,13 +156,13 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
             }
 
             // Calculate pixel position
-            p = (uint16(pos[idx+1]) * 24 + uint16(pos[idx])) * 4;
-            
+            p = (uint16(pos[idx + 1]) * 24 + uint16(pos[idx])) * 4;
+
             // Set RGBA values directly
-            pixels[p] = bytes1(pos[idx+2]);     // R
-            pixels[p+1] = bytes1(pos[idx+3]);   // G 
-            pixels[p+2] = bytes1(pos[idx+4]);   // B
-            pixels[p+3] = bytes1(0xFF);         // A
+            pixels[p] = bytes1(pos[idx + 2]);     // R
+            pixels[p + 1] = bytes1(pos[idx + 3]);   // G
+            pixels[p + 2] = bytes1(pos[idx + 4]);   // B
+            pixels[p + 3] = bytes1(0xFF);         // A
         }
 
         return pixels;
@@ -172,14 +174,15 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
 
         string memory rects = '';
         uint temp = 0;
-        uint8 x; uint8 y;
-        for(uint i = 0; i < pixel.length; i += 4) {
+        uint8 x;
+        uint8 y;
+        for (uint i = 0; i < pixel.length; i += 4) {
 
-            if(pixel[i+3] > 0) {
+            if (pixel[i + 3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % 24);
                 y = uint8(temp / 24);
-                if(x < 24 && y < 24) {
+                if (x < 24 && y < 24) {
                     rects = string(abi.encodePacked(
                         rects,
                         string(
@@ -190,7 +193,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                                 SVG_Y,
                                 toString(y), '" ',
                                 SVG_WIDTH,
-                                'fill="rgb(', toString(uint8(pixel[i])), ',', toString(uint8(pixel[i+1])), ',', toString(uint8(pixel[i+2])),')" ',
+                                'fill="rgb(', toString(uint8(pixel[i])), ',', toString(uint8(pixel[i + 1])), ',', toString(uint8(pixel[i + 2])), ')" ',
                                 SVG_CLOSE_RECT
                             )
                         )
@@ -322,7 +325,7 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         '"',
                         ',',
                         '"image": "',
-                        svgToImageURI(renderFullSVGWithGrid( tokenId)),
+                        svgToImageURI(renderFullSVGWithGrid(tokenId)),
                         '"',
                         '}'
                     )
