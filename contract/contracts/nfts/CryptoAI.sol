@@ -14,9 +14,18 @@ import "../libs/structs/CryptoAIStructsLibs.sol";
 import 'hardhat/console.sol';
 
 contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable {
-    uint16 public constant TOKEN_LIMIT = 10000; // Changed to 10000
+    uint256 public constant TOKEN_LIMIT = 10000; // Changed to 10000
+    uint256 public constant MINT_PRINT = 1 ** 18; // Changed to 10000
 
-    address payable internal _deployer;
+    // super admin
+    address public _admin;
+    // parameter control address
+    address public _paramsAddress;
+    // randomizer
+    address public _randomizerAddr;
+    // deployer
+    address public _deployer;
+
     bool private _contractSealed;
     uint256 public _indexMint;
     mapping(address => uint256) public _allowList;
@@ -29,7 +38,12 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     }
 
     modifier onlyDeployer() {
-        require(msg.sender == _deployer, Errors.ONLY_CREATOR);
+        require(msg.sender == _deployer, Errors.ONLY_DEPLOYER);
+        _;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == _deployer, Errors.ONLY_ADMIN_ALLOWED);
         _;
     }
 
@@ -45,6 +59,23 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         __ERC721_init(name, symbol);
         __ERC721URIStorage_init();
         __Ownable_init();
+    }
+
+    function changeAdmin(address newAdm) external onlyAdmin {
+        require(msg.sender == _admin && newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
+        if (_admin != newAdm) {
+            address _previousAdmin = _admin;
+            _admin = newAdm;
+        }
+    }
+
+    function changeParamAddr(address newAddr) external onlyAdmin {
+        require(msg.sender == _admin && newAddr != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
+
+        // change
+        if (_paramsAddress != newAddr) {
+            _paramsAddress = newAddr;
+        }
     }
 
     function setAllowList(address[] memory allowList) public onlyDeployer unsealed {
@@ -66,7 +97,7 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     function mint(address to) public payable {
         require(to != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(_indexMint <= TOKEN_LIMIT);
-
+//        require(msg.value >)
         _safeMint(to, _indexMint);
         uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, _indexMint)));
         seedTokenId[_indexMint] = seed;
