@@ -42,6 +42,8 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
     string[] private VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
+    string internal constant SVG_X = 'x="';
+    string internal constant SVG_Y = 'y="';
     string internal constant SVG_WIDTH = ' width="1" height="1" ';
     string internal constant SVG_RECT = '<rect ';
     string internal constant SVG_CLOSE_RECT = '/>';
@@ -185,8 +187,10 @@ contract CharacterInfo is ERC721, ERC721URIStorage, Ownable, ERC721Burnable {
                         string(
                             abi.encodePacked(
                                 SVG_RECT,
-                                'x="', toString(x), '" ',
-                                'y="', toString(y), '" ',
+                                SVG_X,
+                                toString(x), '" ',
+                                SVG_Y,
+                                toString(y), '" ',
                                 SVG_WIDTH,
                                 'fill="rgb(', toString(uint8(pixel[i])), ',', toString(uint8(pixel[i+1])), ',', toString(uint8(pixel[i+2])),')" ',
                                 SVG_CLOSE_RECT
