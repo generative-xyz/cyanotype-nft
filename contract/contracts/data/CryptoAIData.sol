@@ -213,13 +213,22 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function renderFullSVGWithGrid(uint256 tokenId) external view returns (string memory) {
-        IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
+        /*IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
         bool unlocked = nft.checkUnlockedNFT(tokenId);
         if (unlocked) {
             (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
-        }
+        }*/
+
         // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
+
+        string memory DNAType = DNA_TYPE[tokenId];
+        CryptoAIStructs.ItemDetail[] memory shuffleDNAVariantMouth = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayShirt = shuffleArray(tokenId, getArrayItemsType("shirt"));
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
+
+
+        bytes memory pixel = createMultipleRects(DNA_Variants[DNAType][uint16(tokenId)].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
 
         string memory rects = '';
         uint temp = 0;
@@ -278,6 +287,15 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             bodyItems[i] = items[_itemType][i];
         }
         return bodyItems;
+    }
+
+    function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+        uint16 count = dnaCounts[_DNAType];
+        CryptoAIStructs.ItemDetail[] memory DNAItems = new CryptoAIStructs.ItemDetail[](count);
+        for (uint16 i = 0; i < count; i++) {
+            DNAItems[i] = DNA_Variants[_DNAType][i];
+        }
+        return DNAItems;
     }
 
     function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {

@@ -79,12 +79,10 @@ async function main() {
         const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna);
         console.log("getDNAVariant", getDNAVariant);
     }
-    // const getDNAVariant = await dataContract.getDNAVariant(address, 0);
 
     // Render SVG
-    // const fullSVG = await dataContract.renderFullSVGWithGrid(address, 0);
-
-    // console.log("fullSVG", fullSVG);
+    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 0);
+    console.log("fullSVG", fullSVG);
 
 }
 
