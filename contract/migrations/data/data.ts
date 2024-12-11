@@ -1100,7 +1100,7 @@ const DATA_CLOTH =  [
     }
 ]
 
-enum DNA {
+export enum DNA {
     MONKEY = 'monkey',
     CAT = 'cat',
     DOG = 'dog',

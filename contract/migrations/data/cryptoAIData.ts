@@ -1,6 +1,6 @@
 import {createAlchemyWeb3} from "@alch/alchemy-web3";
 import * as path from "path";
-import {DATA_INPUT, DATA_VARIANT} from "./data";
+import {DATA_INPUT, DATA_VARIANT, DNA} from "./data";
 
 const {ethers, upgrades} = require("hardhat");
 const hardhatConfig = require("../../hardhat.config");
@@ -174,12 +174,12 @@ class CryptoAIData {
         return val;
     }
 
-    async addDNAVariant(contractAddress: any, gas: any) {
+    async addDNAVariant(contractAddress: any, gas: any,  key: DNA, obj: { name: any; positions: number[]; }) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
 
-        const fun = temp?.nftContract.methods.addDNAVariant(DATA_VARIANT[0].key, DATA_VARIANT[0].name, DATA_VARIANT[0].rate, DATA_VARIANT[0].position);
+        const fun = temp?.nftContract.methods.addDNAVariant(key, obj.name, 20, obj.positions);
         //the transaction
         const tx = {
             from: this.senderPublicKey,
