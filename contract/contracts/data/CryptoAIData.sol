@@ -9,7 +9,7 @@ import "../interfaces/ICryptoAIData.sol";
 import "../interfaces/IAgentNFT.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
-
+import "hardhat/console.sol";
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     // super admin
     address public _admin;
@@ -62,7 +62,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         address deployer,
         address admin
     ) initializer public {
-        VALID_ITEM_TYPES = ["mouth", "cloth", "eye", "head"];
+        VALID_ITEM_TYPES = ["body", "mouth", "eye", "head"];
         _deployer = deployer;
         _admin = admin;
 
@@ -162,14 +162,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return itemId;
     }
 
-    function getItem(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (
-        string memory name,
-        uint8 trait,
-        uint8[] memory positions
-    ) {
+    function getItem(string memory _itemType, uint16 _itemId) public view validItemType(_itemType) returns (CryptoAIStructs.ItemDetail memory) {
         require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
         CryptoAIStructs.ItemDetail memory item = items[_itemType][_itemId];
-        return (item.name, item.trait, item.positions);
+        return item;
     }
 
     //
@@ -178,25 +174,32 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
-    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4) internal pure returns (bytes memory) {
+    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4, uint8[] memory positions5) internal pure returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
-        uint totalLength = positions.length + positions2.length + positions3.length + positions4.length;
-        uint16 p;
-        uint8[] memory pos;
         uint idx;
+        uint totalLength = positions.length + positions2.length + positions3.length + positions4.length + positions5.length;
+
+        uint8[] memory pos;
+
+        uint16 p;
+        uint16 positionLength = uint16(positions.length);
+
         for (uint i = 0; i < totalLength; i += 5) {
-            if (i < positions.length) {
+            if (i < positionLength) {
                 pos = positions;
                 idx = i;
-            } else if (i < positions.length + positions2.length) {
+            } else if (i < positionLength + positions2.length) {
                 pos = positions2;
-                idx = i - positions.length;
-            } else if (i < positions.length + positions2.length + positions3.length) {
+                idx = i - positionLength;
+            } else if (i < positionLength + positions2.length + positions3.length) {
                 pos = positions3;
-                idx = i - positions.length - positions2.length;
-            } else {
+                idx = i - positionLength - positions2.length;
+            } else if (i < positionLength + positions2.length + positions3.length + positions4.length) {
                 pos = positions4;
-                idx = i - positions.length - positions2.length - positions3.length;
+                idx = i - positionLength - positions2.length - positions3.length;
+            } else {
+                pos = positions5;
+                idx = i - positionLength - positions2.length - positions3.length - positions4.length;
             }
 
             // Calculate pixel position
@@ -221,14 +224,33 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
 
-        string memory DNAType = DNA_TYPE[tokenId];
-        CryptoAIStructs.ItemDetail[] memory shuffleDNAVariantMouth = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayShirt = shuffleArray(tokenId, getArrayItemsType("shirt"));
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
+//        string memory DNAType = DNA_TYPE[tokenId];
+//        CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
+//
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayBody = shuffleArray(tokenId, getArrayItemsType("body"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayHead = shuffleArray(tokenId, getArrayItemsType("head"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
+
+        uint16 index = uint16(tokenId);
+
+        string memory DNAType = DNA_TYPE[index];
+        CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
+
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayBody = shuffleArray(0, getArrayItemsType("body"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayHead = shuffleArray(0, getArrayItemsType("head"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(0, getArrayItemsType("mouth"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(0, getArrayItemsType("eye"));
+//        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, shuffleArrayBody[index].positions,shuffleArrayMouth[index].positions, shuffleArrayCloth[index].positions, shuffleArrayEye[index].positions, shuffleArrayHead[index].positions);
 
 
-        bytes memory pixel = createMultipleRects(DNA_Variants[DNAType][uint16(tokenId)].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
+        CryptoAIStructs.ItemDetail memory body = getItem( 'body', index);
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayHead = getArrayItemsType("head");
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
+//        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
+
+
+        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions,shuffleArrayHead[index].positions, items['eye'][index].positions,items['mouth'][index].positions);
 
         string memory rects = '';
         uint temp = 0;
@@ -280,22 +302,20 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return shuffledArray;
     }
 
-    function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+    function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory item) {
         uint16 count = itemCounts[_itemType];
-        CryptoAIStructs.ItemDetail[] memory bodyItems = new CryptoAIStructs.ItemDetail[](count);
+        item = new CryptoAIStructs.ItemDetail[](count);
         for (uint16 i = 0; i < count; i++) {
-            bodyItems[i] = items[_itemType][i];
+            item[i] = items[_itemType][i];
         }
-        return bodyItems;
     }
 
-    function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+    function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
-        CryptoAIStructs.ItemDetail[] memory DNAItems = new CryptoAIStructs.ItemDetail[](count);
+        DNAItems = new CryptoAIStructs.ItemDetail[](count);
         for (uint16 i = 0; i < count; i++) {
             DNAItems[i] = DNA_Variants[_DNAType][i];
         }
-        return DNAItems;
     }
 
     function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {

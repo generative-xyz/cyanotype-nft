@@ -1,8 +1,8 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig, updateConfig} from "../../index";
 import {
+    DATA_BODY,
     DATA_CAT_VARIANT,
-    DATA_CLOTH,
     DATA_DNA, DATA_DOG_VARIANT,
     DATA_EYE,
     DATA_FROG_VARIANT,
@@ -33,14 +33,14 @@ async function main() {
     for (const ele of DATA_MOUTH) {
         await dataContract.addItem(address, 0, ELEMENT.MOUTH, ele);
     }
+    for (const ele of DATA_BODY) {
+        await dataContract.addItem(address, 0, ELEMENT.BODY, ele);
+    }
     for (const ele of DATA_HEAD) {
         await dataContract.addItem(address, 0, ELEMENT.HEAD, ele);
     }
     for (const ele of DATA_EYE) {
         await dataContract.addItem(address, 0, ELEMENT.EYE, ele);
-    }
-    for (const ele of DATA_CLOTH) {
-        await dataContract.addItem(address, 0, ELEMENT.CLOTH, ele);
     }
 
     // await dataContract.getItem(address, 0)
@@ -77,12 +77,15 @@ async function main() {
 
     for (const dna of DATA_DNA) {
         const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna);
-        console.log("getDNAVariant", getDNAVariant);
+        // console.log("getDNAVariant", getDNAVariant);
     }
 
     // Render SVG
-    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 0);
+    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 1);
     console.log("fullSVG", fullSVG);
+
+/*    const ele = await dataContract.getArrayItemsType(address, ELEMENT.HEAD);
+    console.log("ele", ele);*/
 
 }
 

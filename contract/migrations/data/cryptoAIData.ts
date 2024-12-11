@@ -225,6 +225,21 @@ class CryptoAIData {
         const val: any = await temp?.nftContract.methods.renderFullSVGWithGrid(token).call(tx);
         return val;
     }
+
+    async getArrayItemsType(contractAddress: any, _itemType: string) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.getArrayItemsType(_itemType).call(tx);
+        return val;
+    }
 }
 
 export {CryptoAIData};
