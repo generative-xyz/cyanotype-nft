@@ -6,6 +6,7 @@ import '@openzeppelin/contracts/utils/Base64.sol';
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
 import "../interfaces/ICryptoAIData.sol";
+import "../interfaces/IAgentNFT.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
 
@@ -14,6 +15,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     address public _admin;
     // deployer
     address public _deployer;
+    // crypto ai agent address
+    address public _cryptoAIAgentAddr;
 
     string private constant baseURL = 'data:image/svg+xml;base64,';
     string[] private VALID_ITEM_TYPES;
@@ -51,9 +54,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     modifier onlyAdmin() {
-        require(msg.sender == _deployer, Errors.ONLY_ADMIN_ALLOWED);
+        require(msg.sender == _admin, Errors.ONLY_ADMIN_ALLOWED);
         _;
     }
+
     function initialize(
         address deployer,
         address admin
@@ -66,7 +70,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function changeAdmin(address newAdm) external onlyAdmin {
-        require(msg.sender == _admin && newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
+        require(newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
         if (_admin != newAdm) {
             address _previousAdmin = _admin;
             _admin = newAdm;
@@ -77,6 +81,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
+        }
+    }
+
+    function changeCryptoAIAgentAddress(address newAddr) external onlyDeployer {
+        require(newAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
+        if (_cryptoAIAgentAddr != newAddr) {
+            _cryptoAIAgentAddr = newAddr;
         }
     }
 
@@ -129,7 +140,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8 _trait,
         uint8[] memory _positions
     ) public validItemType(_itemType)
-        //onlyDeployer
+    onlyDeployer
     returns (uint16) {
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
@@ -162,7 +173,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     //
-    function svgToImageURI(string memory svg) external pure returns (string memory) {
+    function svgToImageURI(string memory svg) internal pure returns (string memory) {
         string memory svgBase64Encoded = Base64.encode(bytes(svg));
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
@@ -202,20 +213,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function renderFullSVGWithGrid(uint256 tokenId) external view returns (string memory) {
-        //require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        bytes memory pixel = createMultipleRects(DNA_Variants['monkey'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
+        IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
+        bool unlocked = nft.checkUnlockedNFT(tokenId);
+        if (unlocked) {
 
-
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayBody = shuffleArray(tokenId, getArrayItemsType("body"));
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayShirt = shuffleArray(tokenId, getArrayItemsType("shirt"));
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
-
-        bytes memory pixel = createMultipleRects(
-            shuffleArrayBody[randomIndex(shuffleArrayBody.length, tokenId)].positions,
-            shuffleArrayMouth[randomIndex(shuffleArrayMouth.length, tokenId)].positions,
-            shuffleArrayShirt[randomIndex(shuffleArrayShirt.length, tokenId)].positions,
-            shuffleArrayEye[randomIndex(shuffleArrayEye.length, tokenId)].positions);
+        }
+        // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+        bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
 
         string memory rects = '';
         uint temp = 0;
@@ -252,7 +256,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 SVG_FOOTER
             )
         );
-        return svg;
+        return svgToImageURI(svg);
     }
 
     function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) public view returns (CryptoAIStructs.ItemDetail[] memory) {
