@@ -7,7 +7,7 @@ async function main() {
         return;
     }
 
-    await initConfig();
+    let configaaa = await initConfig();
 
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
     const address = await dataContract.deployUpgradeable(process.env.PUBLIC_KEY, process.env.PUBLIC_KEY)
@@ -15,12 +15,14 @@ async function main() {
     await updateConfig("dataContractAddress", address);
     console.log('Deploy succesful');
 
-    const deployer = await dataContract.getDeployer(address)
-    console.log("deployer", deployer);
+    await dataContract.upgradeContract(configaaa['dataContractAddress'])
 
-    await dataContract.addItem(address, 0)
-    const item = await dataContract.getItem(address, 0)
-    console.log("item", item)
+    // const deployer = await dataContract.getDeployer(address)
+    // console.log("deployer", deployer);
+    //
+    // await dataContract.addItem(address, 0)
+    // const item = await dataContract.getItem(address, 0)
+    // console.log("item", item)
 }
 
 main().catch(error => {
