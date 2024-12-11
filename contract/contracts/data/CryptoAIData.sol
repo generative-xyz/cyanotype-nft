@@ -27,7 +27,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')" />';
-    string internal constant PLACEHOLDER_IMAGE;
+//    string internal PLACEHOLDER_IMAGE = '';
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
@@ -281,7 +281,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {
-//        uint256 seed = seedTokenId[tokenId];
+        //uint256 seed = seedTokenId[tokenId];
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
         return randomNumber % maxLength;
     }

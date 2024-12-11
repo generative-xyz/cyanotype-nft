@@ -71,13 +71,20 @@ async function main() {
         await dataContract.addDNAVariant(address, 0, DNA.MONKEY, dna_variant);
     }
 
-    const getDNAVariant = await dataContract.getDNAVariant(address, 0);
+    for (const dna_variant of DATA_CAT_VARIANT) {
+        await dataContract.addDNAVariant(address, 0, DNA.CAT, dna_variant);
+    }
+
+    for (const dna of DATA_DNA) {
+        const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna);
+        console.log("getDNAVariant", getDNAVariant);
+    }
+    // const getDNAVariant = await dataContract.getDNAVariant(address, 0);
 
     // Render SVG
-    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 0);
+    // const fullSVG = await dataContract.renderFullSVGWithGrid(address, 0);
 
-    console.log("fullSVG", fullSVG);
-    console.log("getDNAVariant", getDNAVariant);
+    // console.log("fullSVG", fullSVG);
 
 }
 
