@@ -154,7 +154,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             }
 
             // Calculate pixel position
-            p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) * 4;
+            p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
 
             // Set RGBA values directly
             pixels[p] = bytes1(pos[idx + 2]);     // R
@@ -170,7 +170,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
         bool unlocked = nft.checkUnlockedNFT(tokenId);
         if (unlocked) {
-
+            (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
         }
         // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
         bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
