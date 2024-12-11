@@ -1,5 +1,6 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig, updateConfig} from "../../index";
+import {DATA_DNA, DATA_INPUT} from "./data";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -18,15 +19,26 @@ async function main() {
     const deployer = await dataContract.getDeployer(address)
     console.log("deployer", deployer);
 
-    await dataContract.addItem(address, 0)
-    const item = await dataContract.getItem(address, 0)
-    console.log('item', item);
-    await dataContract.addDNA(address, 0, 'monkey');
-    const dataDNA = await dataContract.getDNA(address, 0);
+    //ADD Element
+    for (const ele of DATA_INPUT) {
+        await dataContract.addItem(address, 0, ele);
+    }
+    await dataContract.getItem(address, 0)
+
+    //ADD DNA
+    for (const dna of DATA_DNA) {
+        await dataContract.addDNA(address, 0, dna);
+    }
+    await dataContract.getDNA(address, 0);
+
+    //ADD DNA Variant
     await dataContract.addDNAVariant(address, 0);
     const getDNAVariant = await dataContract.getDNAVariant(address, 0);
 
-    console.log("dataDNA", dataDNA);
+    // Render SVG
+    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 0);
+
+    console.log("fullSVG", fullSVG);
     console.log("getDNAVariant", getDNAVariant);
 
 }

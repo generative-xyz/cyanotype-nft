@@ -201,8 +201,20 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function renderFullSVGWithGrid(uint256 tokenId) external view returns (string memory) {
-        // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        bytes memory pixel = createMultipleRects(items['body'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
+        //require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+        bytes memory pixel = createMultipleRects(DNA_Variants['monkey'][0].positions, items['mouth'][0].positions, items['shirt'][0].positions, items['eye'][0].positions);
+
+
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayBody = shuffleArray(tokenId, getArrayItemsType("body"));
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayShirt = shuffleArray(tokenId, getArrayItemsType("shirt"));
+        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
+
+        bytes memory pixel = createMultipleRects(
+            shuffleArrayBody[randomIndex(shuffleArrayBody.length, tokenId)].positions,
+            shuffleArrayMouth[randomIndex(shuffleArrayMouth.length, tokenId)].positions,
+            shuffleArrayShirt[randomIndex(shuffleArrayShirt.length, tokenId)].positions,
+            shuffleArrayEye[randomIndex(shuffleArrayEye.length, tokenId)].positions);
 
         string memory rects = '';
         uint temp = 0;
@@ -240,5 +252,32 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             )
         );
         return svg;
+    }
+
+    function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+//        uint256 seed = seedTokenId[tokenId];
+        CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
+        uint256 n = shuffledArray.length;
+
+        for (uint256 i = 0; i < n; i++) {
+            uint256 j = i + uint256(keccak256(abi.encode(tokenId, i))) % (n - i);
+            (shuffledArray[i], shuffledArray[j]) = (shuffledArray[j], shuffledArray[i]);
+        }
+        return shuffledArray;
+    }
+
+    function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+        uint16 count = itemCounts[_itemType];
+        CryptoAIStructs.ItemDetail[] memory bodyItems = new CryptoAIStructs.ItemDetail[](count);
+        for (uint16 i = 0; i < count; i++) {
+            bodyItems[i] = items[_itemType][i];
+        }
+        return bodyItems;
+    }
+
+    function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {
+//        uint256 seed = seedTokenId[tokenId];
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
+        return randomNumber % maxLength;
     }
 }

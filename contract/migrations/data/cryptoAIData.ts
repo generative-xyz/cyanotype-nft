@@ -79,10 +79,10 @@ class CryptoAIData {
         return null;
     }
 
-    async addItem(contractAddress: any, gas: any) {
+    async addItem(contractAddress: any, gas: any, obj: { key: any; name: any; rate: any; position: any; }) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
-        const fun = temp?.nftContract.methods.addItem(DATA_INPUT[0].key, DATA_INPUT[0].name, DATA_INPUT[0].rate, DATA_INPUT[0].position)
+        const fun = temp?.nftContract.methods.addItem(obj.key, obj.name, obj.rate, obj.position)
         //the transaction
         const tx = {
             from: this.senderPublicKey,
@@ -203,6 +203,20 @@ class CryptoAIData {
         return val;
     }
 
+    async renderFullSVGWithGrid(contractAddress: any, token: number) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.renderFullSVGWithGrid(token).call(tx);
+        return val;
+    }
 }
 
 export {CryptoAIData};
