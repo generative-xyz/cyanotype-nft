@@ -54,6 +54,14 @@ class CryptoAIData {
         return {web3, nftContract};
     }
 
+    async upgradeContract(proxyAddress: any) {
+        const contractUpdated = await ethers.getContractFactory("CryptoAIData");
+        console.log('Upgrading CryptoAIData... by proxy ' + proxyAddress);
+        const tx = await upgrades.upgradeProxy(proxyAddress, contractUpdated);
+        console.log('CryptoAIData upgraded on tx address ' + await tx.getAddress());
+        return tx;
+    }
+
     async signedAndSendTx(web3: any, tx: any) {
         const signedTx = await web3.eth.accounts.signTransaction(tx, this.senderPrivateKey)
         if (signedTx.rawTransaction != null) {
