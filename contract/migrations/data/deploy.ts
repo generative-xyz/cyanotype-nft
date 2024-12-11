@@ -1,6 +1,6 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig, updateConfig} from "../../index";
-import {DATA_DNA, DATA_INPUT} from "./data";
+import {DATA_CLOTH, DATA_DNA, DATA_EYE, DATA_HEAD, DATA_MOUTH, ELEMENT} from "./data";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -19,10 +19,20 @@ async function main() {
     await dataContract.upgradeContract(configaaa['dataContractAddress'])
 
     //ADD Element
-    for (const ele of DATA_INPUT) {
-        await dataContract.addItem(address, 0, ele);
+    for (const ele of DATA_MOUTH) {
+        await dataContract.addItem(address, 0, ELEMENT.MOUTH, ele);
     }
-    await dataContract.getItem(address, 0)
+    for (const ele of DATA_HEAD) {
+        await dataContract.addItem(address, 0, ELEMENT.HEAD, ele);
+    }
+    for (const ele of DATA_EYE) {
+        await dataContract.addItem(address, 0, ELEMENT.EYE, ele);
+    }
+    for (const ele of DATA_CLOTH) {
+        await dataContract.addItem(address, 0, ELEMENT.CLOTH, ele);
+    }
+
+    // await dataContract.getItem(address, 0)
 
     //ADD DNA
     for (const dna of DATA_DNA) {

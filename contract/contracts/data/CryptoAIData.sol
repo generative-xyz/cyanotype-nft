@@ -24,6 +24,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')" />';
+    string internal constant PLACEHOLDER_IMAGE;
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
@@ -280,4 +281,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
         return randomNumber % maxLength;
     }
+
+    // 0 => chua unlock => tra ve placeholder URL IPFS => only one can update
+    // 1 => unlock roi chua mint => mapping range point
+    // 2 => unlock va duoc mint
 }
