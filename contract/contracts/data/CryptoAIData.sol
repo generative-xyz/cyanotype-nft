@@ -224,33 +224,18 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         // require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
 
-//        string memory DNAType = DNA_TYPE[tokenId];
-//        CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
-//
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayBody = shuffleArray(tokenId, getArrayItemsType("body"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayHead = shuffleArray(tokenId, getArrayItemsType("head"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
-
         uint16 index = uint16(tokenId);
 
         string memory DNAType = DNA_TYPE[index];
+
         CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
 
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayBody = shuffleArray(0, getArrayItemsType("body"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayHead = shuffleArray(0, getArrayItemsType("head"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(0, getArrayItemsType("mouth"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(0, getArrayItemsType("eye"));
-//        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, shuffleArrayBody[index].positions,shuffleArrayMouth[index].positions, shuffleArrayCloth[index].positions, shuffleArrayEye[index].positions, shuffleArrayHead[index].positions);
+        CryptoAIStructs.ItemDetail memory body = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))];
+        CryptoAIStructs.ItemDetail memory head = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))];
+        CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
+        CryptoAIStructs.ItemDetail memory mouth = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))];
 
-
-        CryptoAIStructs.ItemDetail memory body = getItem( 'body', index);
-        CryptoAIStructs.ItemDetail[] memory shuffleArrayHead = getArrayItemsType("head");
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayMouth = shuffleArray(tokenId, getArrayItemsType("mouth"));
-//        CryptoAIStructs.ItemDetail[] memory shuffleArrayEye = shuffleArray(tokenId, getArrayItemsType("eye"));
-
-
-        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions,shuffleArrayHead[index].positions, items['eye'][index].positions,items['mouth'][index].positions);
+        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions,head.positions, items['eye'][0].positions,mouth.positions);
 
         string memory rects = '';
         uint temp = 0;
@@ -302,13 +287,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return shuffledArray;
     }
 
-    function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory item) {
+    /*function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory item) {
         uint16 count = itemCounts[_itemType];
         item = new CryptoAIStructs.ItemDetail[](count);
         for (uint16 i = 0; i < count; i++) {
             item[i] = items[_itemType][i];
         }
-    }
+    }*/
 
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
