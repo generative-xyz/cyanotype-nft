@@ -276,7 +276,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) public view returns (CryptoAIStructs.ItemDetail[] memory) {
-//        uint256 seed = seedTokenId[tokenId];
         CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
         uint256 n = shuffledArray.length;
 
