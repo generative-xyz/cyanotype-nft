@@ -15,19 +15,18 @@ async function main() {
     await updateConfig("dataContractAddress", address);
     console.log('Deploy succesful');
 
-    // const deployer = await dataContract.getDeployer(address)
-    // console.log("deployer", deployer);
-    //
-    // await dataContract.addItem(address, 0)
-    // const item = await dataContract.getItem(address, 0)
-    // console.log("item", item)
+    const deployer = await dataContract.getDeployer(address)
+    console.log("deployer", deployer);
+
+    await dataContract.addItem(address, 0)
+    const item = await dataContract.getItem(address, 0)
+    console.log('item', item);
     await dataContract.addDNA(address, 0, 'monkey');
     const dataDNA = await dataContract.getDNA(address, 0);
-    console.log('dataDNA', dataDNA)
     await dataContract.addDNAVariant(address, 0);
     const getDNAVariant = await dataContract.getDNAVariant(address, 0);
 
-    // console.log("dataDNA", dataDNA);
+    console.log("dataDNA", dataDNA);
     console.log("getDNAVariant", getDNAVariant);
 
 }

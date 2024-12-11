@@ -8,7 +8,6 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "../interfaces/ICryptoAIData.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
-import "hardhat/console.sol";
 
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     // super admin
@@ -19,7 +18,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string private constant baseURL = 'data:image/svg+xml;base64,';
     string[] private VALID_ITEM_TYPES;
     uint8 internal constant GRID_SIZE = 24;
-//    uint8 internal constant DNA_SIZE;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
@@ -94,8 +92,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
         //onlyDeployer
     returns (uint16){
-        console.log("_DNAName", _DNAName);
-
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
 
