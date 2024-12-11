@@ -145,7 +145,7 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
                     abi.encodePacked(
                         '{',
                         '"image": "',
-                        cryptoAIDataContract.svgToImageURI(cryptoAIDataContract.renderFullSVGWithGrid(tokenId)),
+                        cryptoAIDataContract.renderFullSVGWithGrid(tokenId),
                         '}'
                     )
                 )
