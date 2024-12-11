@@ -27,9 +27,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')" />';
+    string internal constant PLACEHOLDER_IMAGE;
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
+    mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
     mapping(string => uint16) private itemCounts;
+    mapping(string => uint16) private dnaCounts;
+
+    string[] public DNA_TYPE;
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -57,12 +62,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         address deployer,
         address admin
     ) initializer public {
-        VALID_ITEM_TYPES = ["body", "mouth", "shirt", "eye"];
+        VALID_ITEM_TYPES = ["mouth", "cloth", "eye", "head"];
         _deployer = deployer;
         _admin = admin;
 
         __Ownable_init();
-
     }
 
     function changeAdmin(address newAdm) external onlyAdmin {
@@ -88,6 +92,48 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////
+    function addDNA(string memory dnaType) public returns (string memory dna) {
+        DNA_TYPE.push(dnaType);
+        return dnaType;
+    }
+
+    function getDNA(uint8 indexDNA) public view returns (string memory) {
+        return DNA_TYPE[indexDNA];
+    }
+
+    function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
+        //onlyDeployer
+    returns (uint16){
+        require(_positions.length % 5 == 0, "Invalid positions array length");
+        require(_trait <= 200, "Trait must be <= 200");
+
+        uint16 numPixels = uint16(_positions.length / 5);
+        for (uint i = 0; i < numPixels; i++) {
+            uint index = i * 5;
+            require(_positions[index] <= GRID_SIZE, "X coordinate must be <= 24");
+            require(_positions[index + 1] <= GRID_SIZE, "Y coordinate must be <= 24");
+        }
+
+        uint16 itemId = uint16(dnaCounts[_DNAType]++);
+
+        DNA_Variants[_DNAType][itemId].name = _DNAName;
+        DNA_Variants[_DNAType][itemId].trait = _trait;
+        DNA_Variants[_DNAType][itemId].positions = _positions;
+
+        emit CryptoAIStructs.DNAVariantAdded(_DNAType, itemId, _DNAName, _trait);
+        return itemId;
+    }
+
+    function getDNAVariant(string memory _DNAType, uint16 _itemId) public view returns (
+        string memory name,
+        uint8 trait,
+        uint8[] memory positions
+    ) {
+        require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
+        CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType][_itemId];
+        return (item.name, item.trait, item.positions);
+    }
+
     function addItem(
         string memory _itemType,
         string memory _name,
@@ -212,4 +258,35 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         );
         return svgToImageURI(svg);
     }
+
+    function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+//        uint256 seed = seedTokenId[tokenId];
+        CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
+        uint256 n = shuffledArray.length;
+
+        for (uint256 i = 0; i < n; i++) {
+            uint256 j = i + uint256(keccak256(abi.encode(tokenId, i))) % (n - i);
+            (shuffledArray[i], shuffledArray[j]) = (shuffledArray[j], shuffledArray[i]);
+        }
+        return shuffledArray;
+    }
+
+    function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+        uint16 count = itemCounts[_itemType];
+        CryptoAIStructs.ItemDetail[] memory bodyItems = new CryptoAIStructs.ItemDetail[](count);
+        for (uint16 i = 0; i < count; i++) {
+            bodyItems[i] = items[_itemType][i];
+        }
+        return bodyItems;
+    }
+
+    function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {
+//        uint256 seed = seedTokenId[tokenId];
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
+        return randomNumber % maxLength;
+    }
+
+    // 0 => not unlock => tra ve placeholder URL IPFS => only one can update
+    // 1 => unlock roi chua mint => mapping range point
+    // 2 => unlock va duoc mint
 }

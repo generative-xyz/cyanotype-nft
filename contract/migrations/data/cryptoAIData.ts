@@ -1,6 +1,6 @@
 import {createAlchemyWeb3} from "@alch/alchemy-web3";
 import * as path from "path";
-import {DATA_INPUT} from "./data";
+import {DATA_INPUT, DATA_VARIANT, DNA} from "./data";
 
 const {ethers, upgrades} = require("hardhat");
 const hardhatConfig = require("../../hardhat.config");
@@ -87,11 +87,10 @@ class CryptoAIData {
         return null;
     }
 
-    async addItem(contractAddress: any, gas: any) {
+    async addItem(contractAddress: any, gas: any, key: string, obj: { name: any; positions: any; }) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
-
-        const fun = temp?.nftContract.methods.addItem(DATA_INPUT[0].key, DATA_INPUT[0].name, DATA_INPUT[0].rate, DATA_INPUT[0].position)
+        const fun = temp?.nftContract.methods.addItem(key, obj.name, 20, obj.positions)
         //the transaction
         const tx = {
             from: this.senderPublicKey,
@@ -134,7 +133,96 @@ class CryptoAIData {
             nonce: nonce,
         }
 
-        const val: any = await temp?.nftContract.methods.getItem("body", index).call(tx);
+        const val: any = await temp?.nftContract.methods.getItem("mouth", index).call(tx);
+        return val;
+    }
+
+    async addDNA(contractAddress: any, gas: any, dna: string) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+
+        const fun = temp?.nftContract.methods.addDNA(dna)
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+            gas: gas,
+            data: fun.encodeABI(),
+        }
+
+        if (tx.gas == 0) {
+            tx.gas = await fun.estimateGas(tx);
+        }
+
+        return await this.signedAndSendTx(temp?.web3, tx);
+    }
+
+    async getDNA(contractAddress: any, index: number) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.getDNA(index).call(tx);
+        return val;
+    }
+
+    async addDNAVariant(contractAddress: any, gas: any,  key: DNA, obj: { name: any; positions: number[]; }) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+
+        const fun = temp?.nftContract.methods.addDNAVariant(key, obj.name, 20, obj.positions);
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+            gas: gas,
+            data: fun.encodeABI(),
+        }
+
+        if (tx.gas == 0) {
+            tx.gas = await fun.estimateGas(tx);
+        }
+
+        return await this.signedAndSendTx(temp?.web3, tx);
+    }
+
+    async getDNAVariant(contractAddress: any, index: number) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.getDNAVariant('monkey', index).call(tx);
+        return val;
+    }
+
+    async renderFullSVGWithGrid(contractAddress: any, token: number) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.renderFullSVGWithGrid(token).call(tx);
         return val;
     }
 }
