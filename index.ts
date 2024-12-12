@@ -20,4 +20,5 @@ async function updateConfig(key: ConfigField, value: string) {
     }
 }
 
-export {initConfig, updateConfig}
+export { initConfig, updateConfig };
+
