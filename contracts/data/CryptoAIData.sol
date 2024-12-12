@@ -29,10 +29,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
     // TODO:
-    // string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
-    bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
+    /*bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="#';*/
     // TODO: end
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="#';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')"/>';
     // placeholder
@@ -360,9 +360,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8 x;
         uint8 y;
         // TODO:
-        uint p;
+        /*uint p;
         uint8 value;
-        bytes memory buffer = new bytes(8);
+        bytes memory buffer = new bytes(8);*/
         // TODO: end
 
         for (uint i = 0; i < pixels.length; i += 4) {
@@ -372,13 +372,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 y = uint8(temp / GRID_SIZE);
                 if (x < GRID_SIZE && y < GRID_SIZE) {
                     // TODO:
-                    p = (y * 24 + x) * 4;
+                    /*p = (y * 24 + x) * 4;
                     for (uint k = 0; k < 4; k++) {
                         value = uint8(pixels[p + k]);
                         buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
                         value >>= 4;
                         buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
-                    }
+                    }*/
                     // TODO: end
 
                     svg = string(abi.encodePacked(
@@ -390,10 +390,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                             StringsUpgradeable.toString(y),
                             SVG_WIDTH,
                             // TODO:
-                            /*StringsUpgradeable.toString(uint8(pixels[i])), ',',
+                            StringsUpgradeable.toString(uint8(pixels[i])), ',',
                             StringsUpgradeable.toString(uint8(pixels[i + 1])), ',',
-                            StringsUpgradeable.toString(uint8(pixels[i + 2])),*/
-                            string(buffer),
+                            StringsUpgradeable.toString(uint8(pixels[i + 2])),
+                            /*string(buffer),*/
                             // TODO: end
                             SVG_CLOSE_RECT
                         )
