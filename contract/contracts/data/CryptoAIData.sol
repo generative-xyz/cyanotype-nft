@@ -10,6 +10,7 @@ import "../interfaces/IAgentNFT.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
 import "hardhat/console.sol";
+
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     // super admin
     address public _admin;
@@ -245,7 +246,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
         CryptoAIStructs.ItemDetail memory mouth = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))];
 
-        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions,head.positions, items['eye'][0].positions,mouth.positions);
+        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions, head.positions, items['eye'][0].positions, mouth.positions);
 
         string memory rects = '';
         uint temp = 0;

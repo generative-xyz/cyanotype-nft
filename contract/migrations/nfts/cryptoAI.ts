@@ -15,7 +15,8 @@ class CryptoAI {
         console.log("senderPublicKey", senderPublicKey);
     }
 
-    async deployUpgradeable(name: string, symbol: string,
+    async deployUpgradeable(name: string,
+                            symbol: string,
                             adminAddr: any,
                             deployerAddr: any,
                             paramsAddress: any,
@@ -29,8 +30,8 @@ class CryptoAI {
 
         const contract = await ethers.getContractFactory("CryptoAI");
         console.log("CryptoAIData.deploying ...")
-        const proxy = await upgrades.deployProxy(contract, [adminAddr, deployerAddr], {
-            initializer: 'initialize(address, address)',
+        const proxy = await upgrades.deployProxy(contract, [name, symbol, adminAddr, deployerAddr, paramsAddress, random, cryptoAiData], {
+            initializer: 'initialize(string, string, address, address, address, address, address)',
         });
         await proxy.waitForDeployment();
         const proxyAddr = await proxy.getAddress();
