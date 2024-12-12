@@ -18,4 +18,9 @@ library CryptoAIStructs {
         uint8 trait;  // 0-200
         uint8[] positions; // x,y,r,g,b stored sequentially
     }
+
+    struct Token {
+        uint256 tokenID;
+        uint256 rarity;
+    }
 }
