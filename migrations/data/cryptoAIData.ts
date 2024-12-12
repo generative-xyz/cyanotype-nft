@@ -211,7 +211,7 @@ class CryptoAIData {
         return val;
     }
 
-    async renderFullSVGWithGrid(contractAddress: any, token: number) {
+    async cryptoAIImageSvg(contractAddress: any, token: number) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
@@ -222,7 +222,7 @@ class CryptoAIData {
             nonce: nonce,
         }
 
-        const val: any = await temp?.nftContract.methods.renderFullSVGWithGrid(token).call(tx);
+        const val: any = await temp?.nftContract.methods.cryptoAIImageSvg(token).call(tx);
         return val;
     }
 

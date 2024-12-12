@@ -326,16 +326,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIImageSvg(uint256 tokenId) internal view
 //    onlyAIAgentContract
     returns (string memory result) {
-
-
-        bytes memory pixel = cryptoAIImage(tokenId);
-
+        bytes memory pixels = cryptoAIImage(tokenId);
         string memory rects = '';
         uint temp = 0;
         uint8 x;
         uint8 y;
-        for (uint i = 0; i < pixel.length; i += 4) {
-            if (pixel[i + 3] > 0) {
+        for (uint i = 0; i < pixels.length; i += 4) {
+            if (pixels[i + 3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % GRID_SIZE);
                 y = uint8(temp / GRID_SIZE);
@@ -349,7 +346,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                                 SVG_Y,
                                 StringsUpgradeable.toString(y),
                                 SVG_WIDTH,
-                                StringsUpgradeable.toString(uint8(pixel[i])), ',', StringsUpgradeable.toString(uint8(pixel[i + 1])), ',', StringsUpgradeable.toString(uint8(pixel[i + 2])),
+                                StringsUpgradeable.toString(uint8(pixels[i])), ',', StringsUpgradeable.toString(uint8(pixels[i + 1])), ',', StringsUpgradeable.toString(uint8(pixels[i + 2])),
                                 SVG_CLOSE_RECT
                             )
                         )
