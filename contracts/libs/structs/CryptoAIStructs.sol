@@ -22,5 +22,12 @@ library CryptoAIStructs {
     struct Token {
         uint256 tokenID;
         uint256 rarity;
+
+        // condition 1
+        // tokenID = 0: not minted
+        // tokenID > 0: minted
+        // condition 2
+        // rarity = 0: draw animation url
+        // rarity > 0: draw svg image -> completely
     }
 }
