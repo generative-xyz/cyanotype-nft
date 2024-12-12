@@ -96,7 +96,7 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         }
     }
 
-    function changeCryptoAiAddress(address newAddr) external onlyAdmin {
+    function changeCryptoAiDataAddress(address newAddr) external onlyAdmin {
         require(newAddr != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
 
         if (_cryptoAiDataAddr != newAddr) {
