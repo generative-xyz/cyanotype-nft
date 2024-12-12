@@ -344,8 +344,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         ));
     }
 
-    function cryptoAIImageSvg(uint256 tokenId) internal view
-//    onlyAIAgentContract
+    function cryptoAIImageSvg(uint256 tokenId)
+    public view // change to internal after testing
+        // onlyAIAgentContract
     returns (string memory result) {
         bytes memory pixels = cryptoAIImage(tokenId);
         string memory rects = '';
