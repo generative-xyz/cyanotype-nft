@@ -176,7 +176,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             base64 = Base64.encode(
                 abi.encodePacked(
                     '{"animation_url": "',
-                    renderPlaceHolderImage(tokenId),
+                    cryptoAIImageHtml(tokenId),
                     '}'
                 )
             );
@@ -330,7 +330,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return pixels;
     }
 
-    function renderPlaceHolderImage(uint256 tokenId) internal view returns (string memory result) {
+    function cryptoAIImageHtml(uint256 tokenId)
+    internal view
+    returns (string memory result) {
         return string(abi.encodePacked(
             htmlDataType,
             Base64.encode(
