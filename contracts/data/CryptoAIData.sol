@@ -28,13 +28,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
-    // TODO:
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
-    /*bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="#';*/
-    // TODO: end
+    bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="#';
     string internal constant SVG_RECT = '<rect x="';
-    string internal constant SVG_CLOSE_RECT = ')"/>';
+    string internal constant SVG_CLOSE_RECT = '"/>';
     // placeholder
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
@@ -374,11 +371,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint temp;
         uint8 x;
         uint8 y;
-        // TODO:
-        /*uint p;
+        uint p;
         uint8 value;
-        bytes memory buffer = new bytes(8);*/
-        // TODO: end
+        bytes memory buffer = new bytes(8);
 
         for (uint i = 0; i < pixels.length; i += 4) {
             if (pixels[i + 3] > 0) {
@@ -386,15 +381,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 x = uint8(temp % GRID_SIZE);
                 y = uint8(temp / GRID_SIZE);
                 if (x < GRID_SIZE && y < GRID_SIZE) {
-                    // TODO:
-                    /*p = (y * 24 + x) * 4;
+                    p = (uint(y) * 24 + uint(x)) * 4;
                     for (uint k = 0; k < 4; k++) {
                         value = uint8(pixels[p + k]);
                         buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
                         value >>= 4;
                         buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
-                    }*/
-                    // TODO: end
+                    }
 
                     svg = string(abi.encodePacked(
                         svg,
@@ -404,12 +397,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                             SVG_Y,
                             StringsUpgradeable.toString(y),
                             SVG_WIDTH,
-                            // TODO:
-                            StringsUpgradeable.toString(uint8(pixels[i])), ',',
-                            StringsUpgradeable.toString(uint8(pixels[i + 1])), ',',
-                            StringsUpgradeable.toString(uint8(pixels[i + 2])),
-                            /*string(buffer),*/
-                            // TODO: end
+                            string(buffer),
                             SVG_CLOSE_RECT
                         )
                     ));
