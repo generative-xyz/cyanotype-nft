@@ -279,43 +279,45 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIImage(uint256 tokenId)
     internal view
     returns (bytes memory) {
-        uint256 rarity = unlockedTokens[tokenId].rarity;
+        // uint256 rarity = unlockedTokens[tokenId].rarity;
         // TODO:  from rarity;
-        string memory DNAType = DNA_TYPE[randomIndex(shuffleArrayString(rarity, DNA_TYPE).length, tokenId)];// TODO
+       
+       uint256 rarity = tokenId;
+        
+       string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
 
-        // CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
-
-        uint8[] memory positions = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].positions;
-        uint8[] memory positions2 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].positions;
-        uint8[] memory positions3 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].positions;
-        uint8[] memory positions4 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].positions;
-        uint8[] memory positions5 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].positions;
+        uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
+        uint8[] memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.length)))].positions;
+        uint8[] memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.length)))].positions;
+        uint8[] memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.length)))].positions;
+        uint8[] memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.length)))].positions;
 
         bytes memory pixels = new bytes(2304);
         uint idx;
-        uint totalLength = positions.length + positions2.length + positions3.length + positions4.length + positions5.length;
+        uint totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
 
         uint8[] memory pos;
 
         uint16 p;
-        uint16 positionLength = uint16(positions.length);
+        uint16 positionLength = uint16(dna_po.length);
 
         for (uint i = 0; i < totalLength; i += 5) {
             if (i < positionLength) {
-                pos = positions;
+                pos = dna_po;
                 idx = i;
-            } else if (i < positionLength + positions2.length) {
-                pos = positions2;
+            } else if (i < positionLength + body_po.length) {
+                pos = body_po;
                 idx = i - positionLength;
-            } else if (i < positionLength + positions2.length + positions3.length) {
-                pos = positions3;
-                idx = i - positionLength - positions2.length;
-            } else if (i < positionLength + positions2.length + positions3.length + positions4.length) {
-                pos = positions4;
-                idx = i - positionLength - positions2.length - positions3.length;
+            } else if (i < positionLength + body_po.length + head_po.length) {
+                pos = head_po;
+                idx = i - positionLength - body_po.length;
+            } else if (i < positionLength + body_po.length + head_po.length + eye_po.length) {
+                pos = eye_po;
+                idx = i - positionLength - body_po.length - head_po.length;
             } else {
-                pos = positions5;
-                idx = i - positionLength - positions2.length - positions3.length - positions4.length;
+                pos = mouth_po;
+                idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
             }
 
             // Calculate pixel position
@@ -345,21 +347,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 )
             )
         ));
-    }
-
-    function getAttrData(uint256 tokenId) public view returns(string memory n1, string memory n2, string memory n3, string memory n4, string memory n5) {
-        uint256 rarity = unlockedTokens[tokenId].rarity;
-        // TODO:  from rarity;
-        string memory DNAType = DNA_TYPE[randomIndex(shuffleArrayString(rarity, DNA_TYPE).length, tokenId)];// TODO
-         n1 = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].name;
-//         n2 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].name;
-//         n3 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].name;
-//         n4 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].name;
-//         n5 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].name;
-        console.log('n1', n1);
-//        console.log('n2', n2);
-//        console.log("n3", n3, n4, n5);
-        return (n1, n2, n3, n4, n5);
     }
 
     function cryptoAIImageSvg(uint256 tokenId)
@@ -408,28 +395,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
 
-    function shuffleArray(uint256 rarity, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) internal view returns (CryptoAIStructs.ItemDetail[] memory) {
-        CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
-        uint256 n = shuffledArray.length;
-
-        for (uint256 i = 0; i < n; i++) {
-            uint256 j = i + uint256(keccak256(abi.encode(rarity, i))) % (n - i);
-            (shuffledArray[i], shuffledArray[j]) = (shuffledArray[j], shuffledArray[i]);
-        }
-        return shuffledArray;
-    }
-
-    function shuffleArrayString(uint256 rarity, string[] memory arrayToShuffle) internal view returns (string[] memory) {
-        string[] memory shuffledArray = arrayToShuffle;
-        uint256 n = shuffledArray.length;
-
-        for (uint256 i = 0; i < n; i++) {
-            uint256 j = i + uint256(keccak256(abi.encode(rarity, i))) % (n - i);
-            (shuffledArray[i], shuffledArray[j]) = (shuffledArray[j], shuffledArray[i]);
-        }
-        return shuffledArray;
-    }
-
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
         DNAItems = new CryptoAIStructs.ItemDetail[](count);
@@ -439,6 +404,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {
+        if (maxLength == 0) return 0;
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
         return randomNumber % maxLength;
     }
