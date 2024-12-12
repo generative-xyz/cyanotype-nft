@@ -227,6 +227,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function renderFullSVGWithGrid(uint256 tokenId) external view returns (string memory) {
+        return "abc";
         /*IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
         bool unlocked = nft.checkUnlockedNFT(tokenId);
         if (unlocked) {
