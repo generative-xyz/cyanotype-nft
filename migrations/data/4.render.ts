@@ -13,7 +13,7 @@ async function main() {
     const address = config["dataContractAddress"];
 
     // Render SVG
-    const fullSVG = await dataContract.cryptoAIImageSvg(address, 2);
+    const fullSVG = await dataContract.cryptoAIImageSvg(address, 4);
     console.log("fullSVG", fullSVG);
 }
 

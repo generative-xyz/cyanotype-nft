@@ -87,10 +87,10 @@ class CryptoAIData {
         return null;
     }
 
-    async addItem(contractAddress: any, gas: any, key: string, obj: { name: any; positions: any; }) {
+    async addItem(contractAddress: any, gas: any, key: string, obj: { name: any; trait: number; positions: any; }) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
-        const fun = temp?.nftContract.methods.addItem(key, obj.name, 20, obj.positions)
+        const fun = temp?.nftContract.methods.addItem(key, obj.name, obj.trait, obj.positions)
         //the transaction
         const tx = {
             from: this.senderPublicKey,
@@ -174,12 +174,12 @@ class CryptoAIData {
         return val;
     }
 
-    async addDNAVariant(contractAddress: any, gas: any,  key: DNA, obj: { name: any; positions: number[]; }) {
+    async addDNAVariant(contractAddress: any, gas: any,  key: DNA, obj: { name: any; trait: number; positions: number[]; }) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
 
-        const fun = temp?.nftContract.methods.addDNAVariant(key, obj.name, 20, obj.positions);
+        const fun = temp?.nftContract.methods.addDNAVariant(key, obj.name, obj.trait, obj.positions);
         //the transaction
         const tx = {
             from: this.senderPublicKey,

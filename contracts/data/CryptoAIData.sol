@@ -280,15 +280,27 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (bytes memory) {
         uint256 rarity = unlockedTokens[tokenId].rarity;
         // TODO:  from rarity;
-        string memory DNAType = DNA_TYPE[tokenId];// TODO
+        string memory DNAType = DNA_TYPE[randomIndex(shuffleArrayString(rarity, DNA_TYPE).length, tokenId)];// TODO
 
         // CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
 
         uint8[] memory positions = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].positions;
         uint8[] memory positions2 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].positions;
         uint8[] memory positions3 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].positions;
-        uint8[] memory positions4 = items['eye'][0].positions;
+        uint8[] memory positions4 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].positions;
         uint8[] memory positions5 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].positions;
+
+/*        string memory name = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].name;
+        string memory name1 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].name;
+        string memory name2 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].name;
+        string memory name3 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].name;
+        string memory name4 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].name;
+
+        console.log("name", name);
+        console.log("name1", name1);
+        console.log("name2", name2);
+        console.log("name3", name3);
+        console.log("name4", name4);*/
 
         bytes memory pixels = new bytes(2304);
         uint idx;
@@ -384,6 +396,17 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     function shuffleArray(uint256 rarity, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) internal view returns (CryptoAIStructs.ItemDetail[] memory) {
         CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
+        uint256 n = shuffledArray.length;
+
+        for (uint256 i = 0; i < n; i++) {
+            uint256 j = i + uint256(keccak256(abi.encode(rarity, i))) % (n - i);
+            (shuffledArray[i], shuffledArray[j]) = (shuffledArray[j], shuffledArray[i]);
+        }
+        return shuffledArray;
+    }
+
+    function shuffleArrayString(uint256 rarity, string[] memory arrayToShuffle) internal view returns (string[] memory) {
+        string[] memory shuffledArray = arrayToShuffle;
         uint256 n = shuffledArray.length;
 
         for (uint256 i = 0; i < n; i++) {
