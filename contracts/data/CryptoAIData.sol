@@ -207,7 +207,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return item;
     }
 
-    //
     function svgToImageURI(string memory svg) internal pure returns (string memory) {
         string memory svgBase64Encoded = Base64.encode(bytes(svg));
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
@@ -255,9 +254,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function renderFullSVGWithGrid(uint256 tokenId) external view
-    onlyAIAgentContract
+//    onlyAIAgentContract
     returns (string memory) {
-        return "abc";
         /*IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
         bool unlocked = nft.checkUnlockedNFT(tokenId);
         if (unlocked) {
@@ -270,7 +268,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         string memory DNAType = DNA_TYPE[index];
 
         CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
-
         CryptoAIStructs.ItemDetail memory body = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))];
         CryptoAIStructs.ItemDetail memory head = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))];
         CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
@@ -327,14 +324,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return shuffledArray;
     }
 
-    /*function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory item) {
-        uint16 count = itemCounts[_itemType];
-        item = new CryptoAIStructs.ItemDetail[](count);
-        for (uint16 i = 0; i < count; i++) {
-            item[i] = items[_itemType][i];
-        }
-    }*/
-
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
         DNAItems = new CryptoAIStructs.ItemDetail[](count);
@@ -344,7 +333,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function randomIndex(uint256 maxLength, uint256 tokenId) internal view returns (uint) {
-        //uint256 seed = seedTokenId[tokenId];
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
         return randomNumber % maxLength;
     }

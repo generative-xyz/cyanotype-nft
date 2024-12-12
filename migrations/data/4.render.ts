@@ -13,7 +13,7 @@ async function main() {
     const address = config["dataContractAddress"];
 
     // Render SVG
-    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 1);
+    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 2);
     console.log("fullSVG", fullSVG);
 }
 

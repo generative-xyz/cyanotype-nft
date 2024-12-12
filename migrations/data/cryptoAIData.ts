@@ -226,7 +226,7 @@ class CryptoAIData {
         return val;
     }
 
-    async getArrayItemsType(contractAddress: any, _itemType: string) {
+    /*async getArrayItemsType(contractAddress: any, _itemType: string) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
@@ -239,7 +239,7 @@ class CryptoAIData {
 
         const val: any = await temp?.nftContract.methods.getArrayItemsType(_itemType).call(tx);
         return val;
-    }
+    }*/
 
     async changeCryptoAIAgentAddress(contractAddress: any, gas: any, newAddr: any) {
         let temp = this.getContract(contractAddress);
