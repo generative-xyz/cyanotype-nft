@@ -226,14 +226,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return item;
     }
 
-    function svgToImageURI(string memory svg) internal pure returns (string memory) {
-        return string(abi.encodePacked(svgDataType, Base64.encode(bytes(svg))));
-    }
-
-    function htmlToAnimationURI(string memory html) internal pure returns (string memory) {
-        return string(abi.encodePacked(htmlDataType, Base64.encode(bytes(html))));
-    }
-
     function createMultipleRects(uint8[] memory positions,
         uint8[] memory positions2,
         uint8[] memory positions3,
@@ -281,25 +273,54 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return pixels;
     }
 
-    function renderPlaceHolderImage(uint256 tokenId) internal view returns (string memory result) {
-        result = string(abi.encodePacked(
-            PLACEHOLDER_HEADER,
-            tokenId,
-            PLACEHOLDER_FOOTER,
-            PLACEHOLDER_IMAGE)
+    function tokenURI(uint256 tokenId) external view returns (string memory result) {
+        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+        // TODO
+        require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
+        string memory base64 = "";
+        if (unlockedTokens[tokenId].rarity == 0 && false) {
+            base64 = Base64.encode(
+                abi.encodePacked(
+                    '{"animation_url": "',
+                    renderPlaceHolderImage(tokenId),
+                    '}'
+                )
+            );
+        }
+        else {
+            base64 = Base64.encode(
+                abi.encodePacked(
+                    '{"image": "',
+                    renderFullSVGWithGrid(tokenId),
+                    '}'
+                )
+            );
+        }
+        result = string(
+            abi.encodePacked(
+                'data:application/json;base64,',
+                base64
+            )
         );
     }
 
-    function renderFullSVGWithGrid(uint256 tokenId) external view
-//    onlyAIAgentContract
-    returns (string memory) {
-        // TODO
-        require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
-        if (unlockedTokens[tokenId].rarity == 0 && false) {
-            return htmlToAnimationURI(renderPlaceHolderImage(tokenId));
-        }
+    function renderPlaceHolderImage(uint256 tokenId) internal view returns (string memory result) {
+        return string(abi.encodePacked(
+            htmlDataType,
+            Base64.encode(
+                abi.encodePacked(
+                    PLACEHOLDER_HEADER,
+                    tokenId,
+                    PLACEHOLDER_FOOTER,
+                    PLACEHOLDER_IMAGE
+                )
+            )
+        ));
+    }
 
-        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+    function renderFullSVGWithGrid(uint256 tokenId) internal view
+//    onlyAIAgentContract
+    returns (string memory result) {
         uint16 index = uint16(tokenId);
         string memory DNAType = DNA_TYPE[index];
 
@@ -339,14 +360,16 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             }
         }
 
-        string memory svg = string(
-            abi.encodePacked(
-                SVG_HEADER,
-                rects,
-                SVG_FOOTER
-            )
+        result = string(abi.encodePacked(
+            svgDataType,
+            Base64.encode(
+                abi.encodePacked(
+                    SVG_HEADER,
+                    rects,
+                    SVG_FOOTER
+                )
+            ))
         );
-        return svgToImageURI(svg);
     }
 
     function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) public view returns (CryptoAIStructs.ItemDetail[] memory) {
