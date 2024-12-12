@@ -20,6 +20,6 @@ library Errors {
 
     // validation error
     string public constant CONTRACT_SEALED = "200";
-    string public constant TOKEN_ID_NOT_UNLOCKED = "201";
+    string public constant TOKEN_ID_NOT_UNLOCKED = "201"; // agent not really minted on AI agent contract -> still in queue because not reach threadhold
     string public constant TOKEN_ID_UNLOCKED = "202";
 }
