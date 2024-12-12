@@ -10,7 +10,8 @@ async function main() {
     let config = await initConfig();
 
     const dataContract = new CryptoAI(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    await dataContract.tokenURI(config.contractAddress, 1);
+    const data = await dataContract.tokenURI(config.contractAddress, 1);
+    console.log(data);
 }
 
 main().catch(error => {

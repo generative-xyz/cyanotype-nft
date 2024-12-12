@@ -13,8 +13,9 @@ import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../interfaces/ICryptoAIData.sol";
 
 import 'hardhat/console.sol';
+import {IAgentNFT} from "../interfaces/IAgentNFT.sol";
 
-contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable {
+contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable, IAgentNFT {
     uint256 public constant TOKEN_LIMIT = 10000; // Changed to 10000
     uint256 public constant MINT_PRINT = 1 ** 18; // Changed to 10000
 
@@ -132,6 +133,10 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
 
     function checkUnlockedNFT(uint256 tokenID) external pure returns (bool) {
         return tokenID % 2 == 0;
+    }
+
+    function checkNFTPoint(uint256 tokenID) external pure returns (uint256, uint256) {
+        return (100, 100000);
     }
 
     function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
