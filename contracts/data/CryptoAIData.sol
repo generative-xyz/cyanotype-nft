@@ -160,7 +160,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
-        //onlyDeployer
+    onlyDeployer
     returns (uint16){
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
@@ -234,7 +234,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return string(abi.encodePacked(htmlDataType, Base64.encode(bytes(html))));
     }
 
-    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4, uint8[] memory positions5) internal pure returns (bytes memory) {
+    function createMultipleRects(uint8[] memory positions,
+        uint8[] memory positions2,
+        uint8[] memory positions3,
+        uint8[] memory positions4,
+        uint8[] memory positions5)
+    internal pure
+    returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length + positions5.length;
