@@ -297,14 +297,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return shuffledArray;
     }
 
-    /*function getArrayItemsType(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail[] memory item) {
-        uint16 count = itemCounts[_itemType];
-        item = new CryptoAIStructs.ItemDetail[](count);
-        for (uint16 i = 0; i < count; i++) {
-            item[i] = items[_itemType][i];
-        }
-    }*/
-
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
         DNAItems = new CryptoAIStructs.ItemDetail[](count);
