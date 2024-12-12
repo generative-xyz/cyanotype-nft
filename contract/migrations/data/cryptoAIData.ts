@@ -240,6 +240,26 @@ class CryptoAIData {
         const val: any = await temp?.nftContract.methods.getArrayItemsType(_itemType).call(tx);
         return val;
     }
+
+    async changeCryptoAIAgentAddress(contractAddress: any, gas: any, newAddr: any) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+        const fun = temp?.nftContract.methods.changeCryptoAIAgentAddress(newAddr)
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+            gas: gas,
+            data: fun.encodeABI(),
+        }
+
+        if (tx.gas == 0) {
+            tx.gas = await fun.estimateGas(tx);
+        }
+
+        return await this.signedAndSendTx(temp?.web3, tx);
+    }
 }
 
 export {CryptoAIData};

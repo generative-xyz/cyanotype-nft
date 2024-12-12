@@ -1,5 +1,5 @@
-import {CryptoAIData} from "./cryptoAIData";
 import {initConfig} from "../../index";
+import {CryptoAI} from "./cryptoAI";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -9,8 +9,8 @@ async function main() {
 
     let config = await initConfig();
 
-    const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    await dataContract.upgradeContract(config.dataContractAddress)
+    const dataContract = new CryptoAI(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
+    await dataContract.upgradeContract(config.contractAddress)
 
     // const deployer = await dataContract.getDeployer(address)
     // console.log("deployer", deployer);
