@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import '@openzeppelin/contracts/utils/Base64.sol';
 
 import "../libs/helpers/Errors.sol";
-import "../libs/structs/CryptoAIStructsLibs.sol";
+import "../libs/structs/CryptoAIStructs.sol";
 import "../interfaces/ICryptoAIData.sol";
 
 import 'hardhat/console.sol';
