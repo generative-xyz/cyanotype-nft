@@ -166,7 +166,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             base64 = Base64.encode(
                 abi.encodePacked(
                     '{"image": "',
-                    renderFullSVGWithGrid(tokenId),
+                    cryptoAIImageSvg(tokenId),
                     '}'
                 )
             );
@@ -256,13 +256,19 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return item;
     }
 
-    function createMultipleRects(uint8[] memory positions,
-        uint8[] memory positions2,
-        uint8[] memory positions3,
-        uint8[] memory positions4,
-        uint8[] memory positions5)
-    internal pure
+    function cryptoAIImage(uint256 tokenId)
+    internal view
     returns (bytes memory) {
+        string memory DNAType = DNA_TYPE[tokenId];
+
+        // CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
+
+        uint8[] memory positions = shuffleArray(tokenId, getArrayDNAVariant(DNAType))[tokenId].positions;
+        uint8[] memory positions2 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].positions;
+        uint8[] memory positions3 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].positions;
+        uint8[] memory positions4 = items['eye'][0].positions;
+        uint8[] memory positions5 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].positions;
+
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length + positions5.length;
@@ -317,26 +323,16 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         ));
     }
 
-    function renderFullSVGWithGrid(uint256 tokenId) internal view
+    function cryptoAIImageSvg(uint256 tokenId) internal view
 //    onlyAIAgentContract
     returns (string memory result) {
-        uint16 index = uint16(tokenId);
-        string memory DNAType = DNA_TYPE[index];
-
-        CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
-        CryptoAIStructs.ItemDetail memory body = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))];
-        CryptoAIStructs.ItemDetail memory head = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))];
-        CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
-        CryptoAIStructs.ItemDetail memory mouth = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))];
-
-        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions, head.positions, items['eye'][0].positions, mouth.positions);
-
+        bytes memory pixels = cryptoAIImage(tokenId);
         string memory rects = '';
         uint temp = 0;
         uint8 x;
         uint8 y;
-        for (uint i = 0; i < pixel.length; i += 4) {
-            if (pixel[i + 3] > 0) {
+        for (uint i = 0; i < pixels.length; i += 4) {
+            if (pixels[i + 3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % GRID_SIZE);
                 y = uint8(temp / GRID_SIZE);
@@ -350,7 +346,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                                 SVG_Y,
                                 StringsUpgradeable.toString(y),
                                 SVG_WIDTH,
-                                StringsUpgradeable.toString(uint8(pixel[i])), ',', StringsUpgradeable.toString(uint8(pixel[i + 1])), ',', StringsUpgradeable.toString(uint8(pixel[i + 2])),
+                                StringsUpgradeable.toString(uint8(pixels[i])), ',', StringsUpgradeable.toString(uint8(pixels[i + 1])), ',', StringsUpgradeable.toString(uint8(pixels[i + 2])),
                                 SVG_CLOSE_RECT
                             )
                         )
@@ -371,7 +367,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         );
     }
 
-    function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) public view returns (CryptoAIStructs.ItemDetail[] memory) {
+    function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) internal view returns (CryptoAIStructs.ItemDetail[] memory) {
         CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
         uint256 n = shuffledArray.length;
 

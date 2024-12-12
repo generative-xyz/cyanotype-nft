@@ -1,9 +1,15 @@
-import fs from 'fs';
-import path from 'path';
-import { parseSync } from 'svgson';
+import * as fs from 'fs';
+import * as glob from 'glob';
+import * as path from 'path';
+const { parseSync } = require('svgson');
+
+// Use absolute path to testAssets folder
+const PATH_ASSETS = path.join(__dirname, '../assets');
+const PATH_OUTPUT = 'migrations/data/datajson/data-compressed.json';
 
 interface PixelData {
   name: string;
+  trait: number;
   positions: number[];
 }
 
@@ -41,41 +47,61 @@ const convertSvgToPositions = (svgContent: string): number[] => {
   return positions;
 }
 
-const processSvgFolder = (folderPath: string): PixelData[] => {
-  const files = fs.readdirSync(folderPath);
-  const results: PixelData[] = [];
+const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, PixelData[]>> => {
+  try {
+    if (!fs.existsSync(assetsPath)) {
+      throw new Error(`Assets directory not found at: ${assetsPath}`);
+    }
 
-  files.forEach((file, index) => {
-    if (path.extname(file) === '.svg') {
-      const svgContent = fs.readFileSync(path.join(folderPath, file), 'utf-8');
+    const allData: Record<string, Record<string, PixelData[]>> = {};
+
+    // Use glob to find all SVG files in subdirectories
+    const svgFiles = glob.sync(path.join(assetsPath, '**/*.svg'));
+    
+    svgFiles.forEach((filePath: string) => {
+      // Get relative path segments
+      const pathSegments = path.relative(assetsPath, filePath).split(path.sep);
+      const mainFolder = pathSegments[0]; // First segment is the main folder
+      const subFolder = pathSegments[1]; // Second segment is the sub folder
+      
+      if (!allData[mainFolder]) {
+        allData[mainFolder] = {};
+      }
+      
+      if (!allData[mainFolder][subFolder]) {
+        allData[mainFolder][subFolder] = [];
+      }
+
+      const svgContent = fs.readFileSync(filePath, 'utf-8');
       const positions = convertSvgToPositions(svgContent);
       
-      results.push({
-        name: `${path.basename(folderPath)}_${String(index + 1).padStart(2, '0')}`,
+      // Extract name and trait from filename
+      const [name, traitStr] = path.basename(filePath, '.svg').split('_');
+      const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].length + 1;
+
+      allData[mainFolder][subFolder].push({
+        name,
+        trait,
         positions
       });
-    }
-  });
+    });
+      
+    console.log('Data processing complete');
+    return allData;
 
-  return results;
+  } catch (err) {
+    console.error('Error converting assets:', err);
+    process.exit(1);
+  }
 }
 
-const convertAssetsToJson = (assetsPath: string) => {
-  const folders = fs.readdirSync(assetsPath, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
-
-  const allData: {[key: string]: PixelData[]} = {};
-
-  folders.forEach(folder => {
-    const folderPath = path.join(assetsPath, folder);
-    allData[folder] = processSvgFolder(folderPath);
-  });
-
-  return allData;
-}
-
-export const migrateData = (assetsPath: string, outputPath: string) => {
-  const data = convertAssetsToJson(assetsPath);
-  fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
+try {
+  console.log('Assets path:', PATH_ASSETS);
+  console.log('Output path:', PATH_OUTPUT);
+  const data = convertAssetsToJson(PATH_ASSETS);
+  fs.writeFileSync(PATH_OUTPUT, JSON.stringify(data, null, 2));
+  console.log('Successfully wrote data to', PATH_OUTPUT);
+} catch (err) {
+  console.error('Fatal error:', err);
+  process.exit(1);
 }
