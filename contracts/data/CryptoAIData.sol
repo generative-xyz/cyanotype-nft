@@ -259,11 +259,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIImage(uint256 tokenId)
     internal view
     returns (bytes memory) {
-        string memory DNAType = DNA_TYPE[tokenId];
+        uint256 rarity = unlockedTokens[tokenId].rarity;
+        // TODO:  from rarity;
+        string memory DNAType = DNA_TYPE[tokenId];// TODO
 
         // CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
 
-        uint8[] memory positions = shuffleArray(tokenId, getArrayDNAVariant(DNAType))[tokenId].positions;
+        uint8[] memory positions = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].positions;
         uint8[] memory positions2 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].positions;
         uint8[] memory positions3 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].positions;
         uint8[] memory positions4 = items['eye'][0].positions;
@@ -355,24 +357,15 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             }
         }
 
-        result = string(abi.encodePacked(
-            svgDataType,
-            Base64.encode(
-                abi.encodePacked(
-                    SVG_HEADER,
-                    rects,
-                    SVG_FOOTER
-                )
-            ))
-        );
+        result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, rects, SVG_FOOTER))));
     }
 
-    function shuffleArray(uint256 tokenId, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) internal view returns (CryptoAIStructs.ItemDetail[] memory) {
+    function shuffleArray(uint256 rarity, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) internal view returns (CryptoAIStructs.ItemDetail[] memory) {
         CryptoAIStructs.ItemDetail[] memory shuffledArray = arrayToShuffle;
         uint256 n = shuffledArray.length;
 
         for (uint256 i = 0; i < n; i++) {
-            uint256 j = i + uint256(keccak256(abi.encode(tokenId, i))) % (n - i);
+            uint256 j = i + uint256(keccak256(abi.encode(rarity, i))) % (n - i);
             (shuffledArray[i], shuffledArray[j]) = (shuffledArray[j], shuffledArray[i]);
         }
         return shuffledArray;
