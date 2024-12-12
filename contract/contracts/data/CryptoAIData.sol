@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
 import "../interfaces/ICryptoAIData.sol";
 import "../interfaces/IAgentNFT.sol";
-import "../libs/structs/CryptoAIStructsLibs.sol";
+import "../libs/structs/CryptoAIStructs.sol";
 import "../libs/helpers/Errors.sol";
 import "hardhat/console.sol";
 
@@ -20,6 +20,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     address public _cryptoAIAgentAddr;
 
     bool private _contractSealed;
+    mapping(uint256 => CryptoAIStructs.Token) private unlockedTokens;
+
+    uint256 public constant TOKEN_LIMIT = 1000;
     string private constant baseURL = 'data:image/svg+xml;base64,';
     string[] private VALID_ITEM_TYPES;
     uint8 internal constant GRID_SIZE = 24;
@@ -107,6 +110,27 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         _contractSealed = true;
     }
 
+    function unlockRender(uint256 tokenId) external
+    onlyAIAgentContract
+    () {
+        require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
+        require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_UNLOCKED);
+
+        IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
+        (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
+        unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, calculateRarity(tokenId, point * timeLine));
+    }
+
+    function calculateRarity(uint256 tokenId, uint256 weight) internal pure returns (uint256) {
+        return ((tokenId % 10) + 1) * weight;
+    }
+
+    function getTokenRarity(uint256 tokenId) external view returns (uint256) {
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        return unlockedTokens[tokenId].rarity;
+    }
+
+    ///////
     function addDNA(string memory dnaType) public returns (string memory dna) {
         DNA_TYPE.push(dnaType);
         return dnaType;
@@ -237,6 +261,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         if (unlocked) {
             (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
         }*/
+        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
 
         uint16 index = uint16(tokenId);
 

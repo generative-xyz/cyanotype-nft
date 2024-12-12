@@ -18,6 +18,8 @@ library Errors {
     string public constant INVALID_ITEM_TYPE = "103";
     string public constant ITEM_NOT_EXIST = "104";
 
-// validation error
+    // validation error
     string public constant CONTRACT_SEALED = "200";
+    string public constant TOKEN_ID_NOT_UNLOCKED = "201";
+    string public constant TOKEN_ID_UNLOCKED = "202";
 }
