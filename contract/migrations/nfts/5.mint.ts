@@ -10,7 +10,7 @@ async function main() {
     let config = await initConfig();
 
     const dataContract = new CryptoAI(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    await dataContract.mint(config.contractAddress, 0, "0x00");
+    await dataContract.mint(config.contractAddress, 0, process.env.PUBLIC_KEY);
 
 }
 
