@@ -29,7 +29,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')" />';
-//    string internal PLACEHOLDER_IMAGE = '';
+    //    string internal PLACEHOLDER_IMAGE = '';
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
