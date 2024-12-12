@@ -28,7 +28,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
+    // TODO:
+    // string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
+    bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
+    // TODO: end
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="#';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')"/>';
     // placeholder
@@ -351,35 +355,54 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // onlyAIAgentContract
     returns (string memory result) {
         bytes memory pixels = cryptoAIImage(tokenId);
-        string memory rects = '';
-        uint temp = 0;
+        string memory svg = '';
+        uint temp;
         uint8 x;
         uint8 y;
+        // TODO:
+        uint p;
+        uint8 value;
+        bytes memory buffer = new bytes(8);
+        // TODO: end
+
         for (uint i = 0; i < pixels.length; i += 4) {
             if (pixels[i + 3] > 0) {
                 temp = i >> 2;
                 x = uint8(temp % GRID_SIZE);
                 y = uint8(temp / GRID_SIZE);
                 if (x < GRID_SIZE && y < GRID_SIZE) {
-                    rects = string(abi.encodePacked(
-                        rects,
-                        string(
-                            abi.encodePacked(
-                                SVG_RECT,
-                                StringsUpgradeable.toString(x),
-                                SVG_Y,
-                                StringsUpgradeable.toString(y),
-                                SVG_WIDTH,
-                                StringsUpgradeable.toString(uint8(pixels[i])), ',', StringsUpgradeable.toString(uint8(pixels[i + 1])), ',', StringsUpgradeable.toString(uint8(pixels[i + 2])),
-                                SVG_CLOSE_RECT
-                            )
+                    // TODO:
+                    p = (y * 24 + x) * 4;
+                    for (uint k = 0; k < 4; k++) {
+                        value = uint8(pixels[p + k]);
+                        buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
+                        value >>= 4;
+                        buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
+                    }
+                    // TODO: end
+
+                    svg = string(abi.encodePacked(
+                        svg,
+                        abi.encodePacked(
+                            SVG_RECT,
+                            StringsUpgradeable.toString(x),
+                            SVG_Y,
+                            StringsUpgradeable.toString(y),
+                            SVG_WIDTH,
+                            // TODO:
+                            /*StringsUpgradeable.toString(uint8(pixels[i])), ',',
+                            StringsUpgradeable.toString(uint8(pixels[i + 1])), ',',
+                            StringsUpgradeable.toString(uint8(pixels[i + 2])),*/
+                            string(buffer),
+                            // TODO: end
+                            SVG_CLOSE_RECT
                         )
                     ));
                 }
             }
         }
 
-        result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, rects, SVG_FOOTER))));
+        result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
 
     function shuffleArray(uint256 rarity, CryptoAIStructs.ItemDetail[] memory arrayToShuffle) internal view returns (CryptoAIStructs.ItemDetail[] memory) {
