@@ -239,7 +239,7 @@ class CryptoAIData {
 
         const val: any = await temp?.nftContract.methods.getArrayItemsType(_itemType).call(tx);
         return val;
-    }
+    }*/
 
     async changeCryptoAIAgentAddress(contractAddress: any, gas: any, newAddr: any) {
         let temp = this.getContract(contractAddress);
