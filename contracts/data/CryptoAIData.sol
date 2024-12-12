@@ -23,7 +23,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     mapping(uint256 => CryptoAIStructs.Token) private unlockedTokens;
 
     uint256 public constant TOKEN_LIMIT = 1000;
-    string private constant baseURL = 'data:image/svg+xml;base64,';
+    string private constant svgDataType = 'data:image/svg+xml;base64,';
     string[] private VALID_ITEM_TYPES;
     uint8 internal constant GRID_SIZE = 24;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
@@ -32,7 +32,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = ')" />';
-    //    string internal PLACEHOLDER_IMAGE = '';
+
+    // placeholder
+    string private constant htmlDataType = 'data:text/html;base64,';
+    string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
+    string internal constant PLACEHOLDER_FOOTER = "'</script>";
+    string internal PLACEHOLDER_IMAGE = '';
 
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
@@ -99,6 +104,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         }
     }
 
+    function changePlaceHolder(string memory content) external onlyDeployer unsealed {
+        PLACEHOLDER_IMAGE = content;
+    }
+
     function changeCryptoAIAgentAddress(address newAddr) external onlyDeployer unsealed {
         require(newAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_cryptoAIAgentAddr != newAddr) {
@@ -110,15 +119,25 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         _contractSealed = true;
     }
 
-    function unlockRender(uint256 tokenId) external
+    function mintAgent(uint256 tokenId) external
     onlyAIAgentContract
     () {
+        // agent is minted on nft collection, but not unlock render svg by rarity info
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_UNLOCKED);
 
+        unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, 0);
+    }
+
+    function unlockRenderAgent(uint256 tokenId) external
+    onlyAIAgentContract
+    () {
+        // agent is minted on nft collection, and unlock render svg by rarity info
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_UNLOCKED);
         IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
         (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
-        unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, calculateRarity(tokenId, point * timeLine));
+        unlockedTokens[tokenId].rarity = calculateRarity(tokenId, point * timeLine);
+        // TODO
     }
 
     function calculateRarity(uint256 tokenId, uint256 weight) internal pure returns (uint256) {
@@ -141,7 +160,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
-        //onlyDeployer
+    onlyDeployer
     returns (uint16){
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
@@ -208,11 +227,20 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function svgToImageURI(string memory svg) internal pure returns (string memory) {
-        string memory svgBase64Encoded = Base64.encode(bytes(svg));
-        return string(abi.encodePacked(baseURL, svgBase64Encoded));
+        return string(abi.encodePacked(svgDataType, Base64.encode(bytes(svg))));
     }
 
-    function createMultipleRects(uint8[] memory positions, uint8[] memory positions2, uint8[] memory positions3, uint8[] memory positions4, uint8[] memory positions5) internal pure returns (bytes memory) {
+    function htmlToAnimationURI(string memory html) internal pure returns (string memory) {
+        return string(abi.encodePacked(htmlDataType, Base64.encode(bytes(html))));
+    }
+
+    function createMultipleRects(uint8[] memory positions,
+        uint8[] memory positions2,
+        uint8[] memory positions3,
+        uint8[] memory positions4,
+        uint8[] memory positions5)
+    internal pure
+    returns (bytes memory) {
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length + positions5.length;
@@ -253,18 +281,26 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return pixels;
     }
 
+    function renderPlaceHolderImage(uint256 tokenId) internal view returns (string memory result) {
+        result = string(abi.encodePacked(
+            PLACEHOLDER_HEADER,
+            tokenId,
+            PLACEHOLDER_FOOTER,
+            PLACEHOLDER_IMAGE)
+        );
+    }
+
     function renderFullSVGWithGrid(uint256 tokenId) external view
 //    onlyAIAgentContract
     returns (string memory) {
-        /*IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
-        bool unlocked = nft.checkUnlockedNFT(tokenId);
-        if (unlocked) {
-            (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
-        }*/
+        // TODO
+        require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
+        if (unlockedTokens[tokenId].rarity == 0 && false) {
+            return htmlToAnimationURI(renderPlaceHolderImage(tokenId));
+        }
+
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-
         uint16 index = uint16(tokenId);
-
         string memory DNAType = DNA_TYPE[index];
 
         CryptoAIStructs.ItemDetail[] memory shuffleDNAVariant = shuffleArray(tokenId, getArrayDNAVariant(DNAType));
