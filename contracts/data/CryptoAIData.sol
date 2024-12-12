@@ -80,7 +80,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function initialize(
         address deployer,
         address admin
-    ) initializer public {
+    ) initializer
+    public {
         VALID_ITEM_TYPES = ["body", "mouth", "eye", "head"];
         _deployer = deployer;
         _admin = admin;
@@ -88,7 +89,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         __Ownable_init();
     }
 
-    function changeAdmin(address newAdm) external onlyAdmin unsealed {
+    function changeAdmin(address newAdm)
+    external
+    onlyAdmin unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
         if (_admin != newAdm) {
             address _previousAdmin = _admin;
@@ -96,29 +99,38 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         }
     }
 
-    function changeDeployer(address newAdm) external onlyAdmin unsealed {
+    function changeDeployer(address newAdm)
+    external
+    onlyAdmin unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
         }
     }
 
-    function changePlaceHolder(string memory content) external onlyDeployer unsealed {
+    function changePlaceHolder(string memory content)
+    external
+    onlyDeployer unsealed {
         PLACEHOLDER_IMAGE = content;
     }
 
-    function changeCryptoAIAgentAddress(address newAddr) external onlyDeployer unsealed {
+    function changeCryptoAIAgentAddress(address newAddr)
+    external
+    onlyDeployer unsealed {
         require(newAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_cryptoAIAgentAddr != newAddr) {
             _cryptoAIAgentAddr = newAddr;
         }
     }
 
-    function sealContract() external onlyAdmin unsealed {
+    function sealContract()
+    external
+    onlyAdmin unsealed {
         _contractSealed = true;
     }
 
-    function mintAgent(uint256 tokenId) external
+    function mintAgent(uint256 tokenId)
+    external
     onlyAIAgentContract
     () {
         // agent is minted on nft collection, but not unlock render svg by rarity info
@@ -128,7 +140,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, 0);
     }
 
-    function unlockRenderAgent(uint256 tokenId) external
+    function unlockRenderAgent(uint256 tokenId)
+    external
     onlyAIAgentContract
     () {
         // agent is minted on nft collection, and unlock render svg by rarity info
@@ -139,16 +152,22 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // TODO
     }
 
-    function calculateRarity(uint256 tokenId, uint256 weight) internal pure returns (uint256) {
+    function calculateRarity(uint256 tokenId, uint256 weight)
+    internal pure
+    returns (uint256) {
         return ((tokenId % 10) + 1) * weight;
     }
 
-    function getTokenRarity(uint256 tokenId) external view returns (uint256) {
+    function getTokenRarity(uint256 tokenId) external
+    view returns
+    (uint256) {
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         return unlockedTokens[tokenId].rarity;
     }
 
-    function tokenURI(uint256 tokenId) external view returns (string memory result) {
+    function tokenURI(uint256 tokenId)
+    external view
+    returns (string memory result) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
         // TODO
         require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
@@ -157,7 +176,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             base64 = Base64.encode(
                 abi.encodePacked(
                     '{"animation_url": "',
-                    renderPlaceHolderImage(tokenId),
+                    cryptoAIImageHtml(tokenId),
                     '}'
                 )
             );
@@ -179,7 +198,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         );
     }
 
-    ///////
+    ///////  DATA assets + rendering //////
     function addDNA(string memory dnaType) public returns (string memory dna) {
         DNA_TYPE.push(dnaType);
         return dnaType;
@@ -311,7 +330,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return pixels;
     }
 
-    function renderPlaceHolderImage(uint256 tokenId) internal view returns (string memory result) {
+    function cryptoAIImageHtml(uint256 tokenId)
+    internal view
+    returns (string memory result) {
         return string(abi.encodePacked(
             htmlDataType,
             Base64.encode(
@@ -325,8 +346,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         ));
     }
 
-    function cryptoAIImageSvg(uint256 tokenId) internal view
-//    onlyAIAgentContract
+    function cryptoAIImageSvg(uint256 tokenId)
+    public view // change to internal after testing
+        // onlyAIAgentContract
     returns (string memory result) {
         bytes memory pixels = cryptoAIImage(tokenId);
         string memory rects = '';
