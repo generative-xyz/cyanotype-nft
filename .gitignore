@@ -1,59 +1,50 @@
-#configs
-# dependencies
-node_modules
-/node_modules
-/.pnp
+# Dependencies
+node_modules/
+.pnp/
 .pnp.js
 
-# next.js
-.next/
-/out/
-/analyze/
-
-/build
-
-.env
-coverage
-coverage.json
-typechain
-typechain-types
-
-# local env files
-.env*.local
-
-.history
-package-lock.json
-
-# Compiled Solidity contracts
-*.abi
-*.bin
-*.bin-runtime
-*.srcmap
-*.srcmap-runtime
-*.sol.js
-
-# Solidity coverage
+# Testing
 coverage/
 
-# Truffle specific
+# Production
 build/
-truffle-config.js
-truffle.js
+dist/
+out/
 
-# Hardhat specific
-artifacts/
-cache/
-reports/
-src/types/
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# debug
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
-.yarn
 
-# config repo
-/dapps/.gitignore
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
 
-.idea
+# Hardhat files
+cache/
+artifacts/
+typechain/
+typechain-types/
+
+# Deployment files
+deployments/
+
+# Local blockchain data
+.hardhat/
+
+# Temporary files
+*.log
+*.tmp
+
+# Contract size output
+contract-size-output.txt
