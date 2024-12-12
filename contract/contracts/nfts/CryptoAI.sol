@@ -96,7 +96,7 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         }
     }
 
-    function changeCryptoAiAddress(address newAddr) external onlyAdmin {
+    function changeCryptoAiDataAddress(address newAddr) external onlyAdmin {
         require(newAddr != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
 
         if (_cryptoAiDataAddr != newAddr) {
@@ -123,12 +123,15 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     function mint(address to) public payable {
         require(to != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(_indexMint <= TOKEN_LIMIT);
-//        require(msg.value >)
         _safeMint(to, _indexMint);
         uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, _indexMint)));
         seedTokenId[_indexMint] = seed;
         emit CryptoAIStructs.TokenMinted(_indexMint);
         _indexMint += 1;
+    }
+
+    function checkUnlockedNFT(uint256 tokenID) external pure returns (bool) {
+        return tokenID % 2 == 0;
     }
 
     function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
