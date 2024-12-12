@@ -1,5 +1,5 @@
 import {CryptoAIData} from "./cryptoAIData";
-import {initConfig, updateConfig} from "../../index";
+import {initConfig} from "../../index";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -7,13 +7,14 @@ async function main() {
         return;
     }
 
-    let configaaa = await initConfig();
-
+    let config = await initConfig();
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    const address = await dataContract.deployUpgradeable(process.env.PUBLIC_KEY, process.env.PUBLIC_KEY)
-    console.log('CryptoAIData contract address:', address);
-    await updateConfig("dataContractAddress", address);
-    console.log('Deploy succesful');
+    //ADD Element
+    const address = config["dataContractAddress"];
+
+    // Render SVG
+    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 1);
+    console.log("fullSVG", fullSVG);
 }
 
 main().catch(error => {
