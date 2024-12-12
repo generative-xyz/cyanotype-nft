@@ -10,6 +10,7 @@ import "../interfaces/IAgentNFT.sol";
 import "../libs/structs/CryptoAIStructsLibs.sol";
 import "../libs/helpers/Errors.sol";
 import "hardhat/console.sol";
+
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     // super admin
     address public _admin;
@@ -18,6 +19,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     // crypto ai agent address
     address public _cryptoAIAgentAddr;
 
+    bool private _contractSealed;
     string private constant baseURL = 'data:image/svg+xml;base64,';
     string[] private VALID_ITEM_TYPES;
     uint8 internal constant GRID_SIZE = 24;
@@ -48,6 +50,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         _;
     }
 
+    modifier unsealed() {
+        require(!_contractSealed, Errors.CONTRACT_SEALED);
+        _;
+    }
+
     modifier onlyDeployer() {
         require(msg.sender == _deployer, Errors.ONLY_DEPLOYER);
         _;
@@ -69,7 +76,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         __Ownable_init();
     }
 
-    function changeAdmin(address newAdm) external onlyAdmin {
+    function changeAdmin(address newAdm) external onlyAdmin unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
         if (_admin != newAdm) {
             address _previousAdmin = _admin;
@@ -77,18 +84,22 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         }
     }
 
-    function changeDeployer(address newAdm) external onlyAdmin {
+    function changeDeployer(address newAdm) external onlyAdmin unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
         }
     }
 
-    function changeCryptoAIAgentAddress(address newAddr) external onlyDeployer {
+    function changeCryptoAIAgentAddress(address newAddr) external onlyDeployer unsealed {
         require(newAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_cryptoAIAgentAddr != newAddr) {
             _cryptoAIAgentAddr = newAddr;
         }
+    }
+
+    function sealContract() external onlyAdmin unsealed {
+        _contractSealed = true;
     }
 
     ///////
@@ -140,7 +151,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8 _trait,
         uint8[] memory _positions
     ) public validItemType(_itemType)
-    onlyDeployer
+    onlyDeployer unsealed
     returns (uint16) {
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
@@ -235,7 +246,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         CryptoAIStructs.ItemDetail memory eye = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))];
         CryptoAIStructs.ItemDetail memory mouth = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))];
 
-        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions,head.positions, items['eye'][0].positions,mouth.positions);
+        bytes memory pixel = createMultipleRects(shuffleDNAVariant[index].positions, body.positions, head.positions, items['eye'][0].positions, mouth.positions);
 
         string memory rects = '';
         uint temp = 0;

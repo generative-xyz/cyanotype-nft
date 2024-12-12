@@ -1,14 +1,17 @@
 import {CryptoAIData} from "./cryptoAIData";
-import {initConfig, updateConfig} from "../../index";
+import {initConfig} from "../../index";
 import {
     DATA_BODY,
     DATA_CAT_VARIANT,
-    DATA_DNA, DATA_DOG_VARIANT,
+    DATA_DNA,
+    DATA_DOG_VARIANT,
     DATA_EYE,
     DATA_FROG_VARIANT,
-    DATA_HEAD, DATA_HUMAN_VARIANT,
+    DATA_HEAD,
+    DATA_HUMAN_VARIANT,
     DATA_MONKEY_VARIANT,
-    DATA_MOUTH, DATA_ROBOT_VARIANT,
+    DATA_MOUTH,
+    DATA_ROBOT_VARIANT,
     DNA,
     ELEMENT
 } from "./data";
@@ -22,14 +25,9 @@ async function main() {
     let configaaa = await initConfig();
 
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    const address = await dataContract.deployUpgradeable(process.env.PUBLIC_KEY, process.env.PUBLIC_KEY)
-    console.log('CryptoAIData contract address:', address);
-    await updateConfig("dataContractAddress", address);
-    console.log('Deploy succesful');
-
-    await dataContract.upgradeContract(configaaa['dataContractAddress'])
 
     //ADD Element
+    const address = configaaa["dataContractAddress"];
     for (const ele of DATA_MOUTH) {
         await dataContract.addItem(address, 0, ELEMENT.MOUTH, ele);
     }
@@ -84,8 +82,8 @@ async function main() {
     const fullSVG = await dataContract.renderFullSVGWithGrid(address, 5);
     console.log("fullSVG", fullSVG);
 
-/*    const ele = await dataContract.getArrayItemsType(address, ELEMENT.HEAD);
-    console.log("ele", ele);*/
+    /*    const ele = await dataContract.getArrayItemsType(address, ELEMENT.HEAD);
+        console.log("ele", ele);*/
 
 }
 
