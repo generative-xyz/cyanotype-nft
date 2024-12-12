@@ -79,7 +79,7 @@ async function main() {
     }
 
     // Render SVG
-    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 1);
+    const fullSVG = await dataContract.renderFullSVGWithGrid(address, 5);
     console.log("fullSVG", fullSVG);
 
     /*    const ele = await dataContract.getArrayItemsType(address, ELEMENT.HEAD);
