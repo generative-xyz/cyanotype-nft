@@ -1,5 +1,5 @@
 import {initConfig} from "../../index";
-import {CryptoAI} from "./cryptoAI";
+import {CryptoAIData} from "./cryptoAIData";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -9,9 +9,8 @@ async function main() {
 
     let config = await initConfig();
 
-    const dataContract = new CryptoAI(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    await dataContract.changeCryptoAiDataAddress(config.contractAddress, 0, config.dataContractAddress);
-
+    const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
+    await dataContract.changeCryptoAIAgentAddress(config.dataContractAddress, 0, config.contractAddress);
 }
 
 main().catch(error => {
