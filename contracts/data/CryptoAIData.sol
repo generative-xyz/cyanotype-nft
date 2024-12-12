@@ -336,8 +336,4 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId)));
         return randomNumber % maxLength;
     }
-
-    // 0 => not unlock => tra ve placeholder URL IPFS => only one can update
-    // 1 => unlock roi chua mint => mapping range point
-    // 2 => unlock va duoc mint
 }
