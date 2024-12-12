@@ -65,6 +65,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         _;
     }
 
+    modifier onlyAIAgentContract() {
+        require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
+        _;
+    }
+
     function initialize(
         address deployer,
         address admin
@@ -226,7 +231,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return pixels;
     }
 
-    function renderFullSVGWithGrid(uint256 tokenId) external view returns (string memory) {
+    function renderFullSVGWithGrid(uint256 tokenId) external view
+    onlyAIAgentContract
+    returns (string memory) {
         return "abc";
         /*IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
         bool unlocked = nft.checkUnlockedNFT(tokenId);
