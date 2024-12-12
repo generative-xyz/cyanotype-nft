@@ -47,6 +47,7 @@
     "ethers": "^6.6.2",
     "fs": "^0.0.1-security",
     "hardhat-contract-sizer": "^2.10.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "svgson": "^5.3.1"
   }
 }
