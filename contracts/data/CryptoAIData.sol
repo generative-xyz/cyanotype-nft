@@ -149,6 +149,37 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return unlockedTokens[tokenId].rarity;
     }
 
+    function tokenURI(uint256 tokenId) external view returns (string memory result) {
+        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
+        // TODO
+        require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
+        string memory base64 = "";
+        if (unlockedTokens[tokenId].rarity == 0 && false) {
+            base64 = Base64.encode(
+                abi.encodePacked(
+                    '{"animation_url": "',
+                    renderPlaceHolderImage(tokenId),
+                    '}'
+                )
+            );
+        }
+        else {
+            base64 = Base64.encode(
+                abi.encodePacked(
+                    '{"image": "',
+                    renderFullSVGWithGrid(tokenId),
+                    '}'
+                )
+            );
+        }
+        result = string(
+            abi.encodePacked(
+                'data:application/json;base64,',
+                base64
+            )
+        );
+    }
+
     ///////
     function addDNA(string memory dnaType) public returns (string memory dna) {
         DNA_TYPE.push(dnaType);
@@ -271,37 +302,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         }
 
         return pixels;
-    }
-
-    function tokenURI(uint256 tokenId) external view returns (string memory result) {
-        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        // TODO
-        require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
-        string memory base64 = "";
-        if (unlockedTokens[tokenId].rarity == 0 && false) {
-            base64 = Base64.encode(
-                abi.encodePacked(
-                    '{"animation_url": "',
-                    renderPlaceHolderImage(tokenId),
-                    '}'
-                )
-            );
-        }
-        else {
-            base64 = Base64.encode(
-                abi.encodePacked(
-                    '{"image": "',
-                    renderFullSVGWithGrid(tokenId),
-                    '}'
-                )
-            );
-        }
-        result = string(
-            abi.encodePacked(
-                'data:application/json;base64,',
-                base64
-            )
-        );
     }
 
     function renderPlaceHolderImage(uint256 tokenId) internal view returns (string memory result) {
