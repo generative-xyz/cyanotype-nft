@@ -2,8 +2,8 @@ const fs = require('fs').promises;
 
 type ConfigField = 'contractAddress' | 'dataContractAddress';
 let config = {
-    "contractAddress": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
-    "dataContractAddress": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed"
+    "contractAddress": "0x59b670e9fA9D0A427751Af201D676719a970857b",
+    "dataContractAddress": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d"
 };
 
 async function initConfig() {

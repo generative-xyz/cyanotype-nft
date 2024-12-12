@@ -2,7 +2,7 @@
   "DNA": {
     "Cat": [
       {
-        "name": "cat",
+        "name": "cat_1",
         "trait": 1,
         "positions": [
           7,
@@ -1208,7 +1208,7 @@
         ]
       },
       {
-        "name": "cat",
+        "name": "cat_2",
         "trait": 2,
         "positions": [
           5,
@@ -2429,7 +2429,7 @@
         ]
       },
       {
-        "name": "cat",
+        "name": "cat_3",
         "trait": 3,
         "positions": [
           5,
@@ -3607,7 +3607,7 @@
     ],
     "Dog": [
       {
-        "name": "dog",
+        "name": "dog_1",
         "trait": 1,
         "positions": [
           5,
@@ -4828,7 +4828,7 @@
         ]
       },
       {
-        "name": "dog",
+        "name": "dog_2",
         "trait": 2,
         "positions": [
           6,
@@ -6084,7 +6084,7 @@
         ]
       },
       {
-        "name": "dog",
+        "name": "dog_3",
         "trait": 3,
         "positions": [
           5,
@@ -7327,7 +7327,7 @@
     ],
     "Frog": [
       {
-        "name": "frog",
+        "name": "frog_1",
         "trait": 1,
         "positions": [
           7,
@@ -8408,7 +8408,7 @@
         ]
       },
       {
-        "name": "frog",
+        "name": "frog_2",
         "trait": 2,
         "positions": [
           7,
@@ -9489,7 +9489,7 @@
         ]
       },
       {
-        "name": "frog",
+        "name": "frog_3",
         "trait": 3,
         "positions": [
           7,
@@ -10572,7 +10572,7 @@
     ],
     "Human": [
       {
-        "name": "human",
+        "name": "human_1",
         "trait": 1,
         "positions": [
           3,
@@ -11818,7 +11818,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_2",
         "trait": 2,
         "positions": [
           9,
@@ -13054,7 +13054,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_3",
         "trait": 3,
         "positions": [
           9,
@@ -14195,7 +14195,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_4",
         "trait": 4,
         "positions": [
           5,
@@ -15311,7 +15311,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_5",
         "trait": 5,
         "positions": [
           15,
@@ -16277,7 +16277,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_6",
         "trait": 6,
         "positions": [
           7,
@@ -17538,7 +17538,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_7",
         "trait": 7,
         "positions": [
           9,
@@ -18609,7 +18609,7 @@
         ]
       },
       {
-        "name": "human",
+        "name": "human_8",
         "trait": 8,
         "positions": [
           9,
@@ -19682,7 +19682,7 @@
     ],
     "Monkey": [
       {
-        "name": "monkey",
+        "name": "monkey_1",
         "trait": 1,
         "positions": [
           6,
@@ -20893,7 +20893,7 @@
         ]
       },
       {
-        "name": "monkey",
+        "name": "monkey_2",
         "trait": 2,
         "positions": [
           6,
@@ -22104,7 +22104,7 @@
         ]
       },
       {
-        "name": "monkey",
+        "name": "monkey_3",
         "trait": 3,
         "positions": [
           6,
@@ -23317,7 +23317,7 @@
     ],
     "Robot": [
       {
-        "name": "robot",
+        "name": "robot_1",
         "trait": 1,
         "positions": [
           0,
@@ -26203,7 +26203,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_2",
         "trait": 2,
         "positions": [
           5,
@@ -27314,7 +27314,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_3",
         "trait": 3,
         "positions": [
           3,
@@ -28575,7 +28575,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_4",
         "trait": 4,
         "positions": [
           12,
@@ -29701,7 +29701,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_5",
         "trait": 5,
         "positions": [
           12,
@@ -30882,7 +30882,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_6",
         "trait": 6,
         "positions": [
           8,
@@ -32143,7 +32143,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_7",
         "trait": 7,
         "positions": [
           5,
@@ -33254,7 +33254,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_8",
         "trait": 8,
         "positions": [
           3,
@@ -34575,7 +34575,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_9",
         "trait": 9,
         "positions": [
           5,
@@ -35766,7 +35766,7 @@
         ]
       },
       {
-        "name": "robot",
+        "name": "robot_10",
         "trait": 10,
         "positions": [
           5,
@@ -36921,7 +36921,7 @@
   "elements": {
     "Body": [
       {
-        "name": "body",
+        "name": "body_1",
         "trait": 1,
         "positions": [
           7,
@@ -37112,7 +37112,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_2",
         "trait": 2,
         "positions": [
           7,
@@ -37303,7 +37303,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_3",
         "trait": 3,
         "positions": [
           7,
@@ -37559,7 +37559,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_4",
         "trait": 4,
         "positions": [
           7,
@@ -37800,7 +37800,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_5",
         "trait": 5,
         "positions": [
           9,
@@ -38086,7 +38086,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_6",
         "trait": 6,
         "positions": [
           7,
@@ -38327,7 +38327,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_7",
         "trait": 7,
         "positions": [
           8,
@@ -38678,7 +38678,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_8",
         "trait": 8,
         "positions": [
           7,
@@ -38919,7 +38919,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_9",
         "trait": 9,
         "positions": [
           11,
@@ -39190,7 +39190,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_10",
         "trait": 10,
         "positions": [
           5,
@@ -39491,7 +39491,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_11",
         "trait": 11,
         "positions": [
           7,
@@ -39692,7 +39692,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_12",
         "trait": 12,
         "positions": [
           11,
@@ -39963,7 +39963,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_13",
         "trait": 13,
         "positions": [
           8,
@@ -40189,7 +40189,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_14",
         "trait": 14,
         "positions": [
           10,
@@ -40290,7 +40290,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_15",
         "trait": 15,
         "positions": [
           10,
@@ -40386,7 +40386,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_16",
         "trait": 16,
         "positions": [
           6,
@@ -40632,7 +40632,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_17",
         "trait": 17,
         "positions": [
           7,
@@ -40888,7 +40888,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_18",
         "trait": 18,
         "positions": [
           11,
@@ -41194,7 +41194,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_19",
         "trait": 19,
         "positions": [
           10,
@@ -41315,7 +41315,7 @@
         ]
       },
       {
-        "name": "body",
+        "name": "body_20",
         "trait": 20,
         "positions": [
           7,
@@ -41613,7 +41613,7 @@
     ],
     "Eyes": [
       {
-        "name": "eye",
+        "name": "eye_1",
         "trait": 1,
         "positions": [
           8,
@@ -41759,7 +41759,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_2",
         "trait": 2,
         "positions": [
           10,
@@ -41895,7 +41895,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_3",
         "trait": 3,
         "positions": [
           8,
@@ -41981,7 +41981,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_4",
         "trait": 4,
         "positions": [
           9,
@@ -42177,7 +42177,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_5",
         "trait": 5,
         "positions": [
           8,
@@ -42323,7 +42323,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_6",
         "trait": 6,
         "positions": [
           10,
@@ -42419,7 +42419,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_7",
         "trait": 7,
         "positions": [
           9,
@@ -42635,7 +42635,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_8",
         "trait": 8,
         "positions": [
           16,
@@ -42756,7 +42756,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_9",
         "trait": 9,
         "positions": [
           7,
@@ -42987,7 +42987,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_10",
         "trait": 10,
         "positions": [
           9,
@@ -43123,7 +43123,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_11",
         "trait": 11,
         "positions": [
           10,
@@ -43199,7 +43199,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_12",
         "trait": 12,
         "positions": [
           11,
@@ -43265,7 +43265,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_13",
         "trait": 13,
         "positions": [
           9,
@@ -43321,7 +43321,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_14",
         "trait": 14,
         "positions": [
           10,
@@ -43387,7 +43387,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_15",
         "trait": 15,
         "positions": [
           10,
@@ -43463,7 +43463,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_16",
         "trait": 16,
         "positions": [
           6,
@@ -43599,7 +43599,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_17",
         "trait": 17,
         "positions": [
           10,
@@ -43695,7 +43695,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_18",
         "trait": 18,
         "positions": [
           7,
@@ -43866,7 +43866,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_19",
         "trait": 19,
         "positions": [
           11,
@@ -44002,7 +44002,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_20",
         "trait": 20,
         "positions": [
           7,
@@ -44253,7 +44253,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_21",
         "trait": 21,
         "positions": [
           7,
@@ -44429,7 +44429,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_22",
         "trait": 22,
         "positions": [
           11,
@@ -44630,7 +44630,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_23",
         "trait": 23,
         "positions": [
           9,
@@ -44721,7 +44721,7 @@
         ]
       },
       {
-        "name": "eye",
+        "name": "eye_24",
         "trait": 24,
         "positions": [
           8,
@@ -44894,7 +44894,7 @@
     ],
     "Head": [
       {
-        "name": "head",
+        "name": "head_1",
         "trait": 1,
         "positions": [
           12,
@@ -45140,7 +45140,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_2",
         "trait": 2,
         "positions": [
           11,
@@ -45336,7 +45336,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_3",
         "trait": 3,
         "positions": [
           11,
@@ -45582,7 +45582,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_4",
         "trait": 4,
         "positions": [
           10,
@@ -45808,7 +45808,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_5",
         "trait": 5,
         "positions": [
           10,
@@ -46124,7 +46124,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_6",
         "trait": 6,
         "positions": [
           10,
@@ -46460,7 +46460,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_7",
         "trait": 7,
         "positions": [
           11,
@@ -46756,7 +46756,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_8",
         "trait": 8,
         "positions": [
           8,
@@ -46977,7 +46977,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_9",
         "trait": 9,
         "positions": [
           9,
@@ -47153,7 +47153,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_10",
         "trait": 10,
         "positions": [
           13,
@@ -47339,7 +47339,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_11",
         "trait": 11,
         "positions": [
           10,
@@ -47570,7 +47570,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_12",
         "trait": 12,
         "positions": [
           12,
@@ -47781,7 +47781,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_13",
         "trait": 13,
         "positions": [
           13,
@@ -47807,7 +47807,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_14",
         "trait": 14,
         "positions": [
           13,
@@ -47833,7 +47833,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_15",
         "trait": 15,
         "positions": [
           13,
@@ -47859,7 +47859,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_16",
         "trait": 16,
         "positions": [
           11,
@@ -47905,7 +47905,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_17",
         "trait": 17,
         "positions": [
           12,
@@ -47981,7 +47981,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_18",
         "trait": 18,
         "positions": [
           11,
@@ -48027,7 +48027,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_19",
         "trait": 19,
         "positions": [
           15,
@@ -48093,7 +48093,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_20",
         "trait": 20,
         "positions": [
           5,
@@ -48384,7 +48384,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_21",
         "trait": 21,
         "positions": [
           10,
@@ -48570,7 +48570,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_22",
         "trait": 22,
         "positions": [
           12,
@@ -48816,7 +48816,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_23",
         "trait": 23,
         "positions": [
           10,
@@ -48982,7 +48982,7 @@
         ]
       },
       {
-        "name": "head",
+        "name": "head_24",
         "trait": 24,
         "positions": [
           11,
@@ -49195,7 +49195,7 @@
     ],
     "Mouth": [
       {
-        "name": "mouth",
+        "name": "mouth_1",
         "trait": 1,
         "positions": [
           9,
@@ -49346,17 +49346,17 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_2",
         "trait": 2,
         "positions": []
       },
       {
-        "name": "mouth",
+        "name": "mouth_3",
         "trait": 3,
         "positions": []
       },
       {
-        "name": "mouth",
+        "name": "mouth_4",
         "trait": 4,
         "positions": [
           11,
@@ -49402,7 +49402,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_5",
         "trait": 5,
         "positions": [
           8,
@@ -49528,7 +49528,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_6",
         "trait": 6,
         "positions": [
           21,
@@ -49594,7 +49594,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_7",
         "trait": 7,
         "positions": [
           13,
@@ -49650,12 +49650,12 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_8",
         "trait": 8,
         "positions": []
       },
       {
-        "name": "mouth",
+        "name": "mouth_9",
         "trait": 9,
         "positions": [
           11,
@@ -49716,7 +49716,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_10",
         "trait": 10,
         "positions": [
           11,
@@ -49752,7 +49752,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_11",
         "trait": 11,
         "positions": [
           11,
@@ -49848,7 +49848,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_12",
         "trait": 12,
         "positions": [
           13,
@@ -49874,7 +49874,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_13",
         "trait": 13,
         "positions": [
           11,
@@ -50225,7 +50225,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_14",
         "trait": 14,
         "positions": [
           12,
@@ -50261,7 +50261,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_15",
         "trait": 15,
         "positions": [
           5,
@@ -50492,7 +50492,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_16",
         "trait": 16,
         "positions": [
           14,
@@ -50533,12 +50533,12 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_17",
         "trait": 17,
         "positions": []
       },
       {
-        "name": "mouth",
+        "name": "mouth_18",
         "trait": 18,
         "positions": [
           11,
@@ -50624,7 +50624,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_19",
         "trait": 19,
         "positions": [
           9,
@@ -50740,7 +50740,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_20",
         "trait": 20,
         "positions": [
           10,
@@ -50786,7 +50786,7 @@
         ]
       },
       {
-        "name": "mouth",
+        "name": "mouth_21",
         "trait": 21,
         "positions": [
           12,

@@ -80,7 +80,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
       const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].length + 1;
 
       allData[mainFolder][subFolder].push({
-        name,
+        name: `${name}_${trait}`, // To change name to include trait
         trait,
         positions
       });

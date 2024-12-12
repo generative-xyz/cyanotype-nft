@@ -294,18 +294,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8[] memory positions4 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].positions;
         uint8[] memory positions5 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].positions;
 
-/*        string memory name = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].name;
-        string memory name1 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].name;
-        string memory name2 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].name;
-        string memory name3 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].name;
-        string memory name4 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].name;
-
-        console.log("name", name);
-        console.log("name1", name1);
-        console.log("name2", name2);
-        console.log("name3", name3);
-        console.log("name4", name4);*/
-
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint totalLength = positions.length + positions2.length + positions3.length + positions4.length + positions5.length;
@@ -360,6 +348,21 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 )
             )
         ));
+    }
+
+    function getAttrData(uint256 tokenId) public view returns(string memory n1, string memory n2, string memory n3, string memory n4, string memory n5) {
+        uint256 rarity = unlockedTokens[tokenId].rarity;
+        // TODO:  from rarity;
+        string memory DNAType = DNA_TYPE[randomIndex(shuffleArrayString(rarity, DNA_TYPE).length, tokenId)];// TODO
+         n1 = shuffleArray(rarity, getArrayDNAVariant(DNAType))[tokenId].name;
+//         n2 = items['body'][uint16(randomIndex(itemCounts['body'], tokenId))].name;
+//         n3 = items['head'][uint16(randomIndex(itemCounts['head'], tokenId))].name;
+//         n4 = items['eye'][uint16(randomIndex(itemCounts['eye'], tokenId))].name;
+//         n5 = items['mouth'][uint16(randomIndex(itemCounts['mouth'], tokenId))].name;
+        console.log('n1', n1);
+//        console.log('n2', n2);
+//        console.log("n3", n3, n4, n5);
+        return (n1, n2, n3, n4, n5);
     }
 
     function cryptoAIImageSvg(uint256 tokenId)
