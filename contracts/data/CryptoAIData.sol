@@ -22,29 +22,28 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     bool private _contractSealed;
     mapping(uint256 => CryptoAIStructs.Token) private unlockedTokens;
 
-    uint256 public constant TOKEN_LIMIT = 1000;
+    uint256 public constant TOKEN_LIMIT = 0x3E8;
     string private constant svgDataType = 'data:image/svg+xml;base64,';
-    string[] private VALID_ITEM_TYPES;
-    uint8 internal constant GRID_SIZE = 24;
+    uint8 internal constant GRID_SIZE = 0x18;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
     string internal constant SVG_WIDTH = '" width="1" height="1" fill="rgb(';
     string internal constant SVG_RECT = '<rect x="';
-    string internal constant SVG_CLOSE_RECT = ')" />';
-
+    string internal constant SVG_CLOSE_RECT = ')"/>';
     // placeholder
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
     string internal constant PLACEHOLDER_FOOTER = "'</script>";
-    string internal PLACEHOLDER_IMAGE = '';
+    string internal PLACEHOLDER_IMAGE;
 
+    string[] private VALID_ITEM_TYPES;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
+    string[] public DNA_TYPE;
     mapping(string => uint16) private itemCounts;
     mapping(string => uint16) private dnaCounts;
 
-    string[] public DNA_TYPE;
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
