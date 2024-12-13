@@ -41,7 +41,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string[] private VALID_ITEM_TYPES;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
-    mapping(string => mapping(uint16 => uint16)) private traits;
+    mapping(string => uint16[]) private traits;
     
     string[] public DNA_TYPE;
     mapping(string => uint16) private itemCounts;
