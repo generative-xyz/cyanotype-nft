@@ -425,10 +425,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         );
 
         attr = string(abi.encodePacked(
-            '{ơ',
-            name,
-            tokenID,
-            '"',
+            '{[',
+            objString
             ',',
             desc,
             ',',
