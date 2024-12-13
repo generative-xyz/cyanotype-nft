@@ -21,7 +21,7 @@ async function main() {
     }
     let images = "";
     const num = parseInt(args[0]);
-    for (var i = 1; i <= num; i++) {
+    for (var i = 2; i <= num; i++) {
         try {
             const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
             images += "<span>" + i + "</span><br>" + "<img width=\"64\" src=\"" + fullSVG + "\" title='" + i + "' />"
