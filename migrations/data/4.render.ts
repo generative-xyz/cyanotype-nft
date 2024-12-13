@@ -14,13 +14,20 @@ async function main() {
     const address = config["dataContractAddress"];
 
     // Render SVG
-    let images = "";
-    for (var i = 1; i < 5; i++) {
-        const fullSVG = await dataContract.cryptoAIImageSvg(address, 4);
-        images += "<img width=\"256\" src=\"" + fullSVG + "\"/>"
-        console.log(i, "fullSVG", fullSVG);
+    const args = process.argv.slice(2);
+    if (args.length == 0) {
+        console.log("missing number")
+        return;
     }
-    await fs.writeFile('../../testimage.html', images);
+    let images = "";
+    const num = parseInt(args[0]);
+    for (var i = 1; i <= num; i++) {
+        const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
+        images += "<img width=\"256\" src=\"" + fullSVG + "\"/>"
+        // console.log(i, "fullSVG", fullSVG);
+    }
+    console.log("images", images);
+    await fs.writeFile('./migrations/testimage.html', images);
 
     // const attr = await dataContract.getAttrData(address, 4);
     // console.log("fullSVG", attr);
