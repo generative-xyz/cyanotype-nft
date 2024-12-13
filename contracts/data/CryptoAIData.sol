@@ -374,9 +374,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         for (uint i = 0; i < pixels.length; i += 4) {
             if (pixels[i + 3] > 0) {
-                temp = i >> 2;
-                x = uint8(temp % GRID_SIZE);
-                y = uint8(temp / GRID_SIZE);
+                assembly {
+                    temp := shr(2, i)
+                    x := mod(temp, GRID_SIZE)
+                    y := div(temp, GRID_SIZE)
+                }
                 if (x < GRID_SIZE && y < GRID_SIZE) {
                     p = (uint(y) * 24 + uint(x)) * 4;
                     for (uint k = 0; k < 4; k++) {
