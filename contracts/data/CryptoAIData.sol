@@ -292,35 +292,32 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         CryptoAIStructs.ItemDetail memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.positions.length)))];
         CryptoAIStructs.ItemDetail memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.positions.length)))];
 
-        CryptoAIStructs.Attribute[] memory items = [
-                            CryptoAIStructs.Attribute("DNA", dna_po),
-                            CryptoAIStructs.Attribute("Body", body_po),
-                            CryptoAIStructs.Attribute("Head", head_po),
-                            CryptoAIStructs.Attribute("Eye", eye_po),
-                            CryptoAIStructs.Attribute("Mouth", mouth_po)];
+        CryptoAIStructs.Attribute[] memory items = new CryptoAIStructs.Attribute[](5);
+        items[0] = CryptoAIStructs.Attribute("DNA", dna_po);
+        items[1] = CryptoAIStructs.Attribute("Body", body_po);
+        items[2] = CryptoAIStructs.Attribute("Head", head_po);
+        items[3] = CryptoAIStructs.Attribute("Eye", eye_po);
+        items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
 
         bytes memory byteString;
 
         for (uint8 i = 0; i < items.length; i++) {
-            bytes memory objString = abi.encodePacked(
-                '{"trait:"',
-                items[i].trait,
-                '",value:"',
-                items[i].item.name,
-                '"}'
-            );
-            if (i > 0) {
-                byteString = abi.encodePacked(byteString, ",");
+            if( items[i].item.positions.length > 0) {
+                bytes memory objString = abi.encodePacked(
+                    '{"trait":"',
+                    items[i].trait,
+                    '","value":"',
+                    items[i].item.name,
+                    '"}'
+                );
+                if (i > 0) {
+                    byteString = abi.encodePacked(byteString, ",");
+                }
+                byteString = abi.encodePacked(byteString, objString);
             }
-            byteString = abi.encodePacked(byteString, objString);
         }
 
-
-        // DNA
-        // Other traits
-        // Attributes: number
-//        text = "[{'trait': 'DNA', value: 'human'}, {'trait': 'body', value: 'body_1'}, {'trait': 'Attributes', value: 1'}]";
-        text =  abi.encodePacked("[", string(byteString), "]");
+        text = string(abi.encodePacked('[', string(byteString), ']'));
     }
 
     function cryptoAIImage(uint256 tokenId)
