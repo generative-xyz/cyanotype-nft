@@ -186,7 +186,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             base64 = Base64.encode(
                 abi.encodePacked(
                     '{"image": "',
-                    this.cryptoAIImageSvg(tokenId),
+                    this.cryptoAIImageSvg(tokenId), '", "attributes": ',
+                    this.cryptoAIAttributes(tokenId),
                     '}'
                 )
             );
@@ -282,7 +283,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // DNA
         // Other traits
         // Attributes: number
-        text = "[{'trait': 'DNA', value: 'human'}, {'trait': 'body', value: 'body_1'}, {'trait': 'Attributes', value: 1'}]";
+        text = "[{'trait_type': 'DNA', value: 'human'}, {'trait_type': 'body', value: 'body_1'}, {'trait_type': 'Attributes', value: 1'}]";
     }
 
     function cryptoAIImage(uint256 tokenId)
