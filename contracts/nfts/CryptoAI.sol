@@ -13,9 +13,9 @@ import "../libs/structs/CryptoAIStructs.sol";
 import "../interfaces/ICryptoAIData.sol";
 
 import 'hardhat/console.sol';
-import {IAgentNFT} from "../interfaces/IAgentNFT.sol";
+import {IMintableAgent} from "../interfaces/IAgentNFT.sol";
 
-contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable, IAgentNFT {
+contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, IERC2981Upgradeable, OwnableUpgradeable, IMintableAgent {
     uint256 public constant TOKEN_LIMIT = 10000; // Changed to 10000
     uint256 public constant MINT_PRINT = 1 ** 18; // Changed to 10000
 
@@ -131,12 +131,16 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         _indexMint += 1;
     }
 
-    function checkUnlockedNFT(uint256 tokenID) external pure returns (bool) {
-        return tokenID % 2 == 0;
+    function isUnlockedAgent(uint256 _agentId) public view returns (bool) {
+        return _agentId % 2 == 0;
     }
 
-    function checkNFTPoint(uint256 tokenID) external pure returns (uint256, uint256) {
-        return (100, 100000);
+    function getAgentRating(uint256 _agentId) external view returns (uint256, uint256) {
+        return (0, 0);
+    }
+
+    function getAgentRarity(uint256 _agentId) external view returns (uint256) {
+        return 0;
     }
 
     function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
