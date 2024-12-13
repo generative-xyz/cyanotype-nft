@@ -45,7 +45,7 @@ async function main() {
 
     //ADD DNA
     for (const dna of DATA_DNA) {
-        await dataContract.addDNA(address, 0, dna);
+        await dataContract.addDNA(address, 0, dna, 20);
     }
     await dataContract.getDNA(address, 0);
 
