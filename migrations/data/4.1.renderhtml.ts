@@ -19,12 +19,12 @@ async function main() {
         console.log("missing number")
         return;
     }
-    let hmls = "";
+    let htmls = "";
     const num = parseInt(args[0]);
     for (var i = 1; i <= num; i++) {
         try {
             const fullHtml = await dataContract.cryptoAIImageHtml(address, i);
-            hmls += "<pre>" + fullHtml + "</pre><br>"
+            htmls += "<span>" + i + "</span><br><textarea>" + fullHtml + "</textarea><br>"
             console.log(i, " processed");
         } catch (ex) {
             console.log(i, " failed");
@@ -32,7 +32,7 @@ async function main() {
     }
     const path = "./migrations/testhtml.html";
     console.log("path", path);
-    await fs.writeFile(path, hmls);
+    await fs.writeFile(path, htmls);
 
 }
 
