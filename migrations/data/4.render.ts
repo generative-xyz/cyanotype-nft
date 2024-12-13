@@ -26,8 +26,9 @@ async function main() {
         images += "<img width=\"256\" src=\"" + fullSVG + "\"/>"
         // console.log(i, "fullSVG", fullSVG);
     }
-    console.log("images", images);
-    await fs.writeFile('./migrations/testimage.html', images);
+    const path = "./migrations/testimage.html";
+    console.log("path", path);
+    await fs.writeFile('', images);
 
     // const attr = await dataContract.getAttrData(address, 4);
     // console.log("fullSVG", attr);
