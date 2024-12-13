@@ -16,29 +16,37 @@ const DATA_HEAD = data.elements.Head
 const DATA_EYE =  data.elements.Eyes
 
 export enum DNA {
-    MONKEY = 'monkey',
-    CAT = 'cat',
-    DOG = 'dog',
-    FROG = 'frog',
-    ROBOT = 'robot',
-    HUMAN = 'human',
+    MONKEY = 'Monkey',
+    CAT = 'Cat',
+    DOG = 'Dog',
+    FROG = 'Frog',
+    ROBOT = 'Robot',
+    HUMAN = 'Human',
 }
 
-const DATA_DNA: DNA[] = [
-    DNA.MONKEY, DNA.CAT, DNA.DOG, DNA.FROG, DNA.ROBOT, DNA.HUMAN
+
+const DATA_DNA = [
+    {
+        key: DNA.CAT,
+        trait: data.DNA.Cat.trait,
+    },
+    {
+        key: DNA.DOG,
+        trait: data.DNA.Dog.trait,
+    },
 ]
 
-const DATA_FROG_VARIANT =  data.DNA.Frog
+const DATA_FROG_VARIANT =  data.DNA.Frog.items
 
-const DATA_HUMAN_VARIANT =  data.DNA.Human
+const DATA_HUMAN_VARIANT =  data.DNA.Human.items
 
-const DATA_CAT_VARIANT = data.DNA.Cat
+const DATA_CAT_VARIANT = data.DNA.Cat.items
 
-const DATA_DOG_VARIANT =  data.DNA.Dog
+const DATA_DOG_VARIANT =  data.DNA.Dog.items
 
-const DATA_ROBOT_VARIANT = data.DNA.Robot
+const DATA_ROBOT_VARIANT = data.DNA.Robot.items
 
-const DATA_MONKEY_VARIANT = data.DNA.Monkey
+const DATA_MONKEY_VARIANT = data.DNA.Monkey.items
 
 
 export {DATA_EYE, DATA_DNA, DATA_MOUTH, DATA_HEAD, DATA_FROG_VARIANT, DATA_HUMAN_VARIANT, DATA_CAT_VARIANT, DATA_DOG_VARIANT, DATA_ROBOT_VARIANT, DATA_MONKEY_VARIANT, DATA_BODY}

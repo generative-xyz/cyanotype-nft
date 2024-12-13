@@ -4,7 +4,7 @@ import * as path from 'path';
 const { parseSync } = require('svgson');
 
 // Use absolute path to testAssets folder
-const PATH_ASSETS = path.join(__dirname, '../assets');
+const PATH_ASSETS = path.join(__dirname, '../testAssets');
 const PATH_OUTPUT = 'migrations/data/datajson/data-compressed.json';
 
 interface PixelData {
@@ -70,12 +70,13 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
 
       if (mainFolder === 'DNA') {
         // For DNA folder, extract trait from subfolder name
-        const [_, subFolderTrait] = subFolder.split('_');
+        const [subFolderTitle, subFolderTrait] = subFolder.split('_');
         const folderTrait = parseInt(subFolderTrait);
 
-        if (!allData[mainFolder][subFolder]) {
+        if (!allData[mainFolder][subFolderTitle]) {
           // Initialize DNA subfolder with trait and items array
-          allData[mainFolder][subFolder] = {
+          allData[mainFolder][subFolderTitle] = {
+            key: subFolderTitle,
             trait: folderTrait,
             items: []
           };
@@ -86,9 +87,9 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
         
         // Extract name and trait from individual file
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
-        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].items.length + 1;
+        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].items.length + 1;
 
-        allData[mainFolder][subFolder].items.push({
+        allData[mainFolder][subFolderTitle].items.push({
           name: `${name}_${trait}`,
           trait,
           positions
