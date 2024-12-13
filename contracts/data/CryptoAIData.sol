@@ -185,19 +185,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         else {
             base64 = Base64.encode(
                 abi.encodePacked(
-                    '{"image": "',
-                    this.cryptoAIImageSvg(tokenId), '", "attributes": ',
-                    this.cryptoAIAttributes(tokenId),
-                    '}'
+                    '{"image": "', this.cryptoAIImageSvg(tokenId),
+                    '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
                 )
             );
         }
-        result = string(
-            abi.encodePacked(
-                'data:application/json;base64,',
-                base64
-            )
-        );
+        result = string(abi.encodePacked('data:application/json;base64,', base64));
     }
 
     ///////  DATA assets + rendering //////
@@ -413,9 +406,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8 x;
         uint8 y;
         uint p;
-        uint8 value;
         bytes memory buffer = new bytes(8);
-
         for (uint i = 0; i < pixels.length; i += 4) {
             if (pixels[i + 3] > 0) {
                 assembly {
@@ -425,11 +416,24 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 }
                 if (x < GRID_SIZE && y < GRID_SIZE) {
                     p = (uint(y) * 24 + uint(x)) * 4;
+                    /*
                     for (uint k = 0; k < 4; k++) {
-                        value = uint8(pixels[p + k]);
+                        uint8 value = uint8(pixels[p + k]);
                         buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
                         value >>= 4;
                         buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
+                    }
+                    */
+                    assembly {
+                        let hexSymbols := _HEX_SYMBOLS
+                        let bufferPtr := add(buffer, 0x20)
+                        let pixelsPtr := add(add(pixels, 0x20), p)
+                        for {let k := 0} lt(k, 4) {k := add(k, 1)} {
+                            let value := byte(0, mload(add(pixelsPtr, k)))
+                            mstore8(add(bufferPtr, add(mul(k, 2), 1)), byte(and(value, 0xf), hexSymbols))
+                            value := shr(4, value)
+                            mstore8(add(bufferPtr, mul(k, 2)), byte(and(value, 0xf), hexSymbols))
+                        }
                     }
 
                     svg = string(abi.encodePacked(
