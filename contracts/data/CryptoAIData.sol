@@ -276,7 +276,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return item;
     }
 
-    function cryptoAIAttributes(uint16 index)
+    function cryptoAIAttributes(uint256 tokenId)
     external view
     returns (string memory text) {
         text = "";
