@@ -280,10 +280,44 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     external view
     returns (string memory text) {
-        // DNA
-        // Other traits
-        // Attributes: number
-        text = "[{'trait_type': 'DNA', value: 'human'}, {'trait_type': 'body', value: 'body_1'}, {'trait_type': 'Attributes', value: 1'}]";
+        // uint256 rarity = unlockedTokens[tokenId].rarity;
+        // TODO:  from rarity;
+        uint256 rarity = tokenId;
+        string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
+
+        CryptoAIStructs.ItemDetail memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)];
+        CryptoAIStructs.ItemDetail memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.positions.length)))];
+        CryptoAIStructs.ItemDetail memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.positions.length)))];
+        CryptoAIStructs.ItemDetail memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.positions.length)))];
+        CryptoAIStructs.ItemDetail memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.positions.length)))];
+
+        CryptoAIStructs.Attribute[] memory items = new CryptoAIStructs.Attribute[](5);
+        items[0] = CryptoAIStructs.Attribute("DNA", dna_po);
+        items[1] = CryptoAIStructs.Attribute("Body", body_po);
+        items[2] = CryptoAIStructs.Attribute("Head", head_po);
+        items[3] = CryptoAIStructs.Attribute("Eye", eye_po);
+        items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
+
+        bytes memory byteString;
+
+        for (uint8 i = 0; i < items.length; i++) {
+            if( items[i].item.positions.length > 0) {
+                bytes memory objString = abi.encodePacked(
+                    '{"trait":"',
+                    items[i].trait,
+                    '","value":"',
+                    items[i].item.name,
+                    '"}'
+                );
+                if (i > 0) {
+                    byteString = abi.encodePacked(byteString, ",");
+                }
+                byteString = abi.encodePacked(byteString, objString);
+            }
+        }
+
+        text = string(abi.encodePacked('[', string(byteString), ']'));
     }
 
     function cryptoAIImage(uint256 tokenId)
@@ -406,6 +440,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
+
 
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];

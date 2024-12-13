@@ -34,8 +34,8 @@ async function main() {
     console.log("path", path);
     await fs.writeFile(path, images);
 
-    // const attr = await dataContract.getAttrData(address, 4);
-    // console.log("fullSVG", attr);
+    const attr = await dataContract.getAttrData(address, 4);
+    console.log("fullSVG", attr);
 
     //Render Attributes
 }
@@ -44,3 +44,4 @@ main().catch(error => {
     console.error(error);
     process.exitCode = 1;
 });
+

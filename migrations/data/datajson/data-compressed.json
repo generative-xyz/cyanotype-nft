@@ -36921,6 +36921,11 @@
   "elements": {
     "Body": [
       {
+        "name": "body_empty",
+        "trait": 0,
+        "positions": []
+      },
+      {
         "name": "body_1",
         "trait": 1,
         "positions": [
