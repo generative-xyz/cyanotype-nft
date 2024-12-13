@@ -21,10 +21,10 @@ async function main() {
     }
     let images = "";
     const num = parseInt(args[0]);
-    for (var i = 17; i <= num; i++) {
+    for (var i = 1; i <= num; i++) {
         try {
             const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
-            images += "<img width=\"256\" src=\"" + fullSVG + "\" title='" + i + "' />"
+            images += "<img width=\"64\" src=\"" + fullSVG + "\" title='" + i + "' />"
             console.log(i, " processed");
         } catch (ex) {
             console.log(i, " failed");
