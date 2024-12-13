@@ -34,9 +34,10 @@ async function main() {
     // console.log("path", path);
     // await fs.writeFile(path, images);
 
-    // const fullSVG = await dataContract.cryptoAIImageSvg(address, 4);
-    // console.log("fullSVG", fullSVG);
-    const attr = await dataContract.getAttrData(address, 4);
+    const tokenId = 16
+    const fullSVG = await dataContract.cryptoAIImageSvg(address, tokenId);
+    console.log("fullSVG", fullSVG);
+    const attr = await dataContract.getAttrData(address, tokenId);
     console.log("fullSVG", attr);
 
     //Render Attributes

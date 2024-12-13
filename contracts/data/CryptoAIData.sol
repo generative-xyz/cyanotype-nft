@@ -296,7 +296,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         items[0] = CryptoAIStructs.Attribute("DNA", dna_po);
         items[1] = CryptoAIStructs.Attribute("Body", body_po);
         items[2] = CryptoAIStructs.Attribute("Head", head_po);
-        items[3] = CryptoAIStructs.Attribute("Eye", eye_po);
+        items[3] = CryptoAIStructs.Attribute("Eyes", eye_po);
         items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
 
         bytes memory byteString ;
