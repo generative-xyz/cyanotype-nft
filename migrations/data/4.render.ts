@@ -14,32 +14,27 @@ async function main() {
     const address = config["dataContractAddress"];
 
     // Render SVG
-    // const args = process.argv.slice(2);
-    // if (args.length == 0) {
-    //     console.log("missing number")
-    //     return;
-    // }
-    // let images = "";
-    // const num = parseInt(args[0]);
-    // for (var i = 1; i <= num; i++) {
-    //     try {
-    //         const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
-    //         images += "<img width=\"64\" src=\"" + fullSVG + "\" title='" + i + "' />"
-    //         console.log(i, " processed");
-    //     } catch (ex) {
-    //         console.log(i, " failed");
-    //     }
-    // }
-    // const path = "./migrations/testimage.html";
-    // console.log("path", path);
-    // await fs.writeFile(path, images);
-
-    // const fullSVG = await dataContract.cryptoAIImageSvg(address, 4);
-    // console.log("fullSVG", fullSVG);
-    const attr = await dataContract.getAttrData(address, 4);
-    console.log("fullSVG", attr);
-
-    //Render Attributes
+    const args = process.argv.slice(2);
+    if (args.length == 0) {
+        console.log("missing number")
+        return;
+    }
+    let images = "";
+    const num = parseInt(args[0]);
+    for (var i = 1; i <= num; i++) {
+        try {
+            const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
+            images += "<span>" + i + "</span>" + "<img width=\"64\" src=\"" + fullSVG + "\" title='" + i + "' />"
+            console.log(i, " processed");
+            const attr = await dataContract.getAttrData(address, i);
+            images += "<pre>" + attr + "</pre><br>";
+        } catch (ex) {
+            console.log(i, " failed");
+        }
+    }
+    const path = "./migrations/testimage.html";
+    console.log("path", path);
+    await fs.writeFile(path, images);
 }
 
 main().catch(error => {
