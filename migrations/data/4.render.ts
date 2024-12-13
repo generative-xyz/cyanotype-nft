@@ -21,10 +21,14 @@ async function main() {
     }
     let images = "";
     const num = parseInt(args[0]);
-    for (var i = 1; i <= num; i++) {
-        const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
-        images += "<img width=\"256\" src=\"" + fullSVG + "\"/>"
-        console.log(i, " processed");
+    for (var i = 17; i <= num; i++) {
+        try {
+            const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
+            images += "<img width=\"256\" src=\"" + fullSVG + "\" title='" + i + "' />"
+            console.log(i, " processed");
+        } catch (ex) {
+            console.log(i, " failed");
+        }
     }
     const path = "./migrations/testimage.html";
     console.log("path", path);
