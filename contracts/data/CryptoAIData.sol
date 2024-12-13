@@ -279,7 +279,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     external view
     returns (string memory text) {
-        text = "";
+        // DNA
+        // Other traits
+        // Attributes: number
+        text = "[{'trait': 'DNA', value: 'human'}, {'trait': 'body', value: 'body_1'}, {'trait': 'Attributes', value: 1'}]";
     }
 
     function cryptoAIImage(uint256 tokenId)
