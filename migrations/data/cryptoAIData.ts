@@ -237,7 +237,7 @@ class CryptoAIData {
             nonce: nonce,
         }
 
-        const val: any = await temp?.nftContract.methods.getAttrData(token).call(tx);
+        const val: any = await temp?.nftContract.methods.cryptoAIAttributes(token).call(tx);
         return val;
     }
 
