@@ -299,7 +299,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         items[3] = CryptoAIStructs.Attribute("Eye", eye_po);
         items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
 
-        bytes memory byteString;
+        bytes memory byteString ;
+        uint count = 0;
 
         for (uint8 i = 0; i < items.length; i++) {
             if( items[i].item.positions.length > 0) {
@@ -314,8 +315,17 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                     byteString = abi.encodePacked(byteString, ",");
                 }
                 byteString = abi.encodePacked(byteString, objString);
+                count++;
             }
         }
+
+        byteString = abi.encodePacked(
+            '{"trait": "attributes"',
+            ',"value":"',
+            StringsUpgradeable.toString(count),
+            '"},'
+            ,byteString
+        );
 
         text = string(abi.encodePacked('[', string(byteString), ']'));
     }
