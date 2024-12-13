@@ -147,8 +147,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     () {
         // agent is minted on nft collection, and unlock render svg by rarity info
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_UNLOCKED);
-        IAgentNFT nft = IAgentNFT(_cryptoAIAgentAddr);
-        (uint256 point, uint256 timeLine) = nft.checkNFTPoint(tokenId);
+        IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
+        (uint256 point, uint256 timeLine) = nft.getAgentRating(tokenId);
         unlockedTokens[tokenId].rarity = calculateRarity(tokenId, point * timeLine);
         // TODO
     }
@@ -281,10 +281,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (bytes memory) {
         // uint256 rarity = unlockedTokens[tokenId].rarity;
         // TODO:  from rarity;
-       
-       uint256 rarity = tokenId;
-        
-       string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
+
+        uint256 rarity = tokenId;
+
+        string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
         CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
 
         uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;

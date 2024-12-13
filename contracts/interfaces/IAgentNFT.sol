@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.12;
 
-interface IAgentNFT {
-    function checkUnlockedNFT(uint256 tokenID) external pure returns (bool);
+interface IMintableAgent {
+    function isUnlockedAgent(uint256 _agentId) external view returns (bool);
 
-    function checkNFTPoint(uint256 tokenID) external pure returns (uint256, uint256);
+    function getAgentRating(uint256 _agentId) external view returns (uint256, uint256);
+
+    function getAgentRarity(uint256 _agentId) external view returns (uint256);
 }
