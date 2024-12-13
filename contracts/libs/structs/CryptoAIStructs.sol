@@ -19,6 +19,11 @@ library CryptoAIStructs {
         uint8[] positions; // x,y,r,g,b stored sequentially
     }
 
+    struct Attribute {
+        string trait;
+        CryptoAIStructs.ItemDetail item;
+    }
+
     struct Token {
         uint256 tokenID;
         uint256 rarity;
