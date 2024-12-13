@@ -24,11 +24,11 @@ async function main() {
     for (var i = 1; i <= num; i++) {
         const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
         images += "<img width=\"256\" src=\"" + fullSVG + "\"/>"
-        // console.log(i, "fullSVG", fullSVG);
+        console.log(i, " processed");
     }
     const path = "./migrations/testimage.html";
     console.log("path", path);
-    await fs.writeFile('', images);
+    await fs.writeFile(path, images);
 
     // const attr = await dataContract.getAttrData(address, 4);
     // console.log("fullSVG", attr);
