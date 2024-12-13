@@ -24,7 +24,7 @@ async function main() {
     for (var i = 1; i <= num; i++) {
         try {
             const fullHtml = await dataContract.cryptoAIImageHtml(address, i);
-            htmls += "<span>" + i + "</span><br><textarea>" + fullHtml + "</textarea><br>"
+            htmls += "<span>" + i + "</span><br><iframe src='" + fullHtml + "'></iframe><br>"
             console.log(i, " processed");
         } catch (ex) {
             console.log(i, " failed");
