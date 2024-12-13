@@ -395,6 +395,58 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
 
+    function cryptoAIAttribute(uint256 tokenId) public view returns (string memory attr) {
+        // uint256 rarity = unlockedTokens[tokenId].rarity;
+        // TODO:  from rarity;
+        uint256 rarity = tokenId;
+        string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
+
+        CryptoAIStructs.ItemDetail memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)];
+        CryptoAIStructs.ItemDetail memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.positions.length)))];
+        CryptoAIStructs.ItemDetail memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.positions.length)))];
+        CryptoAIStructs.ItemDetail memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.positions.length)))];
+        CryptoAIStructs.ItemDetail memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.positions.length)))];
+
+        bytes memory objString = abi.encodePacked(
+            '{"trait":"',
+            traits[i].trait_type,
+            '","Name":"',
+            traits[i].name,
+            '","size":"',
+            traits[i].size,
+            '"}'
+        );
+
+        attr = string(abi.encodePacked(
+            '{ơ',
+            name,
+            tokenID,
+            '"',
+            ',',
+            desc,
+            ',',
+            '"owner": "',
+            getOwner,
+            '"',
+            ',',
+            '"edition": "',
+            tokenID,
+            '"',
+            ',',
+            '"image": "',
+            this.svgToImageURI(getSvg(tokenId)),
+            '"',
+            ',',
+            '"attributes": [',
+            this.generateTraits(tokenId),
+            ']',
+            '}'
+            )
+        );
+        return '';
+    }
+
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
         DNAItems = new CryptoAIStructs.ItemDetail[](count);
