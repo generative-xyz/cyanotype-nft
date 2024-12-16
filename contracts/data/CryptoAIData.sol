@@ -41,7 +41,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string[] private VALID_ITEM_TYPES;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private items;
     mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
-    mapping(string => mapping(uint16 => uint16)) private traits;
+//    mapping(string => mapping(uint16 => uint16)) private traits;
 
     CryptoAIStructs.DNA_TYPE[] public DNA_TYPE;
     mapping(string => uint16) private itemCounts;
@@ -269,7 +269,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         items[_itemType][itemId].trait = _trait;
         items[_itemType][itemId].positions = _positions;
 
-        traits[_itemType][itemId] = _trait;
+//        traits[_itemType][itemId] = _trait;
         emit CryptoAIStructs.ItemAdded(_itemType, itemId, _name, _trait);
         return itemId;
     }
@@ -359,22 +359,22 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 rarity = tokenId;
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
-
-         uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
-         uint8[] memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.length)))].positions;
-         uint8[] memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.length)))].positions;
-         uint8[] memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.length)))].positions;
-         uint8[] memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.length)))].positions;
+//        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
+//
+//         uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
+//         uint8[] memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.length)))].positions;
+//         uint8[] memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.length)))].positions;
+//         uint8[] memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.length)))].positions;
+//         uint8[] memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.length)))].positions;
 
 //        string memory DNAType = DNA_TYPE[randomByTrait(traits[DNAType], rarity)];// TODO
-//        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
-//
-//        uint8[] memory dna_po = dnaItem[randomByTrait(traits['body'], rarity + dnaItem.length)].positions;
-//        uint8[] memory body_po = items['body'][uint16(randomByTrait(traits['body'], rarity + dna_po.length))].positions;
-//        uint8[] memory head_po = items['head'][uint16(randomByTrait(traits['head'], rarity + body_po.length))].positions;
-//        uint8[] memory eye_po = items['eye'][uint16(randomByTrait(traits['eye'], rarity + head_po.length))].positions;
-//        uint8[] memory mouth_po = items['mouth'][uint16(randomByTrait(traits['mouth'], rarity + eye_po.length))].positions;
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
+
+        uint8[] memory dna_po = dnaItem[randomByTrait(getArrayItemsByType('body'), rarity + dnaItem.length)].positions;
+        uint8[] memory body_po = items['body'][uint16(randomByTrait(traits['body'], rarity + dna_po.length))].positions;
+        uint8[] memory head_po = items['head'][uint16(randomByTrait(traits['head'], rarity + body_po.length))].positions;
+        uint8[] memory eye_po = items['eye'][uint16(randomByTrait(traits['eye'], rarity + head_po.length))].positions;
+        uint8[] memory mouth_po = items['mouth'][uint16(randomByTrait(traits['mouth'], rarity + eye_po.length))].positions;
 
         bytes memory pixels = new bytes(2304);
         uint idx;
@@ -506,26 +506,40 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return randomNumber % maxLength;
     }
 
-    function randomByTrait(uint256[] memory traitInputs, uint256 tokenId) internal view returns (uint) {
-        if (traitInputs.length == 0) return 0;
-        
+    function randomByTrait(CryptoAIStructs.ItemDetail[] memory traitInputs, uint256 tokenId) internal view returns (CryptoAIStructs.ItemDetail memory) {
+        require(traitInputs.length > 0, "Trait inputs cannot be empty");
+
         uint256 totalWeight = 0;
         for (uint i = 0; i < traitInputs.length; i++) {
-            totalWeight += traitInputs[i];
+            totalWeight += traitInputs[i].trait;
         }
-        
-        if (totalWeight == 0) return 0;
-        
+
+        require(totalWeight > 0, "Total weight must be greater than zero");
+
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId))) % totalWeight;
         uint256 currentWeight = 0;
-        
+
         for (uint i = 0; i < traitInputs.length; i++) {
-            currentWeight += traitInputs[i];
+            currentWeight += traitInputs[i].trait;
             if (randomNumber < currentWeight) {
-                return i;
+                return traitInputs[i];
             }
         }
-        
-        return traitInputs.length - 1;
+
+        return traitInputs[traitInputs.length - 1];
+    }
+
+//    function testing(string memory _type, uint256 tokenId) public view returns (CryptoAIStructs.ItemDetail memory item) {
+//        CryptoAIStructs.ItemDetail[] memory itemsArray = getArrayDNAVariant(_type);
+//        item = randomByTrait(itemsArray, tokenId);
+//    }
+
+
+    function getArrayItemsByType(string memory _type) public view returns (CryptoAIStructs.ItemDetail[] memory itemArray) {
+        uint16 count = uint16(itemCounts[_type]);
+        itemArray = new CryptoAIStructs.ItemDetail[](count);
+        for (uint16 i = 0; i < count; i++) {
+            itemArray[i] = items[_type][i];
+        }
     }
 }

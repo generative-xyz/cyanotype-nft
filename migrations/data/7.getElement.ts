@@ -1,7 +1,7 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig} from "../../index";
 
-import {DATA_DNA} from "./data";
+import {DATA_DNA, DNA} from "./data";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -19,7 +19,10 @@ async function main() {
     // const ele = await dataContract.getItem(address, 0)
     // console.log('ele', ele);
 
-    const dna = await dataContract.getDNA(address, 2);
+    // const dna = await dataContract.getDNA(address, 2);
+    // console.log('dna', dna);
+
+    const dna = await dataContract.testing(address, 10, DNA.ROBOT);
     console.log('dna', dna);
     //
     // for (const dna of DATA_DNA) {
