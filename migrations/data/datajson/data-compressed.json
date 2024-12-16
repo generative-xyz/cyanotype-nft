@@ -23311,7 +23311,7 @@
       ]
     },
     "Robot": {
-      "trait": "300",
+      "trait": "100",
       "names": [
         "robot_1",
         "robot_2",

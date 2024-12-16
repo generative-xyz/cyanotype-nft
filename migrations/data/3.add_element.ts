@@ -23,6 +23,7 @@ async function main() {
 
     //ADD DNA
     for (const dna of DATA_DNA) {
+        console.log('dna', dna)
         await dataContract.addDNA(address, 0, dna.key, Number(dna.trait));
     }
 
