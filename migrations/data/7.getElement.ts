@@ -16,15 +16,20 @@ async function main() {
     //ADD Element
     const address = configaaa["dataContractAddress"];
 
-    const ele = await dataContract.getItem(address, 0)
-    console.log('ele', ele);
+    // const ele = await dataContract.getItem(address, 0)
+    // console.log('ele', ele);
 
-    const dna = await dataContract.getDNA(address, 0);
-    console.log('dna', dna);
+    // const dna = await dataContract.getDNA(address, 0);
+    // console.log('dna', dna);
+    //
+    // for (const dna of DATA_DNA) {
+    //     const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna.key);
+    //     console.log("getDNAVariant", getDNAVariant);
+    // }
 
     for (const dna of DATA_DNA) {
-        const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna.key);
-        console.log("getDNAVariant", getDNAVariant);
+        const getDNAVariant = await dataContract.getDNAVariantTraits(address, 2, dna.key);
+        console.log(dna.key, getDNAVariant);
     }
 
 }
