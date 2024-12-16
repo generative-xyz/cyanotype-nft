@@ -41636,7 +41636,7 @@
       },
       {
         "name": "body_NaN",
-        "trait": null,
+        "trait": 100,
         "positions": []
       }
     ],
@@ -44922,7 +44922,7 @@
       },
       {
         "name": "eye_NaN",
-        "trait": null,
+        "trait": 100,
         "positions": []
       }
     ],
@@ -49228,7 +49228,7 @@
       },
       {
         "name": "head_NaN",
-        "trait": null,
+        "trait": 100,
         "positions": []
       }
     ],
@@ -50872,7 +50872,7 @@
       },
       {
         "name": "mouth_NaN",
-        "trait": null,
+        "trait": 100,
         "positions": []
       }
     ]

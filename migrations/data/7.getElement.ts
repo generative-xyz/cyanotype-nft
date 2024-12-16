@@ -1,22 +1,7 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig} from "../../index";
-import * as data from './datajson/data-compressed.json'
 
-import {
-    DATA_BODY,
-    DATA_CAT_VARIANT,
-    DATA_DNA,
-    DATA_DOG_VARIANT,
-    DATA_EYE,
-    DATA_FROG_VARIANT,
-    DATA_HEAD,
-    DATA_HUMAN_VARIANT,
-    DATA_MONKEY_VARIANT,
-    DATA_MOUTH,
-    DATA_ROBOT_VARIANT,
-    DNA,
-    ELEMENT
-} from "./data";
+import {DATA_DNA} from "./data";
 
 async function main() {
     if (process.env.NETWORK != "local") {

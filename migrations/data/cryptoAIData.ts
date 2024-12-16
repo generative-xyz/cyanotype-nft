@@ -137,12 +137,12 @@ class CryptoAIData {
         return val;
     }
 
-    async addDNA(contractAddress: any, gas: any, dna: string, traits: number) {
+    async addDNA(contractAddress: any, gas: any, dna: string, trait: number) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
 
-        const fun = temp?.nftContract.methods.addDNA(dna, traits)
+        const fun = temp?.nftContract.methods.addDNA(dna, trait)
         //the transaction
         const tx = {
             from: this.senderPublicKey,
