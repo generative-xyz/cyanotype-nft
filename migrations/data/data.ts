@@ -52,17 +52,19 @@ const DATA_DNA = [
     },
 ]
 
-const DATA_FROG_VARIANT =  data.DNA.Frog.items
+// const DATA_FROG_VARIANT =  data.DNA.Frog.items
+//
+// const DATA_HUMAN_VARIANT =  data.DNA.Human.items
+//
+// const DATA_CAT_VARIANT = data.DNA.Cat.items
+//
+// const DATA_DOG_VARIANT =  data.DNA.Dog.items
+//
+// const DATA_ROBOT_VARIANT = data.DNA.Robot.items
+//
+// const DATA_MONKEY_VARIANT = data.DNA.Monkey.items
 
-const DATA_HUMAN_VARIANT =  data.DNA.Human.items
 
-const DATA_CAT_VARIANT = data.DNA.Cat.items
+// export {DATA_EYE, DATA_DNA, DATA_MOUTH, DATA_HEAD, DATA_FROG_VARIANT, DATA_HUMAN_VARIANT, DATA_CAT_VARIANT, DATA_DOG_VARIANT, DATA_ROBOT_VARIANT, DATA_MONKEY_VARIANT, DATA_BODY}
 
-const DATA_DOG_VARIANT =  data.DNA.Dog.items
-
-const DATA_ROBOT_VARIANT = data.DNA.Robot.items
-
-const DATA_MONKEY_VARIANT = data.DNA.Monkey.items
-
-
-export {DATA_EYE, DATA_DNA, DATA_MOUTH, DATA_HEAD, DATA_FROG_VARIANT, DATA_HUMAN_VARIANT, DATA_CAT_VARIANT, DATA_DOG_VARIANT, DATA_ROBOT_VARIANT, DATA_MONKEY_VARIANT, DATA_BODY}
+export {DATA_DNA}

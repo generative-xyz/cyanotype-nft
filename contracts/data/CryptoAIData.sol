@@ -40,12 +40,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     string[] private VALID_ITEM_TYPES;
     mapping(string => CryptoAIStructs.ItemDetail) private items;
-    mapping(string => mapping(uint16 => CryptoAIStructs.ItemDetail)) private DNA_Variants;
+    mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
 //    mapping(string => mapping(uint16 => uint16)) private traits;
 
     CryptoAIStructs.DNA_TYPE[] public DNA_TYPE;
-    mapping(string => uint16) private itemCounts;
-    mapping(string => uint16) private dnaCounts;
+//    mapping(string => uint16) private itemCounts;
+//    mapping(string => uint16) private dnaCounts;
     mapping(string => mapping(uint16 => uint16)) private DNA_VARIANT_TRAITS;
 
     modifier validItemType(string memory _itemType) {
@@ -203,7 +203,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return DNA_TYPE[indexDNA];
     }
 
-    function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
+    function addDNAVariant(string memory _DNAType, string[] memory _DNAName, uint8[] memory _traits, uint8[][] memory _positions) public
     onlyDeployer unsealed
     returns (uint16){
 //        require(_positions.length % 5 == 0, "Invalid positions array length");
@@ -217,10 +217,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 //        }
 //
 //        uint16 itemId = uint16(dnaCounts[_DNAType]++);
-//
-//        DNA_Variants[_DNAType][itemId].name = _DNAName;
-//        DNA_Variants[_DNAType][itemId].trait = _trait;
-//        DNA_Variants[_DNAType][itemId].positions = _positions;
+        items[_DNAType].names = _DNAName;
+        items[_DNAType].traits = _traits;
+        items[_DNAType].positions = _positions;
 //
 //        DNA_VARIANT_TRAITS[_DNAType][itemId] = _trait;
 //
@@ -229,15 +228,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
 
-//    function getDNAVariant(string memory _DNAType, uint16 _itemId) public view returns (
-//        string memory name,
-//        uint8 trait,
-//        uint8[] memory positions
-//    ) {
-//        require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
-//        CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType][_itemId];
-//        return (item.name, item.trait, item.positions);
-//    }
+    function getDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail memory) {
+        CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType];
+        return item;
+    }
 
 //    function getDNAVariantTraits(string memory _DNAType, uint16 _itemId) public view returns (
 //        uint16 trait
@@ -274,11 +268,18 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return 1;
     }
 //
-////    function getItem(string memory _itemType) public view validItemType(_itemType) returns (CryptoAIStructs.ItemDetail memory) {
-////        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
-////        CryptoAIStructs.ItemDetail memory item = items[_itemType][_itemId];
-////        return item;
-////    }
+    function getItem(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail memory) {
+//        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
+        CryptoAIStructs.ItemDetail memory item = items[_itemType];
+        return item;
+    }
+
+        function getItemPositions(string memory _itemType) public view returns (uint8[][] memory) {
+//        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
+        CryptoAIStructs.ItemDetail memory item = items[_itemType];
+        return item.positions;
+    }
+
 //
 //    function cryptoAIAttributes(uint256 tokenId)
 //    external view
@@ -336,63 +337,66 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 //        text = string(abi.encodePacked('[', string(byteString), ']'));
 //    }
 //
-//    function cryptoAIImage(uint256 tokenId)
-//    public view
-//    returns (bytes memory) {
-//        /* TODO: uncomment when deploy
-//        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-//        uint256 rarity = unlockedTokens[tokenId].rarity;
-//        */
-//        uint256 rarity = tokenId;
-//
-//        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-//        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
-//        uint8[] memory dna_po = randomByTrait(dnaItem, rarity + dnaItem.length).positions;
-//        uint8[] memory body_po = randomByTrait(getArrayItemsByType('body'), rarity + dna_po.length).positions;
-//        uint8[] memory head_po = randomByTrait(getArrayItemsByType('head'), rarity + body_po.length).positions;
-//        uint8[] memory eye_po = randomByTrait(getArrayItemsByType('eye'), rarity + head_po.length).positions;
-//        uint8[] memory mouth_po = randomByTrait(getArrayItemsByType('mouth'), rarity + eye_po.length).positions;
-//
-//        bytes memory pixels = new bytes(2304);
-//        uint idx;
+    function cryptoAIImage(uint256 tokenId)
+    public view
+    returns (bytes memory) {
+        /* TODO: uncomment when deploy
+        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        uint256 rarity = unlockedTokens[tokenId].rarity;
+        */
+        uint256 rarity = tokenId;
+
+        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
+//        CryptoAIStructs.ItemDetail[] memory dnaItem = DNA_Variants[DNAType.name][0];
+
+//        uint8[] memory dna_po = dnaItem[0].positions;
+
+        uint8[] memory body_po = getItemPositions('body')[0];
+        uint8[] memory head_po = getItemPositions('head')[0];
+        uint8[] memory eye_po = getItemPositions('eye')[0];
+        uint8[] memory mouth_po = getItemPositions('mouth')[0];
+
+        bytes memory pixels = new bytes(2304);
+        uint idx;
 //        uint totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
-//
-//        uint8[] memory pos;
-//
-//        uint16 p;
-//        uint16 positionLength = uint16(dna_po.length);
-//
-//        for (uint i = 0; i < totalLength; i += 5) {
-//            console.log('i: ', i);
-//            if (i < positionLength) {
+        uint totalLength = body_po.length + head_po.length + eye_po.length + mouth_po.length;
+
+        uint8[] memory pos;
+
+        uint16 p;
+        uint16 positionLength = uint16(2);
+
+        for (uint i = 0; i < totalLength; i += 5) {
+            console.log('i: ', i);
+            if (i < positionLength) {
 //                pos = dna_po;
-//                idx = i;
-//            } else if (i < positionLength + body_po.length) {
-//                pos = body_po;
-//                idx = i - positionLength;
-//            } else if (i < positionLength + body_po.length + head_po.length) {
-//                pos = head_po;
-//                idx = i - positionLength - body_po.length;
-//            } else if (i < positionLength + body_po.length + head_po.length + eye_po.length) {
-//                pos = eye_po;
-//                idx = i - positionLength - body_po.length - head_po.length;
-//            } else {
-//                pos = mouth_po;
-//                idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
-//            }
-//
-//            // Calculate pixel position
-//            p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
-//
-//            // Set RGBA values directly
-//            pixels[p] = bytes1(pos[idx + 2]);     // R
-//            pixels[p + 1] = bytes1(pos[idx + 3]);   // G
-//            pixels[p + 2] = bytes1(pos[idx + 4]);   // B
-//            pixels[p + 3] = bytes1(0xFF);         // A
-//        }
-//
-//        return pixels;
-//    }
+                idx = i;
+            } else if (i < positionLength + body_po.length) {
+                pos = body_po;
+                idx = i - positionLength;
+            } else if (i < positionLength + body_po.length + head_po.length) {
+                pos = head_po;
+                idx = i - positionLength - body_po.length;
+            } else if (i < positionLength + body_po.length + head_po.length + eye_po.length) {
+                pos = eye_po;
+                idx = i - positionLength - body_po.length - head_po.length;
+            } else {
+                pos = mouth_po;
+                idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
+            }
+
+            // Calculate pixel position
+            p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
+
+            // Set RGBA values directly
+            pixels[p] = bytes1(pos[idx + 2]);     // R
+            pixels[p + 1] = bytes1(pos[idx + 3]);   // G
+            pixels[p + 2] = bytes1(pos[idx + 4]);   // B
+            pixels[p + 3] = bytes1(0xFF);         // A
+        }
+
+        return pixels;
+    }
 //
 //    function cryptoAIImageHtml(uint256 tokenId)
 //    external view
@@ -410,55 +414,55 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 //        ));
 //    }
 //
-//    function cryptoAIImageSvg(uint256 tokenId)
-//    external view
-//// onlyAIAgentContract
-//    returns (string memory result) {
-//        /* TODO: uncomment when deploy
-//        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-//        */
-//        bytes memory pixels = cryptoAIImage(tokenId);
-//        string memory svg = '';
-//        bytes memory buffer = new bytes(8);
-//        uint p;
-//        for (uint y = 0; y < 24; y++) {
-//            for (uint x = 0; x < 24; x++) {
-//                assembly {
-//                    let multipliedY := mul(y, 24)
-//                    let sum := add(multipliedY, x)
-//                    p := mul(sum, 4)
-//                }
-//                if (uint8(pixels[p + 3]) > 0) {
-//                    assembly {
-//                        let hexSymbols := _HEX_SYMBOLS
-//                        let bufferPtr := add(buffer, 0x20)
-//                        let pixelsPtr := add(add(pixels, 0x20), p)
-//                        for {let k := 0} lt(k, 4) {k := add(k, 1)} {
-//                            let value := byte(0, mload(add(pixelsPtr, k)))
-//                            mstore8(add(bufferPtr, add(mul(k, 2), 1)), byte(and(value, 0xf), hexSymbols))
-//                            value := shr(4, value)
-//                            mstore8(add(bufferPtr, mul(k, 2)), byte(and(value, 0xf), hexSymbols))
-//                        }
-//                    }
-//
-//                    svg = string(abi.encodePacked(
-//                        svg,
-//                        abi.encodePacked(
-//                            SVG_RECT,
-//                            StringsUpgradeable.toString(x),
-//                            SVG_Y,
-//                            StringsUpgradeable.toString(y),
-//                            SVG_WIDTH,
-//                            string(buffer),
-//                            SVG_CLOSE_RECT
-//                        )
-//                    ));
-//                }
-//            }
-//        }
-//
-//        result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
-//    }
+    function cryptoAIImageSvg(uint256 tokenId)
+    external view
+// onlyAIAgentContract
+    returns (string memory result) {
+        /* TODO: uncomment when deploy
+        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        */
+        bytes memory pixels = cryptoAIImage(tokenId);
+        string memory svg = '';
+        bytes memory buffer = new bytes(8);
+        uint p;
+        for (uint y = 0; y < 24; y++) {
+            for (uint x = 0; x < 24; x++) {
+                assembly {
+                    let multipliedY := mul(y, 24)
+                    let sum := add(multipliedY, x)
+                    p := mul(sum, 4)
+                }
+                if (uint8(pixels[p + 3]) > 0) {
+                    assembly {
+                        let hexSymbols := _HEX_SYMBOLS
+                        let bufferPtr := add(buffer, 0x20)
+                        let pixelsPtr := add(add(pixels, 0x20), p)
+                        for {let k := 0} lt(k, 4) {k := add(k, 1)} {
+                            let value := byte(0, mload(add(pixelsPtr, k)))
+                            mstore8(add(bufferPtr, add(mul(k, 2), 1)), byte(and(value, 0xf), hexSymbols))
+                            value := shr(4, value)
+                            mstore8(add(bufferPtr, mul(k, 2)), byte(and(value, 0xf), hexSymbols))
+                        }
+                    }
+
+                    svg = string(abi.encodePacked(
+                        svg,
+                        abi.encodePacked(
+                            SVG_RECT,
+                            StringsUpgradeable.toString(x),
+                            SVG_Y,
+                            StringsUpgradeable.toString(y),
+                            SVG_WIDTH,
+                            string(buffer),
+                            SVG_CLOSE_RECT
+                        )
+                    ));
+                }
+            }
+        }
+
+        result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
+    }
 //
 //// Testing random follow traits =================================
 //    function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
