@@ -22,8 +22,6 @@ async function main() {
     // const dna = await dataContract.getDNA(address, 2);
     // console.log('dna', dna);
 
-    const dna = await dataContract.testing(address, 10, DNA.ROBOT);
-    console.log('dna', dna);
     //
     // for (const dna of DATA_DNA) {
     //     const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna.key);
