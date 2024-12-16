@@ -183,7 +183,6 @@
   }
 
   if (colStyle > 0.66) {
-    console.log("Style 1: Same color per column");
     for (let i = 0; i < cols; i++) {
       let columnColorIndex = Math.floor(mathRand() * thisPalette.length);
       for (let j = 0; j < ptsRows[i]; j++) {
@@ -191,7 +190,6 @@
       }
     }
   } else if (colStyle > 0.33) {
-    console.log("Style 2: Same color per row");
     let maxRows = Math.max(...ptsRows);
     let rowColors = Array(maxRows)
       .fill()
@@ -202,7 +200,6 @@
       }
     }
   } else {
-    console.log("Style 3: Random color for each ball");
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < ptsRows[i]; j++) {
         ptsCols.push(thisPalette[Math.floor(mathRand() * thisPalette.length)]);
