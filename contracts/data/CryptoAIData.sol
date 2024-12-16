@@ -166,10 +166,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     external view
     returns (string memory result) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        // TODO
-        require(unlockedTokens[tokenId].tokenID > 0 || true, Errors.TOKEN_ID_NOT_UNLOCKED);
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         string memory base64 = "";
-        if (unlockedTokens[tokenId].rarity == 0 && false) {
+        if (unlockedTokens[tokenId].rarity == 0) {
             base64 = Base64.encode(
                 abi.encodePacked(
                     '{"animation_url": "',
@@ -375,7 +374,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint16 positionLength = uint16(dna_po.length);
 
         for (uint i = 0; i < totalLength; i += 5) {
-            console.log('i: ',  i);
+            console.log('i: ', i);
 
             if (i < positionLength) {
                 pos = dna_po;
@@ -469,7 +468,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
-
 
     // Testing random follow traits =================================
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
