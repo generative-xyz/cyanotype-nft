@@ -76,7 +76,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     modifier onlyAIAgentContract() {
+        /* TODO: uncomment when deploy
         require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
+        */
         _;
     }
 
@@ -137,9 +139,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     onlyAIAgentContract
     () {
         // agent is minted on nft collection, but not unlock render svg by rarity info
+        /* TODO: uncomment when deploy
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-
+        */
         unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, 0);
     }
 
@@ -148,11 +151,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     onlyAIAgentContract
     () {
         // agent is minted on nft collection, and unlock render svg by rarity info
+        IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
+        /* TODO: uncomment when deploy
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
-        IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
         unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
+        */
+        unlockedTokens[tokenId].rarity = 100000;
     }
 
     function getTokenRarity(uint256 tokenId) external
@@ -188,7 +194,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked('data:application/json;base64,', base64));
     }
 
-    ///////  DATA assets + rendering //////
+///////  DATA assets + rendering //////
     function addDNA(string memory dnaType, uint8 _trait) public onlyDeployer unsealed {
         DNA_TYPE.push(CryptoAIStructs.DNA_TYPE(dnaType, _trait));
     }
@@ -331,12 +337,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIImage(uint256 tokenId)
     public view
     returns (bytes memory) {
-        // uint256 rarity = unlockedTokens[tokenId].rarity;
-        // TODO:  from rarity;
+        /* TODO: uncomment when deploy
+        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        uint256 rarity = unlockedTokens[tokenId].rarity;
+        */
         uint256 rarity = tokenId;
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-
         CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
         uint8[] memory dna_po = randomByTrait(dnaItem, rarity + dnaItem.length).positions;
         uint8[] memory body_po = randomByTrait(getArrayItemsByType('body'), rarity + dna_po.length).positions;
@@ -403,8 +410,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     function cryptoAIImageSvg(uint256 tokenId)
     external view
-        // onlyAIAgentContract
+// onlyAIAgentContract
     returns (string memory result) {
+        /* TODO: uncomment when deploy
+        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        */
         bytes memory pixels = cryptoAIImage(tokenId);
         string memory svg = '';
         bytes memory buffer = new bytes(8);
@@ -448,7 +458,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
 
-    // Testing random follow traits =================================
+// Testing random follow traits =================================
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
         DNAItems = new CryptoAIStructs.ItemDetail[](count);

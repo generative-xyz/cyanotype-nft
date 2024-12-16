@@ -10,10 +10,16 @@ async function main() {
 
     let config = await initConfig();
 
+    const args = process.argv.slice(2);
+    if (args.length == 0) {
+        console.log("missing number")
+        return;
+    }
+
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    const script = (await fs.readFile('./migrations/assets/placeholder-art-compressed.html')).toString();
+    const script = (await fs.readFile('./migrations/data/placeholder.js')).toString();
     console.log("script", script);
-    await dataContract.changePlaceHolder(config.dataContractAddress, 0, script);
+    await dataContract.unlockRenderAgent(config.dataContractAddress, 0, args[0]);
 }
 
 main().catch(error => {
