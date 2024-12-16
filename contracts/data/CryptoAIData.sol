@@ -492,6 +492,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
 
+    // Testing random follow traits =================================
     function getArrayDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail[] memory DNAItems) {
         uint16 count = dnaCounts[_DNAType];
         DNAItems = new CryptoAIStructs.ItemDetail[](count);
