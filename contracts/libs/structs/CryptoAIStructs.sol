@@ -14,9 +14,9 @@ library CryptoAIStructs {
     }
 
     struct ItemDetail {
-        string name;
-        uint8 trait;  // 0-200
-        uint8[] positions; // x,y,r,g,b stored sequentially
+        string[] names;
+        uint8[] traits;  // 0-200
+        uint8[][] positions; // x,y,r,g,b stored sequentially
     }
 
     struct DNA_TYPE {

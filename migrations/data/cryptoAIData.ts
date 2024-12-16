@@ -87,10 +87,10 @@ class CryptoAIData {
         return null;
     }
 
-    async addItem(contractAddress: any, gas: any, key: string, obj: { name: any; trait: number; positions: any; }) {
+    async addItem(contractAddress: any, gas: any, key: string, name: string[], trait: number[], positions: number[][]) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
-        const fun = temp?.nftContract.methods.addItem(key, obj.name, obj.trait, obj.positions)
+        const fun = temp?.nftContract.methods.addItem(key, name, trait, positions)
         //the transaction
         const tx = {
             from: this.senderPublicKey,

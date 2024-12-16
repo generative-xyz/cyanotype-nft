@@ -30,43 +30,43 @@ async function main() {
 
     //ADD Element
     const address = configaaa["dataContractAddress"];
-    for (const ele of DATA_MOUTH) {
-        await dataContract.addItem(address, 0, ELEMENT.MOUTH, ele);
-    }
-    for (const ele of DATA_BODY) {
-        await dataContract.addItem(address, 0, ELEMENT.BODY, ele);
-    }
-    for (const ele of DATA_HEAD) {
-        await dataContract.addItem(address, 0, ELEMENT.HEAD, ele);
-    }
-    for (const ele of DATA_EYE) {
-        await dataContract.addItem(address, 0, ELEMENT.EYE, ele);
-    }
+    // for (const ele of DATA_MOUTH) {
+        await dataContract.addItem(address, 0, ELEMENT.MOUTH, ['abc','abc','abc','abc'], [4,4,4,4], [[4,4,4,4,4],[4,4,4,4,4],[4,4,4,4,4],[4,4,4,4,4]]);
+    // }
+    // for (const ele of DATA_BODY) {
+    //     await dataContract.addItem(address, 0, ELEMENT.BODY, ele);
+    // }
+    // for (const ele of DATA_HEAD) {
+    //     await dataContract.addItem(address, 0, ELEMENT.HEAD, ele);
+    // }
+    // for (const ele of DATA_EYE) {
+    //     await dataContract.addItem(address, 0, ELEMENT.EYE, ele);
+    // }
 
     //ADD DNA
-    for (const dna of DATA_DNA) {
-        await dataContract.addDNA(address, 0, dna.key, dna.trait);
-    }
+    // for (const dna of DATA_DNA) {
+    //     await dataContract.addDNA(address, 0, dna.key, dna.trait);
+    // }
 
     //ADD DNA Variant
-    for (const dna_variant of DATA_CAT_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.CAT, dna_variant);
-    }
-    for (const dna_variant of DATA_DOG_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.DOG, dna_variant);
-    }
-    for (const dna_variant of DATA_FROG_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.FROG, dna_variant);
-    }
-    for (const dna_variant of DATA_HUMAN_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.HUMAN, dna_variant);
-    }
-    for (const dna_variant of DATA_ROBOT_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.ROBOT, dna_variant);
-    }
-    for (const dna_variant of DATA_MONKEY_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.MONKEY, dna_variant);
-    }
+    // for (const dna_variant of DATA_CAT_VARIANT) {
+    //     await dataContract.addDNAVariant(address, 0, DNA.CAT, dna_variant);
+    // }
+    // for (const dna_variant of DATA_DOG_VARIANT) {
+    //     await dataContract.addDNAVariant(address, 0, DNA.DOG, dna_variant);
+    // }
+    // for (const dna_variant of DATA_FROG_VARIANT) {
+    //     await dataContract.addDNAVariant(address, 0, DNA.FROG, dna_variant);
+    // }
+    // for (const dna_variant of DATA_HUMAN_VARIANT) {
+    //     await dataContract.addDNAVariant(address, 0, DNA.HUMAN, dna_variant);
+    // }
+    // for (const dna_variant of DATA_ROBOT_VARIANT) {
+    //     await dataContract.addDNAVariant(address, 0, DNA.ROBOT, dna_variant);
+    // }
+    // for (const dna_variant of DATA_MONKEY_VARIANT) {
+    //     await dataContract.addDNAVariant(address, 0, DNA.MONKEY, dna_variant);
+    // }
 
 }
 
