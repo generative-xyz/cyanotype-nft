@@ -406,23 +406,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint p;
         for (uint y = 0; y < 24; y++) {
             for (uint x = 0; x < 24; x++) {
-                /*
-                p = (y * 24 + x) * 4;
-                */
                 assembly {
                     let multipliedY := mul(y, 24)
                     let sum := add(multipliedY, x)
                     p := mul(sum, 4)
                 }
                 if (uint8(pixels[p + 3]) > 0) {
-                    /*
-                    for (uint k = 0; k < 4; k++) {
-                        uint8 value = uint8(pixels[p + k]);
-                        buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
-                        value >>= 4;
-                        buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
-                    }
-                    */
                     assembly {
                         let hexSymbols := _HEX_SYMBOLS
                         let bufferPtr := add(buffer, 0x20)
