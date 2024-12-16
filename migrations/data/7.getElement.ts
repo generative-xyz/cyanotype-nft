@@ -19,18 +19,18 @@ async function main() {
     // const ele = await dataContract.getItem(address, 0)
     // console.log('ele', ele);
 
-    // const dna = await dataContract.getDNA(address, 0);
-    // console.log('dna', dna);
+    const dna = await dataContract.getDNA(address, 2);
+    console.log('dna', dna);
     //
     // for (const dna of DATA_DNA) {
     //     const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna.key);
     //     console.log("getDNAVariant", getDNAVariant);
     // }
 
-    for (const dna of DATA_DNA) {
-        const getDNAVariant = await dataContract.getDNAVariantTraits(address, 2, dna.key);
-        console.log(dna.key, getDNAVariant);
-    }
+    // for (const dna of DATA_DNA) {
+    //     const getDNAVariant = await dataContract.getDNAVariantTraits(address, 2, dna.key);
+    //     console.log(dna.key, getDNAVariant);
+    // }
 
 }
 
