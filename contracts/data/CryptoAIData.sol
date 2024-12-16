@@ -187,19 +187,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         else {
             base64 = Base64.encode(
                 abi.encodePacked(
-                    '{"image": "',
-                    this.cryptoAIImageSvg(tokenId), '", "attributes": ',
-                    this.cryptoAIAttributes(tokenId),
-                    '}'
+                    '{"image": "', this.cryptoAIImageSvg(tokenId),
+                    '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
                 )
             );
         }
-        result = string(
-            abi.encodePacked(
-                'data:application/json;base64,',
-                base64
-            )
-        );
+        result = string(abi.encodePacked('data:application/json;base64,', base64));
     }
 
     ///////  DATA assets + rendering //////
@@ -304,18 +297,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // items[3] = CryptoAIStructs.Attribute("Eye", eye_po);
         // items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
 
-        string memory DNAType = DNA_TYPE[randomByTrait(traits[DNAType], rarity)];
-        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
-        
-        //dna_po
+        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
         CryptoAIStructs.ItemDetail memory dna_po = dnaItem[randomByTrait(traits['body'], rarity + dnaItem.length)];
-        //body_po
         CryptoAIStructs.ItemDetail memory body_po = items['body'][uint16(randomByTrait(traits['body'], rarity + dna_po.positions.length))];
-        //head_po
         CryptoAIStructs.ItemDetail memory head_po = items['head'][uint16(randomByTrait(traits['head'], rarity + body_po.positions.length))];
-        //eye_po
         CryptoAIStructs.ItemDetail memory eye_po = items['eye'][uint16(randomByTrait(traits['eye'], rarity + head_po.positions.length))];
-        //mouth_po
         CryptoAIStructs.ItemDetail memory mouth_po = items['mouth'][uint16(randomByTrait(traits['mouth'], rarity + eye_po.positions.length))];
 
 
@@ -323,14 +310,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         items[0] = CryptoAIStructs.Attribute("DNA", dna_po);
         items[1] = CryptoAIStructs.Attribute("Body", body_po);
         items[2] = CryptoAIStructs.Attribute("Head", head_po);
-        items[3] = CryptoAIStructs.Attribute("Eye", eye_po);
+        items[3] = CryptoAIStructs.Attribute("Eyes", eye_po);
         items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
 
-        bytes memory byteString ;
+        bytes memory byteString;
         uint count = 0;
 
         for (uint8 i = 0; i < items.length; i++) {
-            if( items[i].item.positions.length > 0) {
+            if (items[i].item.positions.length > 0) {
                 bytes memory objString = abi.encodePacked(
                     '{"trait":"',
                     items[i].trait,
@@ -351,7 +338,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             ',"value":"',
             StringsUpgradeable.toString(count),
             '"},'
-            ,byteString
+            , byteString
         );
 
         text = string(abi.encodePacked('[', string(byteString), ']'));
@@ -366,7 +353,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 rarity = tokenId;
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-         CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
 
          uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
          uint8[] memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.length)))].positions;
@@ -431,7 +418,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             Base64.encode(
                 abi.encodePacked(
                     PLACEHOLDER_HEADER,
-                    tokenId,
+                    StringsUpgradeable.toString(tokenId),
                     PLACEHOLDER_FOOTER,
                     PLACEHOLDER_IMAGE
                 )
@@ -449,9 +436,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8 x;
         uint8 y;
         uint p;
-        uint8 value;
         bytes memory buffer = new bytes(8);
-
         for (uint i = 0; i < pixels.length; i += 4) {
             if (pixels[i + 3] > 0) {
                 assembly {
@@ -461,11 +446,24 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 }
                 if (x < GRID_SIZE && y < GRID_SIZE) {
                     p = (uint(y) * 24 + uint(x)) * 4;
+                    /*
                     for (uint k = 0; k < 4; k++) {
-                        value = uint8(pixels[p + k]);
+                        uint8 value = uint8(pixels[p + k]);
                         buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
                         value >>= 4;
                         buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
+                    }
+                    */
+                    assembly {
+                        let hexSymbols := _HEX_SYMBOLS
+                        let bufferPtr := add(buffer, 0x20)
+                        let pixelsPtr := add(add(pixels, 0x20), p)
+                        for {let k := 0} lt(k, 4) {k := add(k, 1)} {
+                            let value := byte(0, mload(add(pixelsPtr, k)))
+                            mstore8(add(bufferPtr, add(mul(k, 2), 1)), byte(and(value, 0xf), hexSymbols))
+                            value := shr(4, value)
+                            mstore8(add(bufferPtr, mul(k, 2)), byte(and(value, 0xf), hexSymbols))
+                        }
                     }
 
                     svg = string(abi.encodePacked(
