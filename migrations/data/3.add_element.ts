@@ -1,5 +1,7 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig} from "../../index";
+import * as data from './datajson/data-compressed.json'
+
 import {
     DATA_BODY,
     DATA_CAT_VARIANT,
@@ -41,26 +43,23 @@ async function main() {
         await dataContract.addItem(address, 0, ELEMENT.EYE, ele);
     }
 
-    // await dataContract.getItem(address, 0)
-
     //ADD DNA
     for (const dna of DATA_DNA) {
-        await dataContract.addDNA(address, 0, dna);
+        await dataContract.addDNA(address, 0, dna.key, dna.trait);
     }
-    await dataContract.getDNA(address, 0);
 
     //ADD DNA Variant
-    for (const dna_variant of DATA_FROG_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.FROG, dna_variant);
-    }
-    for (const dna_variant of DATA_HUMAN_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.HUMAN, dna_variant);
-    }
     for (const dna_variant of DATA_CAT_VARIANT) {
         await dataContract.addDNAVariant(address, 0, DNA.CAT, dna_variant);
     }
     for (const dna_variant of DATA_DOG_VARIANT) {
         await dataContract.addDNAVariant(address, 0, DNA.DOG, dna_variant);
+    }
+    for (const dna_variant of DATA_FROG_VARIANT) {
+        await dataContract.addDNAVariant(address, 0, DNA.FROG, dna_variant);
+    }
+    for (const dna_variant of DATA_HUMAN_VARIANT) {
+        await dataContract.addDNAVariant(address, 0, DNA.HUMAN, dna_variant);
     }
     for (const dna_variant of DATA_ROBOT_VARIANT) {
         await dataContract.addDNAVariant(address, 0, DNA.ROBOT, dna_variant);
@@ -68,18 +67,6 @@ async function main() {
     for (const dna_variant of DATA_MONKEY_VARIANT) {
         await dataContract.addDNAVariant(address, 0, DNA.MONKEY, dna_variant);
     }
-
-    for (const dna_variant of DATA_CAT_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.CAT, dna_variant);
-    }
-
-    for (const dna of DATA_DNA) {
-        const getDNAVariant = await dataContract.getDNAVariant(address, 0, dna);
-        console.log("getDNAVariant", getDNAVariant);
-    }
-
-    /*    const ele = await dataContract.getArrayItemsType(address, ELEMENT.HEAD);
-        console.log("ele", ele);*/
 
 }
 

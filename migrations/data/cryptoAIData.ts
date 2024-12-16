@@ -137,12 +137,12 @@ class CryptoAIData {
         return val;
     }
 
-    async addDNA(contractAddress: any, gas: any, dna: string) {
+    async addDNA(contractAddress: any, gas: any, dna: string, trait: number) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
 
-        const fun = temp?.nftContract.methods.addDNA(dna)
+        const fun = temp?.nftContract.methods.addDNA(dna, trait)
         //the transaction
         const tx = {
             from: this.senderPublicKey,
@@ -215,6 +215,21 @@ class CryptoAIData {
         return val;
     }
 
+    async getDNAVariantTraits(contractAddress: any, index: number, key: DNA) {
+        let temp = this.getContract(contractAddress);
+        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
+
+        //the transaction
+        const tx = {
+            from: this.senderPublicKey,
+            to: contractAddress,
+            nonce: nonce,
+        }
+
+        const val: any = await temp?.nftContract.methods.getDNAVariantTraits(key, index).call(tx);
+        return val;
+    }
+
     async cryptoAIImageSvg(contractAddress: any, token: number) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
@@ -274,21 +289,6 @@ class CryptoAIData {
         const val: any = await temp?.nftContract.methods.cryptoAIAttributes(token).call(tx);
         return val;
     }
-
-    /*async getArrayItemsType(contractAddress: any, _itemType: string) {
-        let temp = this.getContract(contractAddress);
-        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
-
-        //the transaction
-        const tx = {
-            from: this.senderPublicKey,
-            to: contractAddress,
-            nonce: nonce,
-        }
-
-        const val: any = await temp?.nftContract.methods.getArrayItemsType(_itemType).call(tx);
-        return val;
-    }*/
 
     async changeCryptoAIAgentAddress(contractAddress: any, gas: any, newAddr: any) {
         let temp = this.getContract(contractAddress);
