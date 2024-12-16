@@ -34,6 +34,22 @@ const DATA_DNA = [
         key: DNA.DOG,
         trait: data.DNA.Dog.trait,
     },
+    {
+        key: DNA.FROG,
+        trait: data.DNA.Frog.trait,
+    },
+    {
+        key: DNA.ROBOT,
+        trait: data.DNA.Robot.trait,
+    },
+    {
+        key: DNA.HUMAN,
+        trait: data.DNA.Human.trait,
+    },
+    {
+        key: DNA.MONKEY,
+        trait: data.DNA.Monkey.trait,
+    },
 ]
 
 const DATA_FROG_VARIANT =  data.DNA.Frog.items

@@ -29,11 +29,6 @@ library CryptoAIStructs {
         CryptoAIStructs.ItemDetail item;
     }
 
-    struct DNA_TYPE {
-        string name;
-        uint8 trait;
-    }
-
     struct Token {
         uint256 tokenID;
         uint256 rarity;
