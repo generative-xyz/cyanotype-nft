@@ -30,6 +30,7 @@ async function main() {
             images += "<pre>" + attr + "</pre><br>";
         } catch (ex) {
             console.log(i, " failed");
+            break;
         }
     }
     const path = "./migrations/testimage.html";

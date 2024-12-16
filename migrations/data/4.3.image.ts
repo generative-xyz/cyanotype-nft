@@ -18,8 +18,16 @@ async function main() {
         console.log("missing number")
         return;
     }
-    const img = await dataContract.cryptoAIImage(address, parseInt(args[0]));
-    console.log("img", img)
+    const num = parseInt(args[0]);
+    for (var i = 1; i <= num; i++) {
+        try {
+            await dataContract.cryptoAIImage(address, i);
+            console.log(i, " processed");
+        } catch (ex) {
+            console.log(i, " failed");
+            break;
+        }
+    }
 }
 
 main().catch(error => {
