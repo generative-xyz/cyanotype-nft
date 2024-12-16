@@ -46,7 +46,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     CryptoAIStructs.DNA_TYPE[] public DNA_TYPE;
     mapping(string => uint16) private itemCounts;
     mapping(string => uint16) private dnaCounts;
-
+    mapping(string => mapping(uint16 => uint16)) private DNA_VARIANT_TRAITS;
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -196,9 +196,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////  DATA assets + rendering //////
-    function addDNA(string memory dnaType, uint8 _trait) public returns (string memory dna) {
+    function addDNA(string memory dnaType, uint8 _trait) public onlyDeployer unsealed {
         DNA_TYPE.push(CryptoAIStructs.DNA_TYPE(dnaType, _trait));
-        return dnaType;
     }
 
     function getDNA(uint8 indexDNA) public view returns (CryptoAIStructs.DNA_TYPE memory) {
@@ -206,8 +205,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
-    onlyDeployer
-    returns (uint16) {
+    onlyDeployer unsealed
+    returns (uint16){
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
 
@@ -223,12 +222,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         DNA_Variants[_DNAType][itemId].name = _DNAName;
         DNA_Variants[_DNAType][itemId].trait = _trait;
         DNA_Variants[_DNAType][itemId].positions = _positions;
-
-        traits[_DNAType][itemId] = _trait;
-
+        DNA_VARIANT_TRAITS[_DNAType][itemId] = _trait;
         emit CryptoAIStructs.DNAVariantAdded(_DNAType, itemId, _DNAName, _trait);
         return itemId;
     }
+
 
     function getDNAVariant(string memory _DNAType, uint16 _itemId) public view returns (
         string memory name,
@@ -238,6 +236,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
         CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType][_itemId];
         return (item.name, item.trait, item.positions);
+    }
+
+    function getDNAVariantTraits(string memory _DNAType, uint16 _itemId) public view returns (
+        uint16 trait
+    ) {
+        require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
+        trait = DNA_VARIANT_TRAITS[_DNAType][_itemId];
     }
 
     function addItem(
@@ -350,7 +355,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (bytes memory) {
         // uint256 rarity = unlockedTokens[tokenId].rarity;
         // TODO:  from rarity;
-
+        console.log(1);
         uint256 rarity = tokenId;
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO

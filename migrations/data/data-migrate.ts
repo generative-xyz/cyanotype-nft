@@ -20,16 +20,16 @@ const convertSvgToPositions = (svgContent: string): number[] => {
   const processRect = (rect: any) => {
     const x = parseInt(rect.attributes.x);
     const y = parseInt(rect.attributes.y);
-    
+
     // Extract RGB values from fill color
     const fill = rect.attributes.fill || '#000000';
     const rgb = fill.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-    
+
     if (rgb) {
       const r = parseInt(rgb[1], 16);
-      const g = parseInt(rgb[2], 16); 
+      const g = parseInt(rgb[2], 16);
       const b = parseInt(rgb[3], 16);
-      
+
       positions.push(x, y, r, g, b);
     }
   };
@@ -57,13 +57,13 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
 
     // Use glob to find all SVG files in subdirectories
     const svgFiles = glob.sync(path.join(assetsPath, '**/*.svg'));
-    
+
     svgFiles.forEach((filePath: string) => {
       // Get relative path segments
       const pathSegments = path.relative(assetsPath, filePath).split(path.sep);
       const mainFolder = pathSegments[0]; // First segment is the main folder
       const subFolder = pathSegments[1]; // Second segment is the sub folder
-      
+
       if (!allData[mainFolder]) {
         allData[mainFolder] = {};
       }
@@ -84,7 +84,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
 
         const svgContent = fs.readFileSync(filePath, 'utf-8');
         const positions = convertSvgToPositions(svgContent);
-        
+
         // Extract name and trait from individual file
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
         const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].items.length + 1;
@@ -103,7 +103,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
 
         const svgContent = fs.readFileSync(filePath, 'utf-8');
         const positions = convertSvgToPositions(svgContent);
-        
+
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
         const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].length + 1;
 
@@ -114,7 +114,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
         });
       }
     });
-      
+
     console.log('Data processing complete');
     return allData;
 

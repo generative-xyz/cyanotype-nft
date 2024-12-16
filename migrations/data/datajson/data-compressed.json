@@ -23337,7 +23337,7 @@
     },
     "Robot": {
       "key": "Robot",
-      "trait": 300,
+      "trait": 90,
       "items": [
         {
           "name": "robot_1",
