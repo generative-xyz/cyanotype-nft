@@ -358,33 +358,31 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 rarity = tokenId;
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-//        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
-//
-//         uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
-//         uint8[] memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.length)))].positions;
-//         uint8[] memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.length)))].positions;
-//         uint8[] memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.length)))].positions;
-//         uint8[] memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.length)))].positions;
 
-//        string memory DNAType = DNA_TYPE[randomByTrait(traits[DNAType], rarity)];// TODO
-        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
-
-        uint8[] memory dna_po = dnaItem[randomByTrait(getArrayItemsByType('body'), rarity + dnaItem.length)].positions;
-        uint8[] memory body_po = items['body'][uint16(randomByTrait(traits['body'], rarity + dna_po.length))].positions;
-        uint8[] memory head_po = items['head'][uint16(randomByTrait(traits['head'], rarity + body_po.length))].positions;
-        uint8[] memory eye_po = items['eye'][uint16(randomByTrait(traits['eye'], rarity + head_po.length))].positions;
-        uint8[] memory mouth_po = items['mouth'][uint16(randomByTrait(traits['mouth'], rarity + eye_po.length))].positions;
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
+        uint8[] memory dna_po = randomByTrait(dnaItem, rarity + dnaItem.length).positions;
+        uint8[] memory body_po = randomByTrait(getArrayItemsByType('body'), rarity + dna_po.length).positions;
+        uint8[] memory head_po = randomByTrait(getArrayItemsByType('head'), rarity + body_po.length).positions;
+        uint8[] memory eye_po = randomByTrait(getArrayItemsByType('eye'), rarity + head_po.length).positions;
+        uint8[] memory mouth_po = randomByTrait(getArrayItemsByType('mouth'), rarity + eye_po.length).positions;
 
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
-
+        console.log('dna_po.length', dna_po.length);
+        console.log('body_po.length', body_po.length);
+        console.log('head_po.length', head_po.length);
+        console.log('eye_po.length', eye_po.length);
+        console.log('mouth_po.length', mouth_po.length);
+        console.log('totalLength', totalLength);
         uint8[] memory pos;
 
         uint16 p;
         uint16 positionLength = uint16(dna_po.length);
 
         for (uint i = 0; i < totalLength; i += 5) {
+            console.log('i: ',  i);
+
             if (i < positionLength) {
                 pos = dna_po;
                 idx = i;
@@ -516,12 +514,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         return traitInputs[traitInputs.length - 1];
     }
-
-//    function testing(string memory _type, uint256 tokenId) public view returns (CryptoAIStructs.ItemDetail memory item) {
-//        CryptoAIStructs.ItemDetail[] memory itemsArray = getArrayDNAVariant(_type);
-//        item = randomByTrait(itemsArray, tokenId);
-//    }
-
 
     function getArrayItemsByType(string memory _type) public view returns (CryptoAIStructs.ItemDetail[] memory itemArray) {
         uint16 count = uint16(itemCounts[_type]);
