@@ -136,7 +136,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     () {
         // agent is minted on nft collection, but not unlock render svg by rarity info
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
-        require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_UNLOCKED);
+        require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_NOT_UNLOCKED);
 
         unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, 0);
     }
@@ -146,17 +146,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     onlyAIAgentContract
     () {
         // agent is minted on nft collection, and unlock render svg by rarity info
-        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_UNLOCKED);
+        require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
         IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
-        (uint256 point, uint256 timeLine) = nft.getAgentRating(tokenId);
-        unlockedTokens[tokenId].rarity = calculateRarity(tokenId, point * timeLine);
-        // TODO
-    }
-
-    function calculateRarity(uint256 tokenId, uint256 weight)
-    internal pure
-    returns (uint256) {
-        return ((tokenId % 10) + 1) * weight;
+        unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
     }
 
     function getTokenRarity(uint256 tokenId) external
