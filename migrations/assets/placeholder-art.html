@@ -2,7 +2,7 @@
 <script>
   document.body.style.margin = 0;
   document.body.style.padding = 0;
-  let TokenID = "30"; // hard code
+  let TokenID = "52"; // hard code
 
   function cyrb128($) {
     let _ = 1779033703,
@@ -103,7 +103,7 @@
     constructor(x, y, color, SIZE) {
       this.location = new Vector(x, y);
       this.canvasSize = SIZE;
-      this.cellSize = Math.floor(map(PTS, ptsMin, ptsMax, this.canvasSize / 11, this.canvasSize / 15));
+      this.cellSize = Math.floor(map(PTS, ptsMin, ptsMax, this.canvasSize / 12, this.canvasSize / 16));
       this.color = color;
     }
 
@@ -174,7 +174,7 @@
   for (let i = 0; i < cols; i++) {
     let colsTemp = Math.abs(cols - i - 0.0);
     let ptsRowMin = Math.floor((ptsTemp / colsTemp) * (0.75 + mathRand() * (0.25 + (cols - i) * 0.1)));
-    let ptsRowMax = Math.floor((ptsTemp / colsTemp) * (1 + mathRand() * (0.25 + (cols - i) * 0.1)));
+    let ptsRowMax = Math.floor((ptsTemp / colsTemp) * (1 + mathRand() * (0.15 + (cols - i) * 0.1)));
     let ptsRow = i !== cols - 1 ? Math.floor(ptsRowMin + mathRand() * (ptsRowMax - ptsRowMin)) : ptsTemp;
 
     ptsRows.push(ptsRow);
@@ -211,13 +211,13 @@
     canvas.width = SIZE;
     canvas.height = SIZE;
 
+    colorIndex = 0;
     for (let i = 0; i < cols; i++) {
       let ptsRow = ptsRows[i];
       let posX = (SIZE - 2 * MG) / (cols + 1);
       nodes[i] = [];
       for (let j = 0; j < ptsRow; j++) {
         let k = colStyle > 0.66 ? j : colStyle > 0.33 ? i : i * (j + 1);
-        let ptsCol = ptsCols[(((j + 1) * (i + 1)) % cols) % ptsRow];
         let posY = (SIZE - 2 * MG) / (ptsRow + 1);
         nodes[i][j] = new Ball(MG + posX * (i + 1), MG + posY * (j + 1), ptsCols[colorIndex], SIZE);
         colorIndex++;
@@ -260,7 +260,7 @@
       saveCanvasAs4K();
     }
     if (event.key === "s" || event.key === "S") {
-      saveCanvas("Eternal AI Neurons.png");
+      saveCanvas(`Locked CryptoAgents #${TokenID}.png`);
     }
   });
 
@@ -278,7 +278,7 @@
     S_WGHT = 2 * RES;
     setup();
     draw();
-    saveCanvas("Eternal AI Neurons 4K.png");
+    saveCanvas(`Locked CryptoAgents #${TokenID} 4K.png`);
 
     RES = oldRES;
     SIZE = RES * 1000;
