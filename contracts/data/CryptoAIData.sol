@@ -355,7 +355,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (bytes memory) {
         // uint256 rarity = unlockedTokens[tokenId].rarity;
         // TODO:  from rarity;
-        console.log(1);
         uint256 rarity = tokenId;
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
@@ -438,28 +437,16 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (string memory result) {
         bytes memory pixels = cryptoAIImage(tokenId);
         string memory svg = '';
-        uint temp;
-        uint8 x;
-        uint8 y;
-        uint p;
         bytes memory buffer = new bytes(8);
-        for (uint i = 0; i < pixels.length; i += 4) {
-            if (pixels[i + 3] > 0) {
+        uint p;
+        for (uint y = 0; y < 24; y++) {
+            for (uint x = 0; x < 24; x++) {
                 assembly {
-                    temp := shr(2, i)
-                    x := mod(temp, GRID_SIZE)
-                    y := div(temp, GRID_SIZE)
+                    let multipliedY := mul(y, 24)
+                    let sum := add(multipliedY, x)
+                    p := mul(sum, 4)
                 }
-                if (x < GRID_SIZE && y < GRID_SIZE) {
-                    p = (uint(y) * 24 + uint(x)) * 4;
-                    /*
-                    for (uint k = 0; k < 4; k++) {
-                        uint8 value = uint8(pixels[p + k]);
-                        buffer[k * 2 + 1] = _HEX_SYMBOLS[value & 0xf];
-                        value >>= 4;
-                        buffer[k * 2] = _HEX_SYMBOLS[value & 0xf];
-                    }
-                    */
+                if (uint8(pixels[p + 3]) > 0) {
                     assembly {
                         let hexSymbols := _HEX_SYMBOLS
                         let bufferPtr := add(buffer, 0x20)
