@@ -63,55 +63,52 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
       const pathSegments = path.relative(assetsPath, filePath).split(path.sep);
       const mainFolder = pathSegments[0]; // First segment is the main folder
       const subFolder = pathSegments[1]; // Second segment is the sub folder
+      const [subFolderTitle, subFolderTrait] = subFolder.split('_');
 
       if (!allData[mainFolder]) {
         allData[mainFolder] = {};
       }
 
       if (mainFolder === 'DNA') {
-        // For DNA folder, extract trait from subfolder name
-        const [subFolderTitle, subFolderTrait] = subFolder.split('_');
-        const folderTrait = parseInt(subFolderTrait);
-
+        // For DNA folder, group into arrays of names, traits and positions
         if (!allData[mainFolder][subFolderTitle]) {
-          // Initialize DNA subfolder with trait and items array
           allData[mainFolder][subFolderTitle] = {
-            key: subFolderTitle,
-            trait: folderTrait,
-            items: []
+            trait: subFolderTrait,
+            names: [],
+            traits: [],
+            positions: []
           };
         }
 
         const svgContent = fs.readFileSync(filePath, 'utf-8');
         const positions = convertSvgToPositions(svgContent);
 
-        // Extract name and trait from individual file
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
-        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].items.length + 1;
+        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].traits.length + 1;
 
-        allData[mainFolder][subFolderTitle].items.push({
-          name: `${name}_${trait}`,
-          trait,
-          positions
-        });
+        allData[mainFolder][subFolderTitle].names.push(`${name}_${trait}`);
+        allData[mainFolder][subFolderTitle].traits.push(trait);
+        allData[mainFolder][subFolderTitle].positions.push(positions);
 
       } else {
-        // For non-DNA folders, keep original structure
+        // For non-DNA folders, group into arrays of names, traits and positions
         if (!allData[mainFolder][subFolder]) {
-          allData[mainFolder][subFolder] = [];
+          allData[mainFolder][subFolder] = {
+            names: [],
+            traits: [],
+            positions: []
+          };
         }
 
         const svgContent = fs.readFileSync(filePath, 'utf-8');
         const positions = convertSvgToPositions(svgContent);
 
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
-        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].length + 1;
+        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].traits.length + 1;
 
-        allData[mainFolder][subFolder].push({
-          name: `${name}_${trait}`,
-          trait,
-          positions
-        });
+        allData[mainFolder][subFolder].names.push(`${name}_${trait}`);
+        allData[mainFolder][subFolder].traits.push(trait);
+        allData[mainFolder][subFolder].positions.push(positions);
       }
     });
 
