@@ -194,9 +194,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////  DATA assets + rendering //////
-    function addDNA(string memory dnaType, uint8 _trait) public onlyDeployer unsealed returns (string memory dna) {
+    function addDNA(string memory dnaType, uint8 _trait) public onlyDeployer unsealed {
         DNA_TYPE.push(CryptoAIStructs.DNA_TYPE(dnaType, _trait));
-        return dnaType;
     }
 
     function getDNA(uint8 indexDNA) public view returns (CryptoAIStructs.DNA_TYPE memory) {

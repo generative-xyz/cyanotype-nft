@@ -45,7 +45,6 @@ async function main() {
     for (const dna of DATA_DNA) {
         await dataContract.addDNA(address, 0, dna.key, dna.trait);
     }
-    await dataContract.getDNA(address, 0);
 
     //ADD DNA Variant
     for (const dna_variant of DATA_FROG_VARIANT) {
@@ -65,10 +64,6 @@ async function main() {
     }
     for (const dna_variant of DATA_MONKEY_VARIANT) {
         await dataContract.addDNAVariant(address, 0, DNA.MONKEY, dna_variant);
-    }
-
-    for (const dna_variant of DATA_CAT_VARIANT) {
-        await dataContract.addDNAVariant(address, 0, DNA.CAT, dna_variant);
     }
 
 }
