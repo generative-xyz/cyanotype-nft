@@ -330,22 +330,15 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (bytes memory) {
         // uint256 rarity = unlockedTokens[tokenId].rarity;
         // TODO:  from rarity;
-        console.log(1);
         uint256 rarity = tokenId;
 
         string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
         CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
-        console.log(2);
         uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
-        console.log(3);
         uint8[] memory body_po = items['body'][uint16(randomIndex(itemCounts['body'], randomIndex(rarity, dna_po.length)))].positions;
-        console.log(4);
         uint8[] memory head_po = items['head'][uint16(randomIndex(itemCounts['head'], randomIndex(rarity, body_po.length)))].positions;
-        console.log(5);
         uint8[] memory eye_po = items['eye'][uint16(randomIndex(itemCounts['eye'], randomIndex(rarity, head_po.length)))].positions;
-        console.log(6);
         uint8[] memory mouth_po = items['mouth'][uint16(randomIndex(itemCounts['mouth'], randomIndex(rarity, eye_po.length)))].positions;
-        console.log(7);
 
         bytes memory pixels = new bytes(2304);
         uint idx;
