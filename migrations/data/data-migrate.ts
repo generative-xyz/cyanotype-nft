@@ -20,16 +20,16 @@ const convertSvgToPositions = (svgContent: string): number[] => {
   const processRect = (rect: any) => {
     const x = parseInt(rect.attributes.x);
     const y = parseInt(rect.attributes.y);
-    
+
     // Extract RGB values from fill color
     const fill = rect.attributes.fill || '#000000';
     const rgb = fill.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-    
+
     if (rgb) {
       const r = parseInt(rgb[1], 16);
-      const g = parseInt(rgb[2], 16); 
+      const g = parseInt(rgb[2], 16);
       const b = parseInt(rgb[3], 16);
-      
+
       positions.push(x, y, r, g, b);
     }
   };
@@ -47,45 +47,74 @@ const convertSvgToPositions = (svgContent: string): number[] => {
   return positions;
 }
 
-const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, PixelData[]>> => {
+const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, any>> => {
   try {
     if (!fs.existsSync(assetsPath)) {
       throw new Error(`Assets directory not found at: ${assetsPath}`);
     }
 
-    const allData: Record<string, Record<string, PixelData[]>> = {};
+    const allData: Record<string, Record<string, any>> = {};
 
     // Use glob to find all SVG files in subdirectories
     const svgFiles = glob.sync(path.join(assetsPath, '**/*.svg'));
-    
+
     svgFiles.forEach((filePath: string) => {
       // Get relative path segments
       const pathSegments = path.relative(assetsPath, filePath).split(path.sep);
       const mainFolder = pathSegments[0]; // First segment is the main folder
       const subFolder = pathSegments[1]; // Second segment is the sub folder
-      
+
       if (!allData[mainFolder]) {
         allData[mainFolder] = {};
       }
-      
-      if (!allData[mainFolder][subFolder]) {
-        allData[mainFolder][subFolder] = [];
+
+      if (mainFolder === 'DNA') {
+        // For DNA folder, extract trait from subfolder name
+        const [subFolderTitle, subFolderTrait] = subFolder.split('_');
+        const folderTrait = parseInt(subFolderTrait);
+
+        if (!allData[mainFolder][subFolderTitle]) {
+          // Initialize DNA subfolder with trait and items array
+          allData[mainFolder][subFolderTitle] = {
+            key: subFolderTitle,
+            trait: folderTrait,
+            items: []
+          };
+        }
+
+        const svgContent = fs.readFileSync(filePath, 'utf-8');
+        const positions = convertSvgToPositions(svgContent);
+
+        // Extract name and trait from individual file
+        const [name, traitStr] = path.basename(filePath, '.svg').split('_');
+        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].items.length + 1;
+
+        allData[mainFolder][subFolderTitle].items.push({
+          name: `${name}_${trait}`,
+          trait,
+          positions
+        });
+
+      } else {
+        // For non-DNA folders, keep original structure
+        if (!allData[mainFolder][subFolder]) {
+          allData[mainFolder][subFolder] = [];
+        }
+
+        const svgContent = fs.readFileSync(filePath, 'utf-8');
+        const positions = convertSvgToPositions(svgContent);
+
+        const [name, traitStr] = path.basename(filePath, '.svg').split('_');
+        const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].length + 1;
+
+        allData[mainFolder][subFolder].push({
+          name: `${name}_${trait}`,
+          trait,
+          positions
+        });
       }
-
-      const svgContent = fs.readFileSync(filePath, 'utf-8');
-      const positions = convertSvgToPositions(svgContent);
-      
-      // Extract name and trait from filename
-      const [name, traitStr] = path.basename(filePath, '.svg').split('_');
-      const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].length + 1;
-
-      allData[mainFolder][subFolder].push({
-        name: `${name}_${trait}`, // To change name to include trait
-        trait,
-        positions
-      });
     });
-      
+
     console.log('Data processing complete');
     return allData;
 

@@ -44,7 +44,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     CryptoAIStructs.DNA_TYPE[] public DNA_TYPE;
     mapping(string => uint16) private itemCounts;
     mapping(string => uint16) private dnaCounts;
-
+    mapping(string => mapping(uint16 => uint16)) private DNA_VARIANT_TRAITS;
 
     modifier validItemType(string memory _itemType) {
         bool isValid;
@@ -221,10 +221,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         DNA_Variants[_DNAType][itemId].name = _DNAName;
         DNA_Variants[_DNAType][itemId].trait = _trait;
         DNA_Variants[_DNAType][itemId].positions = _positions;
-
+        DNA_VARIANT_TRAITS[_DNAType][itemId] = _trait;
         emit CryptoAIStructs.DNAVariantAdded(_DNAType, itemId, _DNAName, _trait);
         return itemId;
     }
+
 
     function getDNAVariant(string memory _DNAType, uint16 _itemId) public view returns (
         string memory name,
@@ -234,6 +235,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
         CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType][_itemId];
         return (item.name, item.trait, item.positions);
+    }
+
+    function getDNAVariantTraits(string memory _DNAType, uint16 _itemId) public view returns (
+        uint16 trait
+    ) {
+        require(_itemId < dnaCounts[_DNAType], Errors.ITEM_NOT_EXIST);
+        trait = DNA_VARIANT_TRAITS[_DNAType][_itemId];
     }
 
     function addItem(
@@ -331,8 +339,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         console.log(1);
         uint256 rarity = tokenId;
 
-        string memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType);
+        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
+        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
         console.log(2);
         uint8[] memory dna_po = dnaItem[randomIndex(dnaItem.length, rarity)].positions;
         console.log(3);
