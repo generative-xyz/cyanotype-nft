@@ -19,6 +19,11 @@ library CryptoAIStructs {
         uint8[] positions; // x,y,r,g,b stored sequentially
     }
 
+    struct DNA_TYPE {
+        string name;
+        uint8 trait;
+    }
+
     struct Attribute {
         string trait;
         CryptoAIStructs.ItemDetail item;
