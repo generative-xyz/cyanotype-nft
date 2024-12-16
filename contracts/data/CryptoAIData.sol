@@ -194,7 +194,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////  DATA assets + rendering //////
-    function addDNA(string memory dnaType) public returns (string memory dna) {
+    function addDNA(string memory dnaType) public
+    onlyDeployer unsealed
+    returns (string memory dna) {
         DNA_TYPE.push(dnaType);
         return dnaType;
     }
@@ -204,7 +206,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function addDNAVariant(string memory _DNAType, string memory _DNAName, uint8 _trait, uint8[] memory _positions) public
-    onlyDeployer
+    onlyDeployer unsealed
     returns (uint16){
         require(_positions.length % 5 == 0, "Invalid positions array length");
         require(_trait <= 200, "Trait must be <= 200");
