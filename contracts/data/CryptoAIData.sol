@@ -204,7 +204,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////  DATA assets + rendering //////
-    function addDNA(string[] memory _names, uint8[] memory _traits) public onlyDeployer unsealed {
+    function addDNA(string[] memory _names, uint16[] memory _traits) public onlyDeployer unsealed {
         DNA_TYPES.names = _names;
         DNA_TYPES.traits = _traits;
     }
@@ -213,7 +213,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return DNA_TYPES;
     }
 
-    function addDNAVariant(string memory _DNAType, string[] memory _DNAName, uint8[] memory _traits, uint8[][] memory _positions) public
+    function addDNAVariant(string memory _DNAType, string[] memory _DNAName, uint16[] memory _traits, uint8[][] memory _positions) public
     onlyDeployer unsealed {
         items[_DNAType].names = _DNAName;
         items[_DNAType].traits = _traits;
@@ -230,7 +230,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function addItem(
         string memory _itemType,
         string[] memory _names,
-        uint8[] memory _traits,
+        uint16[] memory _traits,
         uint8[][] memory _positions
     ) public validItemType(_itemType)
     onlyDeployer unsealed {
@@ -419,7 +419,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function selectTrait(uint8[] memory traits, uint256 weight) internal view returns (uint256 index) {
+    function selectTrait(uint16[] memory traits, uint256 weight) internal view returns (uint256 index) {
         uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 100;
         uint256 cumulativeWeight = 0;
 
