@@ -320,9 +320,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint256 totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
-
         uint8[] memory pos;
-
         uint16 p;
         uint16 positionLength = uint16(dna_po.length);
 
