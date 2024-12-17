@@ -158,7 +158,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].tokenID = tokenId;
         unlockedTokens[tokenId].weight = tokenId;
 
-        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.traits, unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.traits, unlockedTokens[tokenId].weight, tokenId);
         uint256[] memory selectedParts = new uint256[](5);
         string[] memory partsName = new string[](5);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
@@ -168,7 +168,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         partsName[4] = "mouth";
 
         for (uint256 i = 0; i < partsName.length; i++) {
-            selectedParts[i] = selectTrait(items[partsName[i]], unlockedTokens[tokenId].weight, tokenId);
+            selectedParts[i] = selectTrait(items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId);
         }
 
         unlockedTokens[tokenId].traits["dna"] = selectedParts[0];
