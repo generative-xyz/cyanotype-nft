@@ -25,13 +25,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
 
     uint256 public constant TOKEN_LIMIT = 0x3E8;
-    string private constant svgDataType = 'data:image/svg+xml;base64,';
+    string private constant svgDataType = 'data:image/svg+xml;utf8,';
     uint8 internal constant GRID_SIZE = 0x18;
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
     string internal constant SVG_Y = '" y="';
     bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="#';
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="%23';
     string internal constant SVG_RECT = '<rect x="';
     string internal constant SVG_CLOSE_RECT = '"/>';
     // placeholder
@@ -179,12 +179,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             );
         }
         else {
-//            base64 = Base64.encode(
-//                abi.encodePacked(
-//                    '{"image": "', this.cryptoAIImageSvg(tokenId),
-//                    '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
-//                )
-//            );
+            base64 = Base64.encode(
+                abi.encodePacked(
+                    '{"image": "', this.cryptoAIImageSvg(tokenId),
+                    '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
+                )
+            );
         }
         result = string(abi.encodePacked('data:application/json;base64,', base64));
     }
@@ -237,63 +237,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return item.positions;
     }
 
-//
-//    function cryptoAIAttributes(uint256 tokenId)
-//    external view
-//    returns (string memory text) {
-//        return text = 'aaa';
-//        // uint256 rarity = unlockedTokens[tokenId].rarity;
-//        // TODO:  from rarity;
-//        uint256 rarity = tokenId;
-//
-//        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[randomIndex(DNA_TYPE.length, rarity)];// TODO
-//        CryptoAIStructs.ItemDetail[] memory dnaItem = getArrayDNAVariant(DNAType.name);
-//
-//        CryptoAIStructs.ItemDetail memory dna_po = randomByTrait(dnaItem, rarity + dnaItem.length);
-//        CryptoAIStructs.ItemDetail memory body_po = randomByTrait(getArrayItemsByType('body'), rarity + dna_po.positions.length);
-//        CryptoAIStructs.ItemDetail memory head_po = randomByTrait(getArrayItemsByType('head'), rarity + body_po.positions.length);
-//        CryptoAIStructs.ItemDetail memory eye_po = randomByTrait(getArrayItemsByType('eye'), rarity + head_po.positions.length);
-//        CryptoAIStructs.ItemDetail memory mouth_po = randomByTrait(getArrayItemsByType('mouth'), rarity + eye_po.positions.length);
-//
-//
-//        CryptoAIStructs.Attribute[] memory items = new CryptoAIStructs.Attribute[](5);
-//        items[0] = CryptoAIStructs.Attribute("DNA", dna_po);
-//        items[1] = CryptoAIStructs.Attribute("Body", body_po);
-//        items[2] = CryptoAIStructs.Attribute("Head", head_po);
-//        items[3] = CryptoAIStructs.Attribute("Eyes", eye_po);
-//        items[4] = CryptoAIStructs.Attribute("Mouth", mouth_po);
-//
-//        bytes memory byteString;
-//        uint count = 0;
-//
-//        for (uint8 i = 0; i < items.length; i++) {
-//            if (items[i].item.positions.length > 0) {
-//                bytes memory objString = abi.encodePacked(
-//                    '{"trait":"',
-//                    items[i].trait,
-//                    '","value":"',
-//                    items[i].item.name,
-//                    '"}'
-//                );
-//                if (i > 0) {
-//                    byteString = abi.encodePacked(byteString, ",");
-//                }
-//                byteString = abi.encodePacked(byteString, objString);
-//                count++;
-//            }
-//        }
-//
-//        byteString = abi.encodePacked(
-//            '{"trait": "attributes"',
-//            ',"value":"',
-//            StringsUpgradeable.toString(count),
-//            '"},'
-//            , byteString
-//        );
-//
-//        text = string(abi.encodePacked('[', string(byteString), ']'));
-//    }
-//
+    function cryptoAIAttributes(uint256 tokenId)
+    external view
+    returns (string memory text) {
+        // TODO
+        text = '[{"trait_type": "Fur", "value": "Dark Brown"}';
+    }
+
     function cryptoAIImage(uint256 tokenId)
     public view
     returns (bytes memory) {
@@ -305,17 +255,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
 
-        uint8[] memory dna_po =  getItemPositions(DNAType.name)[0];
+        uint8[] memory dna_po = getItemPositions(DNAType.name)[0];
         uint8[] memory body_po = getItemPositions('body')[0];
         uint8[] memory head_po = getItemPositions('head')[0];
         uint8[] memory eye_po = getItemPositions('eye')[0];
         uint8[] memory mouth_po = getItemPositions('mouth')[0];
-
-        console.log('dna_po', dna_po.length);
-        console.log('body_po', body_po.length);
-        console.log('head_po', head_po.length);
-        console.log('eye_po', eye_po.length);
-        console.log('mouth_po', mouth_po.length);
 
         bytes memory pixels = new bytes(2304);
         uint idx;
@@ -417,8 +361,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 }
             }
         }
-
-        result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
+        // result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
+        result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
     /*function randomByTrait(CryptoAIStructs.ItemDetail[] memory traitInputs, uint256 tokenId) internal view returns (CryptoAIStructs.ItemDetail memory) {
