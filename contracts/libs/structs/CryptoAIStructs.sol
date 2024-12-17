@@ -20,8 +20,8 @@ library CryptoAIStructs {
     }
 
     struct DNA_TYPE {
-        string name;
-        uint8 trait;
+        string[] names;
+        uint8[] traits;
     }
 
     struct Attribute {
