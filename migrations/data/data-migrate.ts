@@ -86,7 +86,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
         const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].traits.length + 1;
 
-        allData[mainFolder][subFolderTitle].names.push(`${name}_${trait}`);
+        allData[mainFolder][subFolderTitle].names.push(name);
         allData[mainFolder][subFolderTitle].traits.push(trait);
         allData[mainFolder][subFolderTitle].positions.push(positions);
 
@@ -106,7 +106,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
         const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].traits.length + 1;
 
-        allData[mainFolder][subFolder].names.push(`${name}_${trait}`);
+        allData[mainFolder][subFolder].names.push(name);
         allData[mainFolder][subFolder].traits.push(trait);
         allData[mainFolder][subFolder].positions.push(positions);
       }
