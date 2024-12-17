@@ -43,7 +43,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     string[] private VALID_ITEM_TYPES;
     CryptoAIStructs.DNA_TYPE[] public DNA_TYPE;
-
+    CryptoAIStructs.TokenForDNA[] public DNA_TYPE;
     modifier validItemType(string memory _itemType) {
         bool isValid;
         for (uint i = 0; i < VALID_ITEM_TYPES.length; i++) {
@@ -154,10 +154,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
         unlockedTokens[tokenId].weight = nft.getAgentRarity(tokenId);
         */
-        unlockedTokens[tokenId].weight = 100000;
 
-        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
-        unlockedTokens[tokenId].traits["dna"] = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].weight = 100000;
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPE.traits, unlockedTokens[tokenId].weight);
+        
+        unlockedTokens[tokenId].traits["dna"] = selectTrait(DNA_Variants[DNA_TYPE.names[unlockedTokens[tokenId].dna]], unlockedTokens[tokenId].weight);
         unlockedTokens[tokenId].traits["body"] = selectTrait(items["body"], unlockedTokens[tokenId].weight);
         unlockedTokens[tokenId].traits["head"] = selectTrait(items["head"], unlockedTokens[tokenId].weight);
         unlockedTokens[tokenId].traits["eye"] = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
@@ -248,8 +249,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     public view
     returns (string memory text) {
-//        string memory mouthName = items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]];
-//        text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
+
 
         CryptoAIStructs.Attribute[] memory itemsData = new CryptoAIStructs.Attribute[](5);
         itemsData[0] = CryptoAIStructs.Attribute("DNA",

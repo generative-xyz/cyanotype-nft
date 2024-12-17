@@ -42,5 +42,7 @@ library CryptoAIStructs {
         // weight > 0: draw svg image -> completely
 
         mapping(string => uint256) traits; // name attribute[body, head, ....] -> index trait
+        uint256 dna;
     }
+
 }
