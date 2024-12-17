@@ -33,8 +33,18 @@ async function main() {
             const attrStr = JSON.stringify(attr);
             
             if (attrsChecked.includes(attrStr)) {
-                attrsDuplicated.push({id: i, attr});
+                const duplicateIndex = attrsChecked.indexOf(attrStr);
+                const duplicateId = duplicateIndex + 1;
+                attrsDuplicated.push({
+                    id: i,
+                    attr,
+                    duplicateOf: {
+                        id: duplicateId,
+                        attr: JSON.parse(attrsChecked[duplicateIndex])
+                    }
+                });
                 console.log(`Found duplicate attr for ID ${i}:`, attr);
+                console.log(`Duplicate of ID ${duplicateId}:`, JSON.parse(attrsChecked[duplicateIndex]));
             }
             attrsChecked.push(attrStr);
         } catch (ex) {
