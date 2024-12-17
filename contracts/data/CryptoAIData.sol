@@ -23,6 +23,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     mapping(uint256 => CryptoAIStructs.Token) private unlockedTokens;
     mapping(string => CryptoAIStructs.ItemDetail) private items;
     mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
+    mapping(bytes32 => bool) private usedPairs;
 
     uint256 public constant TOKEN_LIMIT = 0x3E8;
     uint8 internal constant GRID_SIZE = 0x18;
@@ -155,13 +156,28 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].weight = nft.getAgentRarity(tokenId);
         */
         unlockedTokens[tokenId].weight = 100000;
-
+        uint256 dna;
+        uint256 body;
+        uint256 head;
+        uint256 eye;
+        uint256 mouth;
+        bytes32 pairHash;
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
-        unlockedTokens[tokenId].traits["dna"] = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["body"] = selectTrait(items["body"], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["head"] = selectTrait(items["head"], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["eye"] = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["mouth"] = selectTrait(items["mouth"], unlockedTokens[tokenId].weight);
+        do {
+            dna = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
+            body = selectTrait(items["body"], unlockedTokens[tokenId].weight);
+            head = selectTrait(items["head"], unlockedTokens[tokenId].weight);
+            eye = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
+            mouth = selectTrait(items["mouth"], unlockedTokens[tokenId].weight);
+            pairHash = keccak256(abi.encodePacked(dna, body, head, eye, mouth));
+        }
+        while (usedPairs[pairHash]);
+
+        unlockedTokens[tokenId].traits["dna"] = dna;
+        unlockedTokens[tokenId].traits["body"] = body;
+        unlockedTokens[tokenId].traits["head"] = head;
+        unlockedTokens[tokenId].traits["eye"] = eye;
+        unlockedTokens[tokenId].traits["mouth"] = mouth;
     }
 
     function getTokenRarity(uint256 tokenId) external
@@ -214,7 +230,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function addDNAVariant(string memory _DNAType, string[] memory _DNAName, uint8[] memory _traits, uint8[][] memory _positions) public
     onlyDeployer unsealed {
         items[_DNAType].names = _DNAName;
-        items[_DNAType].traits = _traits;
+        items[_DNAType].rarities = _traits;
         items[_DNAType].positions = _positions;
         emit CryptoAIStructs.DNAVariantAdded(_DNAType, _DNAName, _traits, _positions);
     }
@@ -233,7 +249,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     ) public validItemType(_itemType)
     onlyDeployer unsealed {
         items[_itemType].names = _names;
-        items[_itemType].traits = _traits;
+        items[_itemType].rarities = _traits;
         items[_itemType].positions = _positions;
 
         emit CryptoAIStructs.ItemAdded(_itemType, _names, _traits, _positions);
@@ -373,13 +389,20 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function selectTrait(CryptoAIStructs.ItemDetail memory attribute, uint256 weight) internal view returns (uint256 index) {
-        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 100;
+        uint256 totalTraits = 0;
+        uint256[] memory adjustedRarity = new uint256[](attribute.names.length);
+
+        for (uint256 i = 0; i < attribute.names.length; i++) {
+            adjustedRarity[i] = attribute.rarities[i] / weight;
+            totalTraits += adjustedRarity[i];
+        }
+        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % totalTraits;
         uint256 cumulativeWeight = 0;
 
         for (uint256 i = 0; i < attribute.names.length; i++) {
-            uint256 adjustedRarity = attribute.traits[i] + weight;
-            cumulativeWeight += adjustedRarity;
+            cumulativeWeight += adjustedRarity[i];
             if (randomValue < cumulativeWeight) {
+                attribute.rarities[i] += attribute.rarities[i] >> 1; // increase rarity of trait 50% after using
                 return i;
             }
         }

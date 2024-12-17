@@ -15,7 +15,7 @@ library CryptoAIStructs {
 
     struct ItemDetail {
         string[] names;
-        uint8[] traits;  // 0-200
+        uint8[] rarities;  // 0-200
         uint8[][] positions; // x,y,r,g,b stored sequentially
     }
 
