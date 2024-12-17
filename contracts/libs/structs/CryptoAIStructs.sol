@@ -27,7 +27,6 @@ library CryptoAIStructs {
     struct Attribute {
         string trait;
         string value;
-        uint8[] positions;
     }
 
     struct Token {
@@ -41,7 +40,7 @@ library CryptoAIStructs {
         // weight = 0: draw animation url
         // weight > 0: draw svg image -> completely
 
-        mapping(string => uint256) traits; // name attribute[body, head, ....] -> index trait
+        uint256[5] traits; // name attribute[body, head, ....] -> index trait
         uint256 dna;
     }
 
