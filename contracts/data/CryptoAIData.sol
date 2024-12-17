@@ -25,14 +25,15 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
 
     uint256 public constant TOKEN_LIMIT = 0x3E8;
-    string private constant svgDataType = 'data:image/svg+xml;utf8,';
     uint8 internal constant GRID_SIZE = 0x18;
+    bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
+    string private constant jsonDataType = "data:application/json;base64,";
+    string private constant svgDataType = 'data:image/svg+xml;utf8,';
     string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
     string internal constant SVG_FOOTER = '</svg>';
-    string internal constant SVG_Y = '" y="';
-    bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="%23';
     string internal constant SVG_RECT = '<rect x="';
+    string internal constant SVG_Y = '" y="';
+    string internal constant SVG_WIDTH = '" width="1" height="1" fill="%23';
     string internal constant SVG_CLOSE_RECT = '"/>';
     // placeholder
     string private constant htmlDataType = 'data:text/html;base64,';
@@ -168,25 +169,27 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (string memory result) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        string memory base64 = "";
         if (unlockedTokens[tokenId].rarity == 0) {
-            base64 = Base64.encode(
-                abi.encodePacked(
+            result = string(abi.encodePacked(
+                jsonDataType,
+                Base64.encode(abi.encodePacked(
                     '{"animation_url": "',
                     this.cryptoAIImageHtml(tokenId),
-                    '}'
+                    '"}'
                 )
+                ))
             );
         }
         else {
-            base64 = Base64.encode(
-                abi.encodePacked(
+            result = string(abi.encodePacked(
+                jsonDataType,
+                Base64.encode(abi.encodePacked(
                     '{"image": "', this.cryptoAIImageSvg(tokenId),
                     '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
                 )
+                ))
             );
         }
-        result = string(abi.encodePacked('data:application/json;base64,', base64));
     }
 
     ///////  DATA assets + rendering //////

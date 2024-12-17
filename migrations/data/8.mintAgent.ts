@@ -17,8 +17,6 @@ async function main() {
     }
 
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    const script = (await fs.readFile('./migrations/data/placeholder.js')).toString();
-    console.log("script", script);
     await dataContract.mintAgent(config.dataContractAddress, 0, args[0]);
 }
 
