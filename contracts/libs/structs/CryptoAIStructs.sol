@@ -26,7 +26,8 @@ library CryptoAIStructs {
 
     struct Attribute {
         string trait;
-        CryptoAIStructs.ItemDetail item;
+        string value;
+        uint8[] positions;
     }
 
     struct Token {

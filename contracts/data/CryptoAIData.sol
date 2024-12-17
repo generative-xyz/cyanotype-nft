@@ -248,12 +248,60 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     public view
     returns (string memory text) {
-        // TODO
-        string memory bodyName = items["body"].names[unlockedTokens[tokenId].traits["body"]];
-        string memory headName = items["head"].names[unlockedTokens[tokenId].traits["head"]];
-        string memory eyeName = items["eye"].names[unlockedTokens[tokenId].traits["eye"]];
-        string memory mouthName = items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]];
-        text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
+//        string memory mouthName = items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]];
+//        text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
+
+        CryptoAIStructs.Attribute[] memory itemsData = new CryptoAIStructs.Attribute[](5);
+        itemsData[0] = CryptoAIStructs.Attribute("DNA",
+            items[DNA_TYPE[1].name].names[unlockedTokens[tokenId].traits["dna"]],
+            items[DNA_TYPE[1].name].positions[unlockedTokens[tokenId].traits["dna"]]
+        );
+        itemsData[1] = CryptoAIStructs.Attribute("Body",
+            items["body"].names[unlockedTokens[tokenId].traits["body"]],
+            items['body'].positions[unlockedTokens[tokenId].traits["body"]]
+        );
+        itemsData[2] = CryptoAIStructs.Attribute("Head",
+            items["head"].names[unlockedTokens[tokenId].traits["head"]],
+            items['head'].positions[unlockedTokens[tokenId].traits["head"]]
+        );
+        itemsData[3] = CryptoAIStructs.Attribute("Eyes",
+            items["eye"].names[unlockedTokens[tokenId].traits["eye"]],
+            items['eye'].positions[unlockedTokens[tokenId].traits["eye"]]
+        );
+        itemsData[4] = CryptoAIStructs.Attribute("Mouth",
+            items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]],
+            items['mouth'].positions[unlockedTokens[tokenId].traits["mouth"]]
+        );
+
+        bytes memory byteString;
+        uint count = 0;
+
+        for (uint8 i = 0; i < itemsData.length; i++) {
+            if (itemsData[i].positions.length > 0) {
+                bytes memory objString = abi.encodePacked(
+                    '{"trait":"',
+                    itemsData[i].trait,
+                    '","value":"',
+                    itemsData[i].value,
+                    '"}'
+                );
+                if (i > 0) {
+                    byteString = abi.encodePacked(byteString, ",");
+                }
+                byteString = abi.encodePacked(byteString, objString);
+                count++;
+            }
+        }
+
+        byteString = abi.encodePacked(
+            '{"trait": "attributes"',
+            ',"value":"',
+            StringsUpgradeable.toString(count),
+            '"},'
+            , byteString
+        );
+
+        text = string(abi.encodePacked('[', string(byteString), ']'));
     }
 
     function cryptoAIImage(uint256 tokenId)
@@ -264,7 +312,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 weight = unlockedTokens[tokenId].weight;
         */
 
-        uint8[] memory dna_po = items[DNA_TYPE[0].name].positions[unlockedTokens[tokenId].traits["dna"]];
+        uint8[] memory dna_po = items[DNA_TYPE[1].name].positions[unlockedTokens[tokenId].traits["dna"]];
         uint8[] memory body_po = items['body'].positions[unlockedTokens[tokenId].traits["body"]];
         uint8[] memory head_po = items['head'].positions[unlockedTokens[tokenId].traits["head"]];
         uint8[] memory eye_po = items['eye'].positions[unlockedTokens[tokenId].traits["eye"]];
