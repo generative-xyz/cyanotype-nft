@@ -133,11 +133,11 @@ class CryptoAIData {
             nonce: nonce,
         }
 
-        const val: any = await temp?.nftContract.methods.getItemPositions(_itemType).call(tx);
+        const val: any = await temp?.nftContract.methods.getItem(_itemType).call(tx);
         return val;
     }
 
-    async addDNA(contractAddress: any, gas: any, dna: string, trait: number) {
+    async addDNA(contractAddress: any, gas: any, dna: string[], trait: number[]) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
@@ -157,21 +157,6 @@ class CryptoAIData {
         }
 
         return await this.signedAndSendTx(temp?.web3, tx);
-    }
-
-    async getDNA(contractAddress: any, index: number) {
-        let temp = this.getContract(contractAddress);
-        const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
-
-        //the transaction
-        const tx = {
-            from: this.senderPublicKey,
-            to: contractAddress,
-            nonce: nonce,
-        }
-
-        const val: any = await temp?.nftContract.methods.getDNA(index).call(tx);
-        return val;
     }
 
     async addDNAVariant(contractAddress: any, gas: any, key: DNA, name: string[],
@@ -213,7 +198,7 @@ class CryptoAIData {
         return val;
     }
 
-    async getDNAVariantTraits(contractAddress: any, index: number, key: DNA) {
+    async getDNA(contractAddress: any) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
@@ -224,7 +209,7 @@ class CryptoAIData {
             nonce: nonce,
         }
 
-        const val: any = await temp?.nftContract.methods.getDNAVariantTraits(key, index).call(tx);
+        const val: any = await temp?.nftContract.methods.getDNA().call(tx);
         return val;
     }
 

@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 library CryptoAIStructs {
 
     event SVGGenerated(address indexed creator, uint timestamp);
-    event ItemAdded(string itemType, string[] name, uint8[] traits, uint8[][] positions);
-    event DNAVariantAdded(string itemType, string[] name, uint8[] traits, uint8[][] positions);
+    event ItemAdded(string itemType, string[] name, uint16[] traits, uint8[][] positions);
+    event DNAVariantAdded(string itemType, string[] name, uint16[] traits, uint8[][] positions);
     event TokenMinted(uint256 tokenId);
 
     struct PositionDetail {
@@ -15,18 +15,19 @@ library CryptoAIStructs {
 
     struct ItemDetail {
         string[] names;
-        uint8[] rarities;  // 0-200
+        uint16[] rarities;  // 0-200
         uint8[][] positions; // x,y,r,g,b stored sequentially
     }
 
     struct DNA_TYPE {
-        string name;
-        uint8 trait;
+        string[] names;
+        uint16[] traits;
     }
 
     struct Attribute {
         string trait;
-        CryptoAIStructs.ItemDetail item;
+        string value;
+        uint8[] positions;
     }
 
     struct Token {
@@ -41,5 +42,7 @@ library CryptoAIStructs {
         // weight > 0: draw svg image -> completely
 
         mapping(string => uint256) traits; // name attribute[body, head, ....] -> index trait
+        uint256 dna;
     }
+
 }
