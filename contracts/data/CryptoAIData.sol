@@ -158,7 +158,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].tokenID = tokenId;
         unlockedTokens[tokenId].weight = tokenId;
 
-        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.traits, unlockedTokens[tokenId].weight, tokenId);
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, "", unlockedTokens[tokenId].weight, tokenId);
+        DNA_TYPES.rarities[unlockedTokens[tokenId].dna] -= DNA_TYPES.rarities[unlockedTokens[tokenId].dna] >> 1;
+        console.log("123");
         uint256[] memory selectedParts = new uint256[](5);
         string[] memory partsName = new string[](5);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
@@ -168,7 +170,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         partsName[4] = "mouth";
 
         for (uint256 i = 0; i < partsName.length; i++) {
-            selectedParts[i] = selectTrait(items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId);
+            selectedParts[i] = selectTrait(items[partsName[i]].rarities, partsName[i], unlockedTokens[tokenId].weight, tokenId);
+            items[partsName[i]].rarities[i] -= items[partsName[i]].rarities[i] >> 1; // increase rarity of trait 50% after using
         }
 
         unlockedTokens[tokenId].traits["dna"] = selectedParts[0];
@@ -217,9 +220,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////  DATA assets + rendering //////
-    function addDNA(string[] memory _names, uint16[] memory _traits) public onlyDeployer unsealed {
+    function addDNA(string[] memory _names, uint16[] memory rarities) public onlyDeployer unsealed {
         DNA_TYPES.names = _names;
-        DNA_TYPES.traits = _traits;
+        DNA_TYPES.rarities = rarities;
     }
 
     function getDNA() public view returns (CryptoAIStructs.DNA_TYPE memory) {
@@ -432,7 +435,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function selectTrait(uint16[] memory rarities, uint256 weight, uint256 tokenId) internal view returns (uint256 index) {
+    function selectTrait(uint16[] memory rarities, string memory name, uint256 weight, uint256 tokenId) internal view returns (uint256 index) {
         uint256 totalTraits = 0;
         uint256[] memory adjustedRarity = new uint256[](rarities.length);
 
@@ -446,7 +449,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         for (uint256 i = 0; i < rarities.length; i++) {
             cumulativeWeight += adjustedRarity[i];
             if (randomValue < cumulativeWeight) {
-//                attribute.rarities[i] -= rarities[i] >> 1; // increase rarity of trait 50% after using
                 return i;
             }
         }

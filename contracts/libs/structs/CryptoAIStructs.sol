@@ -21,7 +21,7 @@ library CryptoAIStructs {
 
     struct DNA_TYPE {
         string[] names;
-        uint16[] traits;
+        uint16[] rarities;
     }
 
     struct Attribute {
