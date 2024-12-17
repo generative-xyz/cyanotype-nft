@@ -54,6 +54,8 @@ async function main() {
     }
     const path = "./migrations/duplicates.json";
     console.log("path", path);
+    console.log("Total items checked:", attrsChecked.length);
+    console.log("Total duplicates found:", attrsDuplicated.length);
     await fs.writeFile(path, JSON.stringify(attrsDuplicated, null, 2));
 }
 
