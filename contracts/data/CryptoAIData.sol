@@ -311,6 +311,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8[] memory eye_po = getItemPositions('eye')[0];
         uint8[] memory mouth_po = getItemPositions('mouth')[0];
 
+        console.log('dna_po', dna_po.length);
+        console.log('body_po', body_po.length);
+        console.log('head_po', head_po.length);
+        console.log('eye_po', eye_po.length);
+        console.log('mouth_po', mouth_po.length);
+
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint256 totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
@@ -318,7 +324,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint8[] memory pos;
 
         uint16 p;
-        uint16 positionLength = uint16(2);
+        uint16 positionLength = uint16(dna_po.length);
 
         for (uint i = 0; i < totalLength; i += 5) {
             if (i < positionLength) {
@@ -417,7 +423,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
     }
 
-    function randomByTrait(CryptoAIStructs.ItemDetail[] memory traitInputs, uint256 tokenId) internal view returns (CryptoAIStructs.ItemDetail memory) {
+    /*function randomByTrait(CryptoAIStructs.ItemDetail[] memory traitInputs, uint256 tokenId) internal view returns (CryptoAIStructs.ItemDetail memory) {
         require(traitInputs.length > 0, "Trait inputs cannot be empty");
 
         uint256 totalWeight = 0;
@@ -438,5 +444,5 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         }
 
         return traitInputs[traitInputs.length - 1];
-    }
+    }*/
 }
