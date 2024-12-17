@@ -25,7 +25,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
     mapping(bytes32 => bool) private usedPairs;
 
-    uint256 public constant TOKEN_LIMIT = 0x3E8;
+    uint256 public constant TOKEN_LIMIT = 0x3E8; // 0x2710
     uint8 internal constant GRID_SIZE = 0x18;
     bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
     string private constant jsonDataType = "data:application/json;base64,";
@@ -163,21 +163,25 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 mouth;
         bytes32 pairHash;
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
+        console.log(1);
         do {
-            dna = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
-            body = selectTrait(items["body"], unlockedTokens[tokenId].weight);
-            head = selectTrait(items["head"], unlockedTokens[tokenId].weight);
-            eye = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
-            mouth = selectTrait(items["mouth"], unlockedTokens[tokenId].weight);
+            dna = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight, tokenId);
+            body = selectTrait(items["body"], unlockedTokens[tokenId].weight, tokenId);
+            head = selectTrait(items["head"], unlockedTokens[tokenId].weight, tokenId);
+            eye = selectTrait(items["eye"], unlockedTokens[tokenId].weight, tokenId);
+            mouth = selectTrait(items["mouth"], unlockedTokens[tokenId].weight, tokenId);
             pairHash = keccak256(abi.encodePacked(dna, body, head, eye, mouth));
         }
         while (usedPairs[pairHash]);
+        console.log(2);
 
+        usedPairs[pairHash] = true;
         unlockedTokens[tokenId].traits["dna"] = dna;
         unlockedTokens[tokenId].traits["body"] = body;
         unlockedTokens[tokenId].traits["head"] = head;
         unlockedTokens[tokenId].traits["eye"] = eye;
         unlockedTokens[tokenId].traits["mouth"] = mouth;
+        console.log(3);
     }
 
     function getTokenRarity(uint256 tokenId) external
@@ -388,21 +392,21 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function selectTrait(CryptoAIStructs.ItemDetail memory attribute, uint256 weight) internal view returns (uint256 index) {
+    function selectTrait(CryptoAIStructs.ItemDetail memory attribute, uint256 weight, uint256 tokenId) internal view returns (uint256 index) {
         uint256 totalTraits = 0;
         uint256[] memory adjustedRarity = new uint256[](attribute.names.length);
 
         for (uint256 i = 0; i < attribute.names.length; i++) {
-            adjustedRarity[i] = attribute.rarities[i] / weight;
+            adjustedRarity[i] = weight / attribute.rarities[i];
             totalTraits += adjustedRarity[i];
         }
-        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % totalTraits;
+        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, tokenId))) % totalTraits;
         uint256 cumulativeWeight = 0;
 
         for (uint256 i = 0; i < attribute.names.length; i++) {
             cumulativeWeight += adjustedRarity[i];
             if (randomValue < cumulativeWeight) {
-                attribute.rarities[i] += attribute.rarities[i] >> 1; // increase rarity of trait 50% after using
+                attribute.rarities[i] -= attribute.rarities[i] >> 1; // increase rarity of trait 50% after using
                 return i;
             }
         }
