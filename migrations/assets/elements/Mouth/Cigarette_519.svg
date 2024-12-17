@@ -1,40 +1,40 @@
-<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M21.1797 9H20.1797V10H21.1797V9Z" fill="white"/>
-<path d="M20.1797 10H19.1797V11H20.1797V10Z" fill="white"/>
-<path d="M20.1797 11H19.1797V12H20.1797V11Z" fill="white"/>
-<path d="M21.1797 11H20.1797V12H21.1797V11Z" fill="white"/>
-<path d="M21.1797 12H20.1797V13H21.1797V12Z" fill="white"/>
-<path d="M20.1797 13H19.1797V14H20.1797V13Z" fill="white"/>
-<path d="M12.1797 14H11.1797V15H12.1797V14Z" fill="black"/>
-<path d="M13.1797 14H12.1797V15H13.1797V14Z" fill="black"/>
-<path d="M14.1797 14H13.1797V15H14.1797V14Z" fill="black"/>
-<path d="M15.1797 14H14.1797V15H15.1797V14Z" fill="black"/>
-<path d="M16.1797 14H15.1797V15H16.1797V14Z" fill="black"/>
-<path d="M19.1797 14H18.1797V15H19.1797V14Z" fill="white"/>
-<path d="M20.1797 14H19.1797V15H20.1797V14Z" fill="white"/>
-<path d="M21.1797 14H20.1797V15H21.1797V14Z" fill="white"/>
-<path d="M12.1797 15H11.1797V16H12.1797V15Z" fill="black"/>
-<path d="M13.1797 15H12.1797V16H13.1797V15Z" fill="#FFF8F7"/>
-<path d="M14.1797 15H13.1797V16H14.1797V15Z" fill="#FFF8F7"/>
-<path d="M15.1797 15H14.1797V16H15.1797V15Z" fill="#698DA7"/>
-<path d="M16.1797 15H15.1797V16H16.1797V15Z" fill="#698DA7"/>
-<path d="M17.1797 15H16.1797V16H17.1797V15Z" fill="#0C4367"/>
-<path d="M18.1797 15H17.1797V16H18.1797V15Z" fill="#0C4367"/>
-<path d="M19.1797 15H18.1797V16H19.1797V15Z" fill="#0C4367"/>
-<path d="M20.1797 15H19.1797V16H20.1797V15Z" fill="#0C4367"/>
-<path d="M21.1797 15H20.1797V16H21.1797V15Z" fill="#0C4367"/>
-<path d="M12.1797 16H11.1797V17H12.1797V16Z" fill="black"/>
-<path d="M13.1797 16H12.1797V17H13.1797V16Z" fill="black"/>
-<path d="M14.1797 16H13.1797V17H14.1797V16Z" fill="black"/>
-<path d="M15.1797 16H14.1797V17H15.1797V16Z" fill="black"/>
-<path d="M16.1797 16H15.1797V17H16.1797V16Z" fill="black"/>
-<path d="M17.1797 16H16.1797V17H17.1797V16Z" fill="#698DA7"/>
-<path d="M18.1797 16H17.1797V17H18.1797V16Z" fill="#0C4367"/>
-<path d="M19.1797 16H18.1797V17H19.1797V16Z" fill="#0C4367"/>
-<path d="M20.1797 16H19.1797V17H20.1797V16Z" fill="#0C4367"/>
-<path d="M21.1797 16H20.1797V17H21.1797V16Z" fill="#0C4367"/>
-<path d="M18.1797 17H17.1797V18H18.1797V17Z" fill="#698DA7"/>
-<path d="M19.1797 17H18.1797V18H19.1797V17Z" fill="#0C4367"/>
-<path d="M20.1797 17H19.1797V18H20.1797V17Z" fill="#0C4367"/>
-<path d="M21.1797 17H20.1797V18H21.1797V17Z" fill="#0C4367"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="9" width="1" height="1" fill="#ffffff"/>
+  <rect x="19" y="10" width="1" height="1" fill="#ffffff"/>
+  <rect x="19" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="20" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="20" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="19" y="13" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="14" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="14" width="1" height="1" fill="#000000"/>
+  <rect x="13" y="14" width="1" height="1" fill="#000000"/>
+  <rect x="14" y="14" width="1" height="1" fill="#000000"/>
+  <rect x="15" y="14" width="1" height="1" fill="#000000"/>
+  <rect x="18" y="14" width="1" height="1" fill="#ffffff"/>
+  <rect x="19" y="14" width="1" height="1" fill="#ffffff"/>
+  <rect x="20" y="14" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="15" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="15" width="1" height="1" fill="#FFF8F7"/>
+  <rect x="13" y="15" width="1" height="1" fill="#FFF8F7"/>
+  <rect x="14" y="15" width="1" height="1" fill="#698DA7"/>
+  <rect x="15" y="15" width="1" height="1" fill="#698DA7"/>
+  <rect x="16" y="15" width="1" height="1" fill="#0C4367"/>
+  <rect x="17" y="15" width="1" height="1" fill="#0C4367"/>
+  <rect x="18" y="15" width="1" height="1" fill="#0C4367"/>
+  <rect x="19" y="15" width="1" height="1" fill="#0C4367"/>
+  <rect x="20" y="15" width="1" height="1" fill="#0C4367"/>
+  <rect x="11" y="16" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="16" width="1" height="1" fill="#000000"/>
+  <rect x="13" y="16" width="1" height="1" fill="#000000"/>
+  <rect x="14" y="16" width="1" height="1" fill="#000000"/>
+  <rect x="15" y="16" width="1" height="1" fill="#000000"/>
+  <rect x="16" y="16" width="1" height="1" fill="#698DA7"/>
+  <rect x="17" y="16" width="1" height="1" fill="#0C4367"/>
+  <rect x="18" y="16" width="1" height="1" fill="#0C4367"/>
+  <rect x="19" y="16" width="1" height="1" fill="#0C4367"/>
+  <rect x="20" y="16" width="1" height="1" fill="#0C4367"/>
+  <rect x="17" y="17" width="1" height="1" fill="#698DA7"/>
+  <rect x="18" y="17" width="1" height="1" fill="#0C4367"/>
+  <rect x="19" y="17" width="1" height="1" fill="#0C4367"/>
+  <rect x="20" y="17" width="1" height="1" fill="#0C4367"/>
 </svg>

@@ -1,18 +1,18 @@
-<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11.0625 11H10.0625V12H11.0625V11Z" fill="black"/>
-<path d="M11.0625 12H10.0625V13H11.0625V12Z" fill="white"/>
-<path d="M11.0625 10H10.0625V11H11.0625V10Z" fill="white"/>
-<path d="M12.0625 11H11.0625V12H12.0625V11Z" fill="black"/>
-<path d="M12.0625 12H11.0625V13H12.0625V12Z" fill="white"/>
-<path d="M12.0625 10H11.0625V11H12.0625V10Z" fill="white"/>
-<path d="M13.0625 11H12.0625V12H13.0625V11Z" fill="black"/>
-<path d="M14.0625 11H13.0625V12H14.0625V11Z" fill="black"/>
-<path d="M15.0625 11H14.0625V12H15.0625V11Z" fill="black"/>
-<path d="M16.0625 11H15.0625V12H16.0625V11Z" fill="black"/>
-<path d="M17.0625 11H16.0625V12H17.0625V11Z" fill="black"/>
-<path d="M17.0625 12H16.0625V13H17.0625V12Z" fill="white"/>
-<path d="M17.0625 10H16.0625V11H17.0625V10Z" fill="white"/>
-<path d="M18.0625 11H17.0625V12H18.0625V11Z" fill="black"/>
-<path d="M18.0625 12H17.0625V13H18.0625V12Z" fill="white"/>
-<path d="M18.0625 10H17.0625V11H18.0625V10Z" fill="white"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="10" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="10" y="10" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="11" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="10" width="1" height="1" fill="#ffffff"/>
+  <rect x="12" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="13" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="14" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="15" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="16" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="16" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="16" y="10" width="1" height="1" fill="#ffffff"/>
+  <rect x="17" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="17" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="17" y="10" width="1" height="1" fill="#ffffff"/>
 </svg>

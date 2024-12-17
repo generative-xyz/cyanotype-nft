@@ -1,45 +1,45 @@
-<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.8594 18H9.85938V19H10.8594V18Z" fill="#1E1E1E"/>
-<path d="M13.8594 18H12.8594V19H13.8594V18Z" fill="#1E1E1E"/>
-<path d="M9.85938 19H8.85938V20H9.85938V19Z" fill="#1E1E1E"/>
-<path d="M10.8594 19H9.85938V20H10.8594V19Z" fill="#1E1E1E"/>
-<path d="M11.8594 19H10.8594V20H11.8594V19Z" fill="#1E1E1E"/>
-<path d="M12.8594 19H11.8594V20H12.8594V19Z" fill="#1E1E1E"/>
-<path d="M13.8594 19H12.8594V20H13.8594V19Z" fill="#1E1E1E"/>
-<path d="M14.8594 19H13.8594V20H14.8594V19Z" fill="#1E1E1E"/>
-<path d="M8.85938 20H7.85938V21H8.85938V20Z" fill="#1E1E1E"/>
-<path d="M9.85938 20H8.85938V21H9.85938V20Z" fill="#1E1E1E"/>
-<path d="M10.8594 20H9.85938V21H10.8594V20Z" fill="#8D8D8D"/>
-<path d="M11.8594 20H10.8594V21H11.8594V20Z" fill="#8D8D8D"/>
-<path d="M12.8594 20H11.8594V21H12.8594V20Z" fill="#8D8D8D"/>
-<path d="M13.8594 20H12.8594V21H13.8594V20Z" fill="#8D8D8D"/>
-<path d="M14.8594 20H13.8594V21H14.8594V20Z" fill="#8D8D8D"/>
-<path d="M15.8594 20H14.8594V21H15.8594V20Z" fill="#1E1E1E"/>
-<path d="M7.85938 21H6.85938V22H7.85938V21Z" fill="#1E1E1E"/>
-<path d="M8.85938 21H7.85938V22H8.85938V21Z" fill="#1E1E1E"/>
-<path d="M9.85938 21H8.85938V22H9.85938V21Z" fill="#1E1E1E"/>
-<path d="M10.8594 21H9.85938V22H10.8594V21Z" fill="#8D8D8D"/>
-<path d="M11.8594 21H10.8594V22H11.8594V21Z" fill="#7FD570"/>
-<path d="M12.8594 21H11.8594V22H12.8594V21Z" fill="#8D8D8D"/>
-<path d="M13.8594 21H12.8594V22H13.8594V21Z" fill="#7FD570"/>
-<path d="M14.8594 21H13.8594V22H14.8594V21Z" fill="#8D8D8D"/>
-<path d="M15.8594 21H14.8594V22H15.8594V21Z" fill="#1E1E1E"/>
-<path d="M7.85938 22H6.85938V23H7.85938V22Z" fill="#1E1E1E"/>
-<path d="M8.85938 22H7.85938V23H8.85938V22Z" fill="#1E1E1E"/>
-<path d="M9.85938 22H8.85938V23H9.85938V22Z" fill="#1E1E1E"/>
-<path d="M10.8594 22H9.85938V23H10.8594V22Z" fill="#8D8D8D"/>
-<path d="M11.8594 22H10.8594V23H11.8594V22Z" fill="#8D8D8D"/>
-<path d="M12.8594 22H11.8594V23H12.8594V22Z" fill="#8D8D8D"/>
-<path d="M13.8594 22H12.8594V23H13.8594V22Z" fill="#8D8D8D"/>
-<path d="M14.8594 22H13.8594V23H14.8594V22Z" fill="#8D8D8D"/>
-<path d="M15.8594 22H14.8594V23H15.8594V22Z" fill="#1E1E1E"/>
-<path d="M6.85938 23H5.85938V24H6.85938V23Z" fill="#1E1E1E"/>
-<path d="M8.85938 23H7.85938V24H8.85938V23Z" fill="#1E1E1E"/>
-<path d="M9.85938 23H8.85938V24H9.85938V23Z" fill="#1E1E1E"/>
-<path d="M10.8594 23H9.85938V24H10.8594V23Z" fill="#1E1E1E"/>
-<path d="M11.8594 23H10.8594V24H11.8594V23Z" fill="#1E1E1E"/>
-<path d="M12.8594 23H11.8594V24H12.8594V23Z" fill="#1E1E1E"/>
-<path d="M13.8594 23H12.8594V24H13.8594V23Z" fill="#1E1E1E"/>
-<path d="M14.8594 23H13.8594V24H14.8594V23Z" fill="#1E1E1E"/>
-<path d="M16.8594 23H15.8594V24H16.8594V23Z" fill="#1E1E1E"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="9" y="18" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="12" y="18" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="8" y="19" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="9" y="19" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="10" y="19" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="11" y="19" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="12" y="19" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="13" y="19" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="7" y="20" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="8" y="20" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="9" y="20" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="10" y="20" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="11" y="20" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="12" y="20" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="13" y="20" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="14" y="20" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="6" y="21" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="7" y="21" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="8" y="21" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="9" y="21" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="10" y="21" width="1" height="1" fill="#7FD570"/>
+  <rect x="11" y="21" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="12" y="21" width="1" height="1" fill="#7FD570"/>
+  <rect x="13" y="21" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="14" y="21" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="6" y="22" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="7" y="22" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="8" y="22" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="9" y="22" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="10" y="22" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="11" y="22" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="12" y="22" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="13" y="22" width="1" height="1" fill="#8D8D8D"/>
+  <rect x="14" y="22" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="5" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="7" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="8" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="9" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="10" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="11" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="12" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="13" y="23" width="1" height="1" fill="#1E1E1E"/>
+  <rect x="15" y="23" width="1" height="1" fill="#1E1E1E"/>
 </svg>
