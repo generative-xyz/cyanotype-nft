@@ -1,25 +1,25 @@
-<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11.7266 10H10.7266V11H11.7266V10Z" fill="white"/>
-<path d="M12.7266 10H11.7266V11H12.7266V10Z" fill="black"/>
-<path d="M13.7266 10H12.7266V11H13.7266V10Z" fill="black"/>
-<path d="M17.7266 10H16.7266V11H17.7266V10Z" fill="white"/>
-<path d="M18.7266 10H17.7266V11H18.7266V10Z" fill="black"/>
-<path d="M19.7266 10H18.7266V11H19.7266V10Z" fill="black"/>
-<path d="M11.7266 11H10.7266V12H11.7266V11Z" fill="white"/>
-<path d="M12.7266 11H11.7266V12H12.7266V11Z" fill="black"/>
-<path d="M13.7266 11H12.7266V12H13.7266V11Z" fill="white"/>
-<path d="M17.7266 11H16.7266V12H17.7266V11Z" fill="white"/>
-<path d="M18.7266 11H17.7266V12H18.7266V11Z" fill="black"/>
-<path d="M19.7266 11H18.7266V12H19.7266V11Z" fill="white"/>
-<path d="M11.7266 12H10.7266V13H11.7266V12Z" fill="white"/>
-<path d="M12.7266 12H11.7266V13H12.7266V12Z" fill="black"/>
-<path d="M13.7266 12H12.7266V13H13.7266V12Z" fill="black"/>
-<path d="M11.7266 13H10.7266V14H11.7266V13Z" fill="#76F9FF"/>
-<path d="M10.7266 13H9.72656V14H10.7266V13Z" fill="#76F9FF"/>
-<path d="M12.7266 13H11.7266V14H12.7266V13Z" fill="#76F9FF"/>
-<path d="M17.7266 12H16.7266V13H17.7266V12Z" fill="white"/>
-<path d="M18.7266 12H17.7266V13H18.7266V12Z" fill="black"/>
-<path d="M19.7266 12H18.7266V13H19.7266V12Z" fill="black"/>
-<path d="M19.7266 13H18.7266V14H19.7266V13Z" fill="#76F9FF"/>
-<path d="M20.7266 13H19.7266V14H20.7266V13Z" fill="#76F9FF"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="10" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="10" width="1" height="1" fill="#000000"/>
+  <rect x="16" y="10" width="1" height="1" fill="#ffffff"/>
+  <rect x="17" y="10" width="1" height="1" fill="#000000"/>
+  <rect x="18" y="10" width="1" height="1" fill="#000000"/>
+  <rect x="10" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="16" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="17" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="18" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="10" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="12" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="12" width="1" height="1" fill="#000000"/>
+  <rect x="10" y="13" width="1" height="1" fill="#76F9FF"/>
+  <rect x="9" y="13" width="1" height="1" fill="#76F9FF"/>
+  <rect x="11" y="13" width="1" height="1" fill="#76F9FF"/>
+  <rect x="16" y="12" width="1" height="1" fill="#ffffff"/>
+  <rect x="17" y="12" width="1" height="1" fill="#000000"/>
+  <rect x="18" y="12" width="1" height="1" fill="#000000"/>
+  <rect x="18" y="13" width="1" height="1" fill="#76F9FF"/>
+  <rect x="19" y="13" width="1" height="1" fill="#76F9FF"/>
 </svg>
