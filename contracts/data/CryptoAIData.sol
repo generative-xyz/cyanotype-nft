@@ -173,7 +173,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             base64 = Base64.encode(
                 abi.encodePacked(
                     '{"animation_url": "',
-//                    this.cryptoAIImageHtml(tokenId),
+                    this.cryptoAIImageHtml(tokenId),
                     '}'
                 )
             );
