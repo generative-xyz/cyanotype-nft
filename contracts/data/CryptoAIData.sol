@@ -249,6 +249,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     public view
     returns (string memory text) {
         // TODO
+        string memory bodyName = items["body"].names[unlockedTokens[tokenId].traits["body"]];
+        string memory headName = items["head"].names[unlockedTokens[tokenId].traits["head"]];
+        string memory eyeName = items["eye"].names[unlockedTokens[tokenId].traits["eye"]];
+        string memory mouthName = items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]];
         text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
     }
 
