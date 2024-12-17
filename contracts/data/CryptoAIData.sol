@@ -227,7 +227,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function getItem(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail memory) {
-//        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
         CryptoAIStructs.ItemDetail memory item = items[_itemType];
         return item;
     }
@@ -255,15 +254,37 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
 
+//        CryptoAIStructs.ItemDetail memory body = getItem('body');
+//        CryptoAIStructs.ItemDetail memory head = getItem('head');
+//        CryptoAIStructs.ItemDetail memory eye = getItem('eye');
+//        CryptoAIStructs.ItemDetail memory mouth = getItem('mouth');
+
+//        uint16 indexBody = randomByTrait(getItem('body').traits, rarity);
+//        uint16 indexHead = randomByTrait( getItem('head').traits, rarity);
+//        uint16 indexEye = randomByTrait(getItem('eye').traits, rarity);
+//        uint16 indexMouth = randomByTrait(getItem('mouth').traits, rarity);
+
+
         uint8[] memory dna_po = getItemPositions(DNAType.name)[0];
-        uint8[] memory body_po = getItemPositions('body')[0];
-        uint8[] memory head_po = getItemPositions('head')[0];
-        uint8[] memory eye_po = getItemPositions('eye')[0];
-        uint8[] memory mouth_po = getItemPositions('mouth')[0];
+        uint8[] memory body_po = getItemPositions('body')[randomByTrait(getItem('body').traits, rarity)];
+        uint8[] memory head_po = getItemPositions('head')[randomByTrait( getItem('head').traits, rarity)];
+        uint8[] memory eye_po = getItemPositions('eye')[randomByTrait(getItem('eye').traits, rarity)];
+        uint8[] memory mouth_po = getItemPositions('mouth')[randomByTrait(getItem('mouth').traits, rarity)];
+
+        console.log('dna_po', dna_po.length);
+        console.log('body_po', randomByTrait(getItem('body').traits, rarity));
+        console.log('body_po.length', body_po.length);
+        console.log('head_po', randomByTrait(getItem('head').traits, rarity));
+        console.log('head_po.length', head_po.length);
+        console.log('eye_po', randomByTrait(getItem('eye').traits, rarity));
+        console.log('eye_po.length', eye_po.length);
+        console.log('mouth_po', randomByTrait(getItem('mouth').traits, rarity));
+        console.log('mouth_po.length', mouth_po.length);
 
         bytes memory pixels = new bytes(2304);
         uint idx;
         uint256 totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
+        console.log('totalLength', totalLength);
         uint8[] memory pos;
         uint16 p;
         uint16 positionLength = uint16(dna_po.length);
@@ -295,7 +316,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             pixels[p + 2] = bytes1(pos[idx + 4]);   // B
             pixels[p + 3] = bytes1(0xFF);         // A
         }
-
+        console.logBytes(pixels);
         return pixels;
     }
 
@@ -365,12 +386,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    /*function randomByTrait(CryptoAIStructs.ItemDetail[] memory traitInputs, uint256 tokenId) internal view returns (CryptoAIStructs.ItemDetail memory) {
+    function randomByTrait(uint8[] memory traitInputs, uint256 tokenId) internal view returns (uint16) {
         require(traitInputs.length > 0, "Trait inputs cannot be empty");
-
         uint256 totalWeight = 0;
-        for (uint i = 0; i < traitInputs.length; i++) {
-            totalWeight += traitInputs[i].traits;
+        for (uint16 i = 0; i < traitInputs.length; i++) {
+            totalWeight += traitInputs[i];
         }
 
         require(totalWeight > 0, "Total weight must be greater than zero");
@@ -378,13 +398,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId))) % totalWeight;
         uint256 currentWeight = 0;
 
-        for (uint i = 0; i < traitInputs.length; i++) {
-            currentWeight += traitInputs[i].traits;
+        for (uint16 i = 0; i < traitInputs.length; i++) {
+            currentWeight += traitInputs[i];
             if (randomNumber < currentWeight) {
-                return traitInputs[i];
+                return i;
             }
         }
 
-        return traitInputs[traitInputs.length - 1];
-    }*/
+        return uint16(traitInputs.length - 1);
+    }
 }
