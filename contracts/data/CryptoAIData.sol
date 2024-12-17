@@ -160,7 +160,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId);
         DNA_TYPES.rarities[unlockedTokens[tokenId].dna] -= DNA_TYPES.rarities[unlockedTokens[tokenId].dna] >> 1;
-        console.log("123");
         string[] memory partsName = new string[](5);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
         partsName[1] = "body";
@@ -281,7 +280,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint count = 0;
 
         for (uint8 i = 0; i < itemsData.length; i++) {
-            if (keccak256(abi.encodePacked(itemsData[i].value)) != keccak256(abi.encodePacked("Empty"))) {
+            if (bytes(itemsData[i].value).length != 0) {
                 bytes memory objString = abi.encodePacked(
                     '{"trait":"',
                     itemsData[i].trait,
