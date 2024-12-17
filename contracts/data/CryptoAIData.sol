@@ -152,7 +152,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
-        unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
+        unlockedTokens[tokenId].weight = nft.getAgentRarity(tokenId);
         */
         unlockedTokens[tokenId].weight = 100000;
 
@@ -291,14 +291,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
             }
 
-// Calculate pixel position
             p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
 
-// Set RGBA values directly
-            pixels[p] = bytes1(pos[idx + 2]);     // R
-            pixels[p + 1] = bytes1(pos[idx + 3]);   // G
-            pixels[p + 2] = bytes1(pos[idx + 4]);   // B
-            pixels[p + 3] = bytes1(0xFF);         // A
+            pixels[p] = bytes1(pos[idx + 2]);
+            pixels[p + 1] = bytes1(pos[idx + 3]);
+            pixels[p + 2] = bytes1(pos[idx + 4]);
+            pixels[p + 3] = bytes1(0xFF);
         }
 
         return pixels;
