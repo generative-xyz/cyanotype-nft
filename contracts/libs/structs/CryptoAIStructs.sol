@@ -20,13 +20,14 @@ library CryptoAIStructs {
     }
 
     struct DNA_TYPE {
-        string name;
-        uint8 trait;
+        string[] names;
+        uint8[] traits;
     }
 
     struct Attribute {
         string trait;
-        CryptoAIStructs.ItemDetail item;
+        string value;
+        uint8[] positions;
     }
 
     struct Token {
@@ -41,5 +42,7 @@ library CryptoAIStructs {
         // weight > 0: draw svg image -> completely
 
         mapping(string => uint256) traits; // name attribute[body, head, ....] -> index trait
+        uint256 dna;
     }
+
 }

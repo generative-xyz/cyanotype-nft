@@ -42,8 +42,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string internal PLACEHOLDER_IMAGE;
 
     string[] private VALID_ITEM_TYPES;
-    CryptoAIStructs.DNA_TYPE[] public DNA_TYPE;
-
+    CryptoAIStructs.DNA_TYPE private DNA_TYPES;
+//    CryptoAIStructs.TokenForDNA[] public DNA_TYPE;
     modifier validItemType(string memory _itemType) {
         bool isValid;
         for (uint i = 0; i < VALID_ITEM_TYPES.length; i++) {
@@ -154,14 +154,15 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
         unlockedTokens[tokenId].weight = nft.getAgentRarity(tokenId);
         */
-        unlockedTokens[tokenId].weight = 100000;
 
-        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
-        unlockedTokens[tokenId].traits["dna"] = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["body"] = selectTrait(items["body"], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["head"] = selectTrait(items["head"], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["eye"] = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
-        unlockedTokens[tokenId].traits["mouth"] = selectTrait(items["mouth"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].weight = 100000;
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.traits, unlockedTokens[tokenId].weight);
+        
+        unlockedTokens[tokenId].traits["dna"] = selectTrait(items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].traits, unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["body"] = selectTrait(items["body"].traits, unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["head"] = selectTrait(items["head"].traits, unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["eye"] = selectTrait(items["eye"].traits, unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["mouth"] = selectTrait(items["mouth"].traits, unlockedTokens[tokenId].weight);
     }
 
     function getTokenRarity(uint256 tokenId) external
@@ -203,12 +204,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     ///////  DATA assets + rendering //////
-    function addDNA(string memory dnaType, uint8 _trait) public onlyDeployer unsealed {
-        DNA_TYPE.push(CryptoAIStructs.DNA_TYPE(dnaType, _trait));
+    function addDNA(string[] memory _names, uint8[] memory _traits) public onlyDeployer unsealed {
+        DNA_TYPES.names = _names;
+        DNA_TYPES.traits = _traits;
     }
 
-    function getDNA(uint8 indexDNA) public view returns (CryptoAIStructs.DNA_TYPE memory) {
-        return DNA_TYPE[indexDNA];
+    function getDNA() public view returns (CryptoAIStructs.DNA_TYPE memory) {
+        return DNA_TYPES;
     }
 
     function addDNAVariant(string memory _DNAType, string[] memory _DNAName, uint8[] memory _traits, uint8[][] memory _positions) public
@@ -221,7 +223,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
 
     function getDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail memory) {
-        CryptoAIStructs.ItemDetail memory item = DNA_Variants[_DNAType];
+        CryptoAIStructs.ItemDetail memory item = items[_DNAType];
         return item;
     }
 
@@ -248,12 +250,58 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     public view
     returns (string memory text) {
-        // TODO
-        string memory bodyName = items["body"].names[unlockedTokens[tokenId].traits["body"]];
-        string memory headName = items["head"].names[unlockedTokens[tokenId].traits["head"]];
-        string memory eyeName = items["eye"].names[unlockedTokens[tokenId].traits["eye"]];
-        string memory mouthName = items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]];
-        text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
+
+        CryptoAIStructs.Attribute[] memory itemsData = new CryptoAIStructs.Attribute[](5);
+        itemsData[0] = CryptoAIStructs.Attribute("DNA",
+            items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].names[unlockedTokens[tokenId].traits["dna"]],
+            items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].positions[unlockedTokens[tokenId].traits["dna"]]
+        );
+        itemsData[1] = CryptoAIStructs.Attribute("Body",
+            items["body"].names[unlockedTokens[tokenId].traits["body"]],
+            items['body'].positions[unlockedTokens[tokenId].traits["body"]]
+        );
+        itemsData[2] = CryptoAIStructs.Attribute("Head",
+            items["head"].names[unlockedTokens[tokenId].traits["head"]],
+            items['head'].positions[unlockedTokens[tokenId].traits["head"]]
+        );
+        itemsData[3] = CryptoAIStructs.Attribute("Eyes",
+            items["eye"].names[unlockedTokens[tokenId].traits["eye"]],
+            items['eye'].positions[unlockedTokens[tokenId].traits["eye"]]
+        );
+        itemsData[4] = CryptoAIStructs.Attribute("Mouth",
+            items["mouth"].names[unlockedTokens[tokenId].traits["mouth"]],
+            items['mouth'].positions[unlockedTokens[tokenId].traits["mouth"]]
+        );
+
+        bytes memory byteString;
+        uint count = 0;
+
+        for (uint8 i = 0; i < itemsData.length; i++) {
+            if (itemsData[i].positions.length > 0) {
+                bytes memory objString = abi.encodePacked(
+                    '{"trait":"',
+                    itemsData[i].trait,
+                    '","value":"',
+                    itemsData[i].value,
+                    '"}'
+                );
+                if (i > 0) {
+                    byteString = abi.encodePacked(byteString, ",");
+                }
+                byteString = abi.encodePacked(byteString, objString);
+                count++;
+            }
+        }
+
+        byteString = abi.encodePacked(
+            '{"trait": "attributes"',
+            ',"value":"',
+            StringsUpgradeable.toString(count),
+            '"},'
+            , byteString
+        );
+
+        text = string(abi.encodePacked('[', string(byteString), ']'));
     }
 
     function cryptoAIImage(uint256 tokenId)
@@ -263,8 +311,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].weight > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         uint256 weight = unlockedTokens[tokenId].weight;
         */
-
-        uint8[] memory dna_po = items[DNA_TYPE[0].name].positions[unlockedTokens[tokenId].traits["dna"]];
+        uint8[] memory dna_po = items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].positions[unlockedTokens[tokenId].traits["dna"]];
         uint8[] memory body_po = items['body'].positions[unlockedTokens[tokenId].traits["body"]];
         uint8[] memory head_po = items['head'].positions[unlockedTokens[tokenId].traits["head"]];
         uint8[] memory eye_po = items['eye'].positions[unlockedTokens[tokenId].traits["eye"]];
@@ -372,18 +419,18 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function selectTrait(CryptoAIStructs.ItemDetail memory attribute, uint256 weight) internal view returns (uint256 index) {
+    function selectTrait(uint8[] memory traits, uint256 weight) internal view returns (uint256 index) {
         uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 100;
         uint256 cumulativeWeight = 0;
 
-        for (uint256 i = 0; i < attribute.names.length; i++) {
-            uint256 adjustedRarity = attribute.traits[i] + weight;
+        for (uint256 i = 0; i < traits.length; i++) {
+            uint256 adjustedRarity = traits[i] + weight;
             cumulativeWeight += adjustedRarity;
             if (randomValue < cumulativeWeight) {
                 return i;
             }
         }
 
-        return attribute.names.length - 1;
+        return traits.length - 1;
     }
 }

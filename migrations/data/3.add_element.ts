@@ -1,7 +1,7 @@
 import {CryptoAIData} from "./cryptoAIData";
 import {initConfig} from "../../index";
 import * as data from './datajson/data-compressed.json'
-import {DATA_DNA, DNA, ELEMENT} from "./data";
+import {DNA, ELEMENT, KEY_DNA, TRAITS_DNA} from "./data";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -22,10 +22,7 @@ async function main() {
     await dataContract.addItem(address, 0,ELEMENT.HEAD,  data.elements.Head.names,  data.elements.Head.traits,  data.elements.Head.positions);
 
     //ADD DNA
-    for (const dna of DATA_DNA) {
-        console.log('dna', dna)
-        await dataContract.addDNA(address, 0, dna.key, Number(dna.trait));
-    }
+    await dataContract.addDNA(address, 0, KEY_DNA, TRAITS_DNA);
 
     //ADD DNA Variant
     await dataContract.addDNAVariant(address, 0, DNA.DOG, data.DNA.Dog.names, data.DNA.Dog.traits,  data.DNA.Dog.positions);

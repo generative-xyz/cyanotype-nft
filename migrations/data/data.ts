@@ -24,6 +24,8 @@ export enum DNA {
     HUMAN = 'Human',
 }
 
+const KEY_DNA = [DNA.CAT, DNA.DOG, DNA.FROG, DNA.ROBOT, DNA.HUMAN, DNA.MONKEY]
+const TRAITS_DNA = [data.DNA.Cat.trait, data.DNA.Dog.trait, data.DNA.Frog.trait, data.DNA.Robot.trait, data.DNA.Human.trait,data.DNA.Monkey.trait].map((item) => Number(item))
 
 const DATA_DNA = [
     {
@@ -67,4 +69,4 @@ const DATA_DNA = [
 
 // export {DATA_EYE, DATA_DNA, DATA_MOUTH, DATA_HEAD, DATA_FROG_VARIANT, DATA_HUMAN_VARIANT, DATA_CAT_VARIANT, DATA_DOG_VARIANT, DATA_ROBOT_VARIANT, DATA_MONKEY_VARIANT, DATA_BODY}
 
-export {DATA_DNA}
+export {KEY_DNA, TRAITS_DNA}
