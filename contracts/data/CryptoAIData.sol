@@ -139,7 +139,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         */
-        unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, 0);
+        unlockedTokens[tokenId].tokenID = tokenId;
     }
 
     function unlockRenderAgent(uint256 tokenId)
@@ -149,19 +149,26 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // agent is minted on nft collection, and unlock render svg by rarity info
         IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
         /* TODO: uncomment when deploy
-require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
-require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
-unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
-*/
-        unlockedTokens[tokenId].rarity = 100000;
+        require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
+        unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
+        */
+        unlockedTokens[tokenId].weight = 100000;
+
+        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
+        unlockedTokens[tokenId].traits["dna"] = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["body"] = selectTrait(items["body"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["head"] = selectTrait(items["head"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["eye"] = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["mouth"] = selectTrait(items["mouth"], unlockedTokens[tokenId].weight);
     }
 
     function getTokenRarity(uint256 tokenId) external
     view returns
     (uint256) {
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        return unlockedTokens[tokenId].rarity;
+        return unlockedTokens[tokenId].weight;
     }
 
     function tokenURI(uint256 tokenId)
@@ -169,7 +176,7 @@ unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
     returns (string memory result) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        if (unlockedTokens[tokenId].rarity == 0) {
+        if (unlockedTokens[tokenId].weight == 0) {
             result = string(abi.encodePacked(
                 jsonDataType,
                 Base64.encode(abi.encodePacked(
@@ -238,11 +245,6 @@ unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
         return item;
     }
 
-    function getItemPositions(string memory _itemType) public view returns (uint8[][] memory) {
-        CryptoAIStructs.ItemDetail memory item = items[_itemType];
-        return item.positions;
-    }
-
     function cryptoAIAttributes(uint256 tokenId)
     public view
     returns (string memory text) {
@@ -254,18 +256,15 @@ unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
     public view
     returns (bytes memory) {
         /* TODO: uncomment when deploy
-        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        uint256 rarity = unlockedTokens[tokenId].rarity;
+        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].weight > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        uint256 weight = unlockedTokens[tokenId].weight;
         */
-        uint256 rarity = tokenId;
 
-        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
-
-        uint8[] memory dna_po = getItemPositions(DNAType.name)[0];
-        uint8[] memory body_po = getItemPositions('body')[0];
-        uint8[] memory head_po = getItemPositions('head')[0];
-        uint8[] memory eye_po = getItemPositions('eye')[0];
-        uint8[] memory mouth_po = getItemPositions('mouth')[0];
+        uint8[] memory dna_po = items[DNA_TYPE[0].name].positions[unlockedTokens[tokenId].traits["dna"]];
+        uint8[] memory body_po = items['body'].positions[unlockedTokens[tokenId].traits["body"]];
+        uint8[] memory head_po = items['head'].positions[unlockedTokens[tokenId].traits["head"]];
+        uint8[] memory eye_po = items['eye'].positions[unlockedTokens[tokenId].traits["eye"]];
+        uint8[] memory mouth_po = items['mouth'].positions[unlockedTokens[tokenId].traits["mouth"]];
 
         bytes memory pixels = new bytes(2304);
         uint idx;
@@ -371,26 +370,18 @@ unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    /*function randomByTrait(CryptoAIStructs.ItemDetail[] memory traitInputs, uint256 tokenId) internal view returns (CryptoAIStructs.ItemDetail memory) {
-        require(traitInputs.length > 0, "Trait inputs cannot be empty");
+    function selectTrait(CryptoAIStructs.ItemDetail memory attribute, uint256 weight) internal view returns (uint256 index) {
+        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 100;
+        uint256 cumulativeWeight = 0;
 
-        uint256 totalWeight = 0;
-        for (uint i = 0; i < traitInputs.length; i++) {
-            totalWeight += traitInputs[i].traits;
-        }
-
-        require(totalWeight > 0, "Total weight must be greater than zero");
-
-        uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId))) % totalWeight;
-        uint256 currentWeight = 0;
-
-        for (uint i = 0; i < traitInputs.length; i++) {
-            currentWeight += traitInputs[i].traits;
-            if (randomNumber < currentWeight) {
-                return traitInputs[i];
+        for (uint256 i = 0; i < attribute.names.length; i++) {
+            uint256 adjustedRarity = attribute.traits[i] + weight;
+            cumulativeWeight += adjustedRarity;
+            if (randomValue < cumulativeWeight) {
+                return i;
             }
         }
 
-        return traitInputs[traitInputs.length - 1];
-    }*/
+        return attribute.names.length - 1;
+    }
 }

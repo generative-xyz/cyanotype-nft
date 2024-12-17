@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 library CryptoAIStructs {
 
     event SVGGenerated(address indexed creator, uint timestamp);
-    event ItemAdded(string itemType, string[] name, uint8[] traits,  uint8[][] positions);
-    event DNAVariantAdded(string itemType, string[] name, uint8[] traits,  uint8[][] positions);
+    event ItemAdded(string itemType, string[] name, uint8[] traits, uint8[][] positions);
+    event DNAVariantAdded(string itemType, string[] name, uint8[] traits, uint8[][] positions);
     event TokenMinted(uint256 tokenId);
 
     struct PositionDetail {
@@ -31,13 +31,15 @@ library CryptoAIStructs {
 
     struct Token {
         uint256 tokenID;
-        uint256 rarity;
+        uint256 weight;
 
         // condition 1
         // tokenID = 0: not minted
         // tokenID > 0: minted
         // condition 2
-        // rarity = 0: draw animation url
-        // rarity > 0: draw svg image -> completely
+        // weight = 0: draw animation url
+        // weight > 0: draw svg image -> completely
+
+        mapping(string => uint256) traits; // name attribute[body, head, ....] -> index trait
     }
 }
