@@ -25,15 +25,16 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
 
     uint256 public constant TOKEN_LIMIT = 0x3E8;
-    string private constant svgDataType = 'data:image/svg+xml;utf8,';
     uint8 internal constant GRID_SIZE = 0x18;
-    string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
-    string internal constant SVG_FOOTER = '</svg>';
-    string internal constant SVG_Y = '" y="';
     bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="%23';
-    string internal constant SVG_RECT = '<rect x="';
-    string internal constant SVG_CLOSE_RECT = '"/>';
+    string private constant jsonDataType = "data:application/json;base64,";
+    string private constant svgDataType = 'data:image/svg+xml;utf8,';
+    string internal constant SVG_HEADER = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>";
+    string internal constant SVG_FOOTER = '</svg>';
+    string internal constant SVG_RECT = "<rect x='";
+    string internal constant SVG_Y = "' y='";
+    string internal constant SVG_WIDTH = "' width='1' height='1' fill='%23";
+    string internal constant SVG_CLOSE_RECT = "'/>";
     // placeholder
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
@@ -72,8 +73,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     modifier onlyAIAgentContract() {
         /* TODO: uncomment when deploy
-        require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
-        */
+    require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
+    */
         _;
     }
 
@@ -138,7 +139,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID == 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         */
-        unlockedTokens[tokenId] = CryptoAIStructs.Token(tokenId, 0);
+        unlockedTokens[tokenId].tokenID = tokenId;
     }
 
     function unlockRenderAgent(uint256 tokenId)
@@ -153,14 +154,21 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
         unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
         */
-        unlockedTokens[tokenId].rarity = 100000;
+        unlockedTokens[tokenId].weight = 100000;
+
+        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
+        unlockedTokens[tokenId].traits["dna"] = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["body"] = selectTrait(items["body"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["head"] = selectTrait(items["head"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["eye"] = selectTrait(items["eye"], unlockedTokens[tokenId].weight);
+        unlockedTokens[tokenId].traits["mouth"] = selectTrait(items["mouth"], unlockedTokens[tokenId].weight);
     }
 
     function getTokenRarity(uint256 tokenId) external
     view returns
     (uint256) {
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        return unlockedTokens[tokenId].rarity;
+        return unlockedTokens[tokenId].weight;
     }
 
     function tokenURI(uint256 tokenId)
@@ -168,25 +176,30 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (string memory result) {
         require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        string memory base64 = "";
-        if (unlockedTokens[tokenId].rarity == 0) {
-            base64 = Base64.encode(
-                abi.encodePacked(
+        if (unlockedTokens[tokenId].weight == 0) {
+            result = string(abi.encodePacked(
+                jsonDataType,
+                Base64.encode(abi.encodePacked(
                     '{"animation_url": "',
-//                    this.cryptoAIImageHtml(tokenId),
-                    '}'
+                    cryptoAIImageHtml(tokenId),
+                    '"}'
                 )
+                ))
             );
-        }
-        else {
-            base64 = Base64.encode(
-                abi.encodePacked(
-                    '{"image": "', this.cryptoAIImageSvg(tokenId),
-                    '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
+        } else {
+            /*result = string(abi.encodePacked(
+                jsonDataType,
+                Base64.encode(abi.encodePacked(
+                    '{"image": "', cryptoAIImageSvg(tokenId),
+                    '", "attributes": ', cryptoAIAttributes(tokenId), '}'
                 )
-            );
+                ))
+            );*/
+            result = string(abi.encodePacked(
+                '{"image": "', cryptoAIImageSvg(tokenId),
+                '", "attributes": ', cryptoAIAttributes(tokenId), '}'
+            ));
         }
-        result = string(abi.encodePacked('data:application/json;base64,', base64));
     }
 
     ///////  DATA assets + rendering //////
@@ -231,55 +244,26 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         return item;
     }
 
-    function getItemPositions(string memory _itemType) public view returns (uint8[][] memory) {
-        CryptoAIStructs.ItemDetail memory item = items[_itemType];
-        return item.positions;
-    }
-
     function cryptoAIAttributes(uint256 tokenId)
-    external view
+    public view
     returns (string memory text) {
         // TODO
-        text = '[{"trait_type": "Fur", "value": "Dark Brown"}';
+        text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
     }
 
     function cryptoAIImage(uint256 tokenId)
     public view
     returns (bytes memory) {
         /* TODO: uncomment when deploy
-        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        uint256 rarity = unlockedTokens[tokenId].rarity;
+        require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].weight > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        uint256 weight = unlockedTokens[tokenId].weight;
         */
-        uint256 rarity = tokenId;
 
-        CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
-
-//        CryptoAIStructs.ItemDetail memory body = getItem('body');
-//        CryptoAIStructs.ItemDetail memory head = getItem('head');
-//        CryptoAIStructs.ItemDetail memory eye = getItem('eye');
-//        CryptoAIStructs.ItemDetail memory mouth = getItem('mouth');
-
-//        uint16 indexBody = randomByTrait(getItem('body').traits, rarity);
-//        uint16 indexHead = randomByTrait( getItem('head').traits, rarity);
-//        uint16 indexEye = randomByTrait(getItem('eye').traits, rarity);
-//        uint16 indexMouth = randomByTrait(getItem('mouth').traits, rarity);
-
-
-        uint8[] memory dna_po = getItemPositions(DNAType.name)[0];
-        uint8[] memory body_po = getItemPositions('body')[randomByTrait(getItem('body').traits, rarity)];
-        uint8[] memory head_po = getItemPositions('head')[randomByTrait( getItem('head').traits, rarity)];
-        uint8[] memory eye_po = getItemPositions('eye')[randomByTrait(getItem('eye').traits, rarity)];
-        uint8[] memory mouth_po = getItemPositions('mouth')[randomByTrait(getItem('mouth').traits, rarity)];
-
-        console.log('dna_po', dna_po.length);
-        console.log('body_po', randomByTrait(getItem('body').traits, rarity));
-        console.log('body_po.length', body_po.length);
-        console.log('head_po', randomByTrait(getItem('head').traits, rarity));
-        console.log('head_po.length', head_po.length);
-        console.log('eye_po', randomByTrait(getItem('eye').traits, rarity));
-        console.log('eye_po.length', eye_po.length);
-        console.log('mouth_po', randomByTrait(getItem('mouth').traits, rarity));
-        console.log('mouth_po.length', mouth_po.length);
+        uint8[] memory dna_po = items[DNA_TYPE[0].name].positions[unlockedTokens[tokenId].traits["dna"]];
+        uint8[] memory body_po = items['body'].positions[unlockedTokens[tokenId].traits["body"]];
+        uint8[] memory head_po = items['head'].positions[unlockedTokens[tokenId].traits["head"]];
+        uint8[] memory eye_po = items['eye'].positions[unlockedTokens[tokenId].traits["eye"]];
+        uint8[] memory mouth_po = items['mouth'].positions[unlockedTokens[tokenId].traits["mouth"]];
 
         bytes memory pixels = new bytes(2304);
         uint idx;
@@ -307,10 +291,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
             }
 
-            // Calculate pixel position
+// Calculate pixel position
             p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
 
-            // Set RGBA values directly
+// Set RGBA values directly
             pixels[p] = bytes1(pos[idx + 2]);     // R
             pixels[p + 1] = bytes1(pos[idx + 3]);   // G
             pixels[p + 2] = bytes1(pos[idx + 4]);   // B
@@ -321,7 +305,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function cryptoAIImageHtml(uint256 tokenId)
-    external view
+    public view
     returns (string memory result) {
         return string(abi.encodePacked(
             htmlDataType,
@@ -337,8 +321,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function cryptoAIImageSvg(uint256 tokenId)
-    external view
-// onlyAIAgentContract
+    public view
+        // onlyAIAgentContract
     returns (string memory result) {
         /* TODO: uncomment when deploy
         require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
@@ -386,25 +370,18 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function randomByTrait(uint8[] memory traitInputs, uint256 tokenId) internal view returns (uint16) {
-        require(traitInputs.length > 0, "Trait inputs cannot be empty");
-        uint256 totalWeight = 0;
-        for (uint16 i = 0; i < traitInputs.length; i++) {
-            totalWeight += traitInputs[i];
-        }
+    function selectTrait(CryptoAIStructs.ItemDetail memory attribute, uint256 weight) internal view returns (uint256 index) {
+        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 100;
+        uint256 cumulativeWeight = 0;
 
-        require(totalWeight > 0, "Total weight must be greater than zero");
-
-        uint256 randomNumber = uint256(keccak256(abi.encodePacked(tokenId))) % totalWeight;
-        uint256 currentWeight = 0;
-
-        for (uint16 i = 0; i < traitInputs.length; i++) {
-            currentWeight += traitInputs[i];
-            if (randomNumber < currentWeight) {
+        for (uint256 i = 0; i < attribute.names.length; i++) {
+            uint256 adjustedRarity = attribute.traits[i] + weight;
+            cumulativeWeight += adjustedRarity;
+            if (randomValue < cumulativeWeight) {
                 return i;
             }
         }
 
-        return uint16(traitInputs.length - 1);
+        return attribute.names.length - 1;
     }
 }
