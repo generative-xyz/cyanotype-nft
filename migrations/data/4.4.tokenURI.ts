@@ -1,5 +1,6 @@
 import {initConfig} from "../../index";
 import {CryptoAIData} from "./cryptoAIData";
+import {promises as fs} from "fs";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -19,7 +20,9 @@ async function main() {
         return;
     }
     const data = await dataContract.tokenURI(address, parseInt(args[0]));
-    console.log(data)
+    const path = "./migrations/token_" + args[0] + ".json";
+    console.log("path", path);
+    await fs.writeFile(path, data);
 }
 
 main().catch(error => {

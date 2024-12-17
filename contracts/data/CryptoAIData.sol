@@ -29,12 +29,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
     string private constant jsonDataType = "data:application/json;base64,";
     string private constant svgDataType = 'data:image/svg+xml;utf8,';
-    string internal constant SVG_HEADER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
+    string internal constant SVG_HEADER = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>";
     string internal constant SVG_FOOTER = '</svg>';
-    string internal constant SVG_RECT = '<rect x="';
-    string internal constant SVG_Y = '" y="';
-    string internal constant SVG_WIDTH = '" width="1" height="1" fill="%23';
-    string internal constant SVG_CLOSE_RECT = '"/>';
+    string internal constant SVG_RECT = "<rect x='";
+    string internal constant SVG_Y = "' y='";
+    string internal constant SVG_WIDTH = "' width='1' height='1' fill='%23";
+    string internal constant SVG_CLOSE_RECT = "'/>";
     // placeholder
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
@@ -73,8 +73,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     modifier onlyAIAgentContract() {
         /* TODO: uncomment when deploy
-        require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
-        */
+    require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
+    */
         _;
     }
 
@@ -149,11 +149,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // agent is minted on nft collection, and unlock render svg by rarity info
         IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
         /* TODO: uncomment when deploy
-        require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
-        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
-        unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
-        */
+require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
+require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
+unlockedTokens[tokenId].rarity = nft.getAgentRarity(tokenId);
+*/
         unlockedTokens[tokenId].rarity = 100000;
     }
 
@@ -174,21 +174,24 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 jsonDataType,
                 Base64.encode(abi.encodePacked(
                     '{"animation_url": "',
-                    this.cryptoAIImageHtml(tokenId),
+                    cryptoAIImageHtml(tokenId),
                     '"}'
                 )
                 ))
             );
-        }
-        else {
-            result = string(abi.encodePacked(
+        } else {
+            /*result = string(abi.encodePacked(
                 jsonDataType,
                 Base64.encode(abi.encodePacked(
-                    '{"image": "', this.cryptoAIImageSvg(tokenId),
-                    '", "attributes": ', this.cryptoAIAttributes(tokenId), '}'
+                    '{"image": "', cryptoAIImageSvg(tokenId),
+                    '", "attributes": ', cryptoAIAttributes(tokenId), '}'
                 )
                 ))
-            );
+            );*/
+            result = string(abi.encodePacked(
+                '{"image": "', cryptoAIImageSvg(tokenId),
+                '", "attributes": ', cryptoAIAttributes(tokenId), '}'
+            ));
         }
     }
 
@@ -230,7 +233,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function getItem(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail memory) {
-//        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
+        //        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
         CryptoAIStructs.ItemDetail memory item = items[_itemType];
         return item;
     }
@@ -241,10 +244,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function cryptoAIAttributes(uint256 tokenId)
-    external view
+    public view
     returns (string memory text) {
         // TODO
-        text = '[{"trait_type": "Fur", "value": "Dark Brown"}';
+        text = '[{"trait_type": "Fur", "value": "Dark Brown"}]';
     }
 
     function cryptoAIImage(uint256 tokenId)
@@ -289,10 +292,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
             }
 
-            // Calculate pixel position
+// Calculate pixel position
             p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
 
-            // Set RGBA values directly
+// Set RGBA values directly
             pixels[p] = bytes1(pos[idx + 2]);     // R
             pixels[p + 1] = bytes1(pos[idx + 3]);   // G
             pixels[p + 2] = bytes1(pos[idx + 4]);   // B
@@ -303,7 +306,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function cryptoAIImageHtml(uint256 tokenId)
-    external view
+    public view
     returns (string memory result) {
         return string(abi.encodePacked(
             htmlDataType,
@@ -319,8 +322,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function cryptoAIImageSvg(uint256 tokenId)
-    external view
-// onlyAIAgentContract
+    public view
+        // onlyAIAgentContract
     returns (string memory result) {
         /* TODO: uncomment when deploy
         require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].rarity > 0, Errors.TOKEN_ID_NOT_UNLOCKED);

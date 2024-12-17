@@ -24,7 +24,7 @@ async function main() {
     for (var i = 1; i <= num; i++) {
         try {
             const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
-            images += "<span>" + i + "</span><br>" + "<img width=\"64\" src=\'" + fullSVG + "\' title='" + i + "' />"
+            images += "<span>" + i + "</span><br>" + "<img width=\"64\" src=\"" + fullSVG + "\" title='" + i + "' />"
             console.log(i, " processed");
             const attr = await dataContract.getAttrData(address, i);
             images += "<pre>" + attr + "</pre><br>";
