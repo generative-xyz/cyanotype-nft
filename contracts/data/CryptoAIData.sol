@@ -163,7 +163,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 mouth;
         bytes32 pairHash;
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
-        console.log(1);
+        console.log(tokenId);
         do {
             dna = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight, tokenId);
             body = selectTrait(items["body"], unlockedTokens[tokenId].weight, tokenId);
@@ -173,7 +173,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             pairHash = keccak256(abi.encodePacked(dna, body, head, eye, mouth));
         }
         while (usedPairs[pairHash]);
-        console.log(2);
+        console.log("a");
 
         usedPairs[pairHash] = true;
         unlockedTokens[tokenId].traits["dna"] = dna;
@@ -181,7 +181,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].traits["head"] = head;
         unlockedTokens[tokenId].traits["eye"] = eye;
         unlockedTokens[tokenId].traits["mouth"] = mouth;
-        console.log(3);
+        console.log("b");
     }
 
     function getTokenRarity(uint256 tokenId) external
