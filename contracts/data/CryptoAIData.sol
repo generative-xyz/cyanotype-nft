@@ -152,7 +152,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         /* TODO: uncomment when deploy
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        require(unlockedTokens[tokenId].rarity == 0, Errors.TOKEN_ID_UNLOCKED);
+        require(unlockedTokens[tokenId].weight == 0, Errors.TOKEN_ID_UNLOCKED);
         unlockedTokens[tokenId].weight = nft.getAgentRarity(tokenId);
         */
         unlockedTokens[tokenId].weight = 100000;
@@ -164,18 +164,18 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         bytes32 pairHash;
         CryptoAIStructs.DNA_TYPE memory DNAType = DNA_TYPE[0];// TODO
         console.log(tokenId);
-        do {
-            dna = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight, tokenId);
-            body = selectTrait(items["body"], unlockedTokens[tokenId].weight, tokenId);
-            head = selectTrait(items["head"], unlockedTokens[tokenId].weight, tokenId);
-            eye = selectTrait(items["eye"], unlockedTokens[tokenId].weight, tokenId);
-            mouth = selectTrait(items["mouth"], unlockedTokens[tokenId].weight, tokenId);
-            pairHash = keccak256(abi.encodePacked(dna, body, head, eye, mouth));
-        }
-        while (usedPairs[pairHash]);
+//        do {
+        dna = selectTrait(items[DNAType.name], unlockedTokens[tokenId].weight, tokenId);
+        body = selectTrait(items["body"], unlockedTokens[tokenId].weight, tokenId);
+        head = selectTrait(items["head"], unlockedTokens[tokenId].weight, tokenId);
+        eye = selectTrait(items["eye"], unlockedTokens[tokenId].weight, tokenId);
+        mouth = selectTrait(items["mouth"], unlockedTokens[tokenId].weight, tokenId);
+        pairHash = keccak256(abi.encodePacked(dna, body, head, eye, mouth));
+//        }
+//        while (usedPairs[pairHash]);
         console.log("a");
 
-        usedPairs[pairHash] = true;
+//        usedPairs[pairHash] = true;
         unlockedTokens[tokenId].traits["dna"] = dna;
         unlockedTokens[tokenId].traits["body"] = body;
         unlockedTokens[tokenId].traits["head"] = head;
