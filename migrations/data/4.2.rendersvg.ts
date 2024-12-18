@@ -25,9 +25,10 @@ async function main() {
         try {
             const fullSVG = await dataContract.cryptoAIImageSvg(address, i);
             images += "<span>" + i + "</span><br>" + "<img width=\"64\" src=\"" + fullSVG + "\" title='" + i + "' />"
-            console.log(i, " processed");
+            console.log(i, " processed image");
             const attr = await dataContract.getAttrData(address, i);
             images += "<pre>" + attr + "</pre><br>";
+            console.log(i, " processed attr");
         } catch (ex) {
             console.log(i, " failed");
             break;
