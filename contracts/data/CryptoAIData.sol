@@ -27,7 +27,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
     string internal constant PLACEHOLDER_FOOTER = "'</script>";
-    string[5] private partsName = ["dna", "Body", "Head", "Eye", "Mouth"];
+    string[5] private partsName = ["dna", "Body", "Head", "Eyes", "Mouth"];
 
     // deployer
     address public _deployer;
@@ -73,7 +73,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     function changeDeployer(address newAdm)
     external
-    unsealed {
+    onlyDeployer unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
@@ -236,30 +236,23 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     public view
     returns (string memory text) {
-
-        CryptoAIStructs.Attribute[] memory itemsData = new CryptoAIStructs.Attribute[](5);
-        for (uint256 i = 0; i < 5; i++) {
-            if (i == 0) {
-                itemsData[i] = CryptoAIStructs.Attribute("DNA",
-                    items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].names[unlockedTokens[tokenId].traits[i]]
-                );
-            } else {
-                itemsData[i] = CryptoAIStructs.Attribute(partsName[i],
-                    items[partsName[i]].names[unlockedTokens[tokenId].traits[i]]
-                );
-            }
-        }
-
         bytes memory byteString;
         uint count = 0;
-
-        for (uint8 i = 0; i < itemsData.length; i++) {
-            if (bytes(itemsData[i].value).length != 0) {
+        string memory traitName;
+        string memory value;
+        for (uint8 i = 0; i < partsName.length; i++) {
+            traitName = partsName[i];
+            value = items[partsName[i]].names[unlockedTokens[tokenId].traits[i]];
+            if (i == 0) {
+                traitName = "DNA";
+                value = items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].names[unlockedTokens[tokenId].traits[i]];
+            }
+            if (bytes(value).length != 0) {
                 bytes memory objString = abi.encodePacked(
                     '{"trait":"',
-                    itemsData[i].trait,
+                    traitName,
                     '","value":"',
-                    itemsData[i].value,
+                    value,
                     '"}'
                 );
                 if (i > 0) {
