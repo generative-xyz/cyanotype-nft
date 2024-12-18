@@ -1,33 +1,33 @@
-<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.3984 10H9.39844V11H10.3984V10Z" fill="#383838"/>
-<path d="M11.3984 10H10.3984V11H11.3984V10Z" fill="#383838"/>
-<path d="M12.3984 10H11.3984V11H12.3984V10Z" fill="#383838"/>
-<path d="M13.3984 10H12.3984V11H13.3984V10Z" fill="#383838"/>
-<path d="M14.3984 10H13.3984V11H14.3984V10Z" fill="#383838"/>
-<path d="M15.3984 10H14.3984V11H15.3984V10Z" fill="#383838"/>
-<path d="M16.3984 10H15.3984V11H16.3984V10Z" fill="#383838"/>
-<path d="M17.3984 10H16.3984V11H17.3984V10Z" fill="#383838"/>
-<path d="M18.3984 10H17.3984V11H18.3984V10Z" fill="#383838"/>
-<path d="M19.3984 10H18.3984V11H19.3984V10Z" fill="#383838"/>
-<path d="M9.39844 11H8.39844V12H9.39844V11Z" fill="#383838"/>
-<path d="M10.3984 11H9.39844V12H10.3984V11Z" fill="#383838"/>
-<path d="M13.3984 11H12.3984V12H13.3984V11Z" fill="#383838"/>
-<path d="M14.3984 11H13.3984V12H14.3984V11Z" fill="#383838"/>
-<path d="M15.3984 11H14.3984V12H15.3984V11Z" fill="#383838"/>
-<path d="M16.3984 11H15.3984V12H16.3984V11Z" fill="#383838"/>
-<path d="M19.3984 11H18.3984V12H19.3984V11Z" fill="#383838"/>
-<path d="M8.39844 12H7.39844V13H8.39844V12Z" fill="#383838"/>
-<path d="M9.39844 12H8.39844V13H9.39844V12Z" fill="#383838"/>
-<path d="M10.3984 12H9.39844V13H10.3984V12Z" fill="#383838"/>
-<path d="M11.3984 12H10.3984V13H11.3984V12Z" fill="#383838"/>
-<path d="M11.3984 11H10.3984V12H11.3984V11Z" fill="white"/>
-<path d="M12.3984 12H11.3984V13H12.3984V12Z" fill="#383838"/>
-<path d="M12.3984 11H11.3984V12H12.3984V11Z" fill="black"/>
-<path d="M13.3984 12H12.3984V13H13.3984V12Z" fill="#383838"/>
-<path d="M16.3984 12H15.3984V13H16.3984V12Z" fill="#383838"/>
-<path d="M17.3984 12H16.3984V13H17.3984V12Z" fill="#383838"/>
-<path d="M17.3984 11H16.3984V12H17.3984V11Z" fill="white"/>
-<path d="M18.3984 12H17.3984V13H18.3984V12Z" fill="#383838"/>
-<path d="M18.3984 11H17.3984V12H18.3984V11Z" fill="black"/>
-<path d="M19.3984 12H18.3984V13H19.3984V12Z" fill="#383838"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="9" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="10" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="11" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="12" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="13" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="14" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="15" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="16" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="17" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="18" y="10" width="1" height="1" fill="#383838"/>
+  <rect x="8" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="9" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="12" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="13" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="14" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="15" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="18" y="11" width="1" height="1" fill="#383838"/>
+  <rect x="7" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="8" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="9" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="10" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="10" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="11" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="11" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="12" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="15" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="16" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="16" y="11" width="1" height="1" fill="#ffffff"/>
+  <rect x="17" y="12" width="1" height="1" fill="#383838"/>
+  <rect x="17" y="11" width="1" height="1" fill="#000000"/>
+  <rect x="18" y="12" width="1" height="1" fill="#383838"/>
 </svg>

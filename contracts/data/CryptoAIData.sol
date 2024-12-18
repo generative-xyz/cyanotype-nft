@@ -12,19 +12,6 @@ import "../libs/helpers/Errors.sol";
 import "hardhat/console.sol";
 
 contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
-    // super admin
-    address public _admin;
-    // deployer
-    address public _deployer;
-    // crypto ai agent address
-    address public _cryptoAIAgentAddr;
-
-    bool private _contractSealed;
-    mapping(uint256 => CryptoAIStructs.Token) private unlockedTokens;
-    mapping(string => CryptoAIStructs.ItemDetail) private items;
-    mapping(string => CryptoAIStructs.ItemDetail) private DNA_Variants;
-    mapping(bytes32 => bool) private usedPairs;
-
     uint256 public constant TOKEN_LIMIT = 0x3E8; // 0x2710
     uint8 internal constant GRID_SIZE = 0x18;
     bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
@@ -40,22 +27,22 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
     string internal constant PLACEHOLDER_FOOTER = "'</script>";
+    string[5] private partsName = ["dna", "Body", "Head", "Eye", "Mouth"];
+
+    // deployer
+    address public _deployer;
+    // crypto ai agent address
+    address public _cryptoAIAgentAddr;
+    bool private _contractSealed;
+
+    // assets
+    mapping(uint256 => CryptoAIStructs.Token) private unlockedTokens;
+    mapping(string => CryptoAIStructs.ItemDetail) private items;
+    CryptoAIStructs.DNA_TYPE private DNA_TYPES;// cat dog human
+    mapping(bytes32 => bool) private usedPairs;
+
+    // assets
     string internal PLACEHOLDER_IMAGE;
-
-    string[] private VALID_ITEM_TYPES;
-    CryptoAIStructs.DNA_TYPE private DNA_TYPES;
-
-    modifier validItemType(string memory _itemType) {
-        bool isValid;
-        for (uint i = 0; i < VALID_ITEM_TYPES.length; i++) {
-            if (keccak256(abi.encodePacked(_itemType)) == keccak256(abi.encodePacked(VALID_ITEM_TYPES[i]))) {
-                isValid = true;
-                break;
-            }
-        }
-        require(isValid, Errors.INVALID_ITEM_TYPE);
-        _;
-    }
 
     modifier unsealed() {
         require(!_contractSealed, Errors.CONTRACT_SEALED);
@@ -67,11 +54,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         _;
     }
 
-    modifier onlyAdmin() {
-        require(msg.sender == _admin, Errors.ONLY_ADMIN_ALLOWED);
-        _;
-    }
-
     modifier onlyAIAgentContract() {
         /* TODO: uncomment when deploy
     require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
@@ -80,30 +62,18 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function initialize(
-        address deployer,
-        address admin
+        address deployer
     ) initializer
     public {
-        VALID_ITEM_TYPES = ["body", "mouth", "eye", "head"];
         _deployer = deployer;
-        _admin = admin;
 
         __Ownable_init();
     }
 
-    function changeAdmin(address newAdm)
-    external
-    onlyAdmin unsealed {
-        require(newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
-        if (_admin != newAdm) {
-            address _previousAdmin = _admin;
-            _admin = newAdm;
-        }
-    }
 
     function changeDeployer(address newAdm)
     external
-    onlyAdmin unsealed {
+    unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
@@ -127,7 +97,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     function sealContract()
     external
-    onlyAdmin unsealed {
+    unsealed {
         _contractSealed = true;
     }
 
@@ -158,18 +128,25 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].tokenID = tokenId;
         unlockedTokens[tokenId].weight = tokenId + 2000;
 
-        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId);
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
         DNA_TYPES.rarities[unlockedTokens[tokenId].dna] -= DNA_TYPES.rarities[unlockedTokens[tokenId].dna] >> 1;
-        string[] memory partsName = new string[](5);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
-        partsName[1] = "body";
-        partsName[2] = "head";
-        partsName[3] = "eye";
-        partsName[4] = "mouth";
 
-        for (uint256 i = 0; i < partsName.length; i++) {
-            unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId);
-            items[partsName[i]].rarities[i] -= items[partsName[i]].rarities[i] >> 1; // increase rarity of trait 50% after using
+        bytes32 pairHash;
+        uint256 maxAttempts = 5;
+        uint256 attempt = 0;
+        do {
+            attempt++;
+            for (uint256 i = 0; i < partsName.length; i++) {
+                unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
+                items[partsName[i]].rarities[i] -= items[partsName[i]].rarities[i] >> 1; // increase rarity of trait 50% after using
+            }
+            pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
+        }
+        while (usedPairs[pairHash] && attempt < maxAttempts);
+        // require(!usedPairs[pairHash], Errors.USED_PAIRs);
+        if (!usedPairs[pairHash]) {
+            usedPairs[pairHash] = true;
         }
     }
 
@@ -240,8 +217,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         string[] memory _names,
         uint16[] memory _traits,
         uint8[][] memory _positions
-    ) public validItemType(_itemType)
-    onlyDeployer unsealed {
+    ) public
+    onlyDeployer unsealed
+    {
         items[_itemType].names = _names;
         items[_itemType].rarities = _traits;
         items[_itemType].positions = _positions;
@@ -258,34 +236,23 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function cryptoAIAttributes(uint256 tokenId)
     public view
     returns (string memory text) {
-
-        CryptoAIStructs.Attribute[] memory itemsData = new CryptoAIStructs.Attribute[](5);
-        itemsData[0] = CryptoAIStructs.Attribute("DNA",
-            items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].names[unlockedTokens[tokenId].traits[0]]
-        );
-        itemsData[1] = CryptoAIStructs.Attribute("Body",
-            items["body"].names[unlockedTokens[tokenId].traits[1]]
-        );
-        itemsData[2] = CryptoAIStructs.Attribute("Head",
-            items["head"].names[unlockedTokens[tokenId].traits[2]]
-        );
-        itemsData[3] = CryptoAIStructs.Attribute("Eyes",
-            items["eye"].names[unlockedTokens[tokenId].traits[3]]
-        );
-        itemsData[4] = CryptoAIStructs.Attribute("Mouth",
-            items["mouth"].names[unlockedTokens[tokenId].traits[4]]
-        );
-
         bytes memory byteString;
         uint count = 0;
-
-        for (uint8 i = 0; i < itemsData.length; i++) {
-            if (bytes(itemsData[i].value).length != 0) {
+        string memory traitName;
+        string memory value;
+        for (uint8 i = 0; i < partsName.length; i++) {
+            traitName = partsName[i];
+            value = items[partsName[i]].names[unlockedTokens[tokenId].traits[i]];
+            if (i == 0) {
+                traitName = "DNA";
+                value = items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].names[unlockedTokens[tokenId].traits[i]];
+            }
+            if (bytes(value).length != 0) {
                 bytes memory objString = abi.encodePacked(
                     '{"trait":"',
-                    itemsData[i].trait,
+                    traitName,
                     '","value":"',
-                    itemsData[i].value,
+                    value,
                     '"}'
                 );
                 if (i > 0) {
@@ -422,7 +389,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function selectTrait(uint16[] memory rarities, uint256 weight, uint256 tokenId) internal view returns (uint256 index) {
+    function selectTrait(uint16[] memory rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
         uint256 totalTraits = 0;
         uint256[] memory adjustedRarity = new uint256[](rarities.length);
 
@@ -431,7 +398,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             totalTraits += adjustedRarity[i];
         }
 
-        uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, tokenId))) % totalTraits;
+        uint256 randomValue = uint256(keccak256(abi.encodePacked(msg.sender, block.timestamp, block.difficulty, tokenId, attempt))) % totalTraits;
         uint256 cumulativeWeight = 0;
 
         for (uint256 i = 0; i < rarities.length; i++) {
