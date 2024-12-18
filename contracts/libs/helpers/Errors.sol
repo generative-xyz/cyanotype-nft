@@ -15,8 +15,9 @@ library Errors {
     string public constant INV_ADD = "100";
     string public constant ONLY_ADMIN_ALLOWED = "101";
     string public constant ONLY_DEPLOYER = "102";
-    string public constant INVALID_ITEM_TYPE = "103";
-    string public constant ITEM_NOT_EXIST = "104";
+    string public constant ONLY_AGENT_CONTRACT = "103";
+    string public constant INVALID_ITEM_TYPE = "104";
+    string public constant ITEM_NOT_EXIST = "105";
 
     // validation error
     string public constant CONTRACT_SEALED = "200";

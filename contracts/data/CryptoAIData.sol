@@ -56,8 +56,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     modifier onlyAIAgentContract() {
         /* TODO: uncomment when deploy
-    require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
-    */
+        require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_AGENT_CONTRACT);
+        */
         _;
     }
 
