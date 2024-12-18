@@ -16,7 +16,7 @@ async function main() {
     //ADD Element
     const address = configaaa["dataContractAddress"];
 
-    const ele: [] = await dataContract.getItem(address, 'eye')
+    const ele: [] = await dataContract.getItem(address, 'Eyes')
     console.log('ele', ele)
 
     // const ele = await dataContract.getDNA(address)
