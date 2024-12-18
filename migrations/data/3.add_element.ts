@@ -43,9 +43,9 @@ async function main() {
         });
 
         await dataContract.addItem(address, 0, ELEMENT.MOUTH, data.elements.Mouth.names, data.elements.Mouth.traits, data.elements.Mouth.positions);
-        await dataContract.addItem(address, 0, ELEMENT.BODY, data.elements.Body.names, data.elements.Body.traits, data.elements.Body.positions);
-        await dataContract.addItem(address, 0, ELEMENT.EYES, data.elements.Eyes.names, data.elements.Eyes.traits, data.elements.Eyes.positions);
         await dataContract.addItem(address, 0, ELEMENT.HEAD, data.elements.Head.names, data.elements.Head.traits, data.elements.Head.positions);
+        await dataContract.addItem(address, 0, ELEMENT.EYES, data.elements.Eyes.names, data.elements.Eyes.traits, data.elements.Eyes.positions);
+        await dataContract.addItem(address, 0, ELEMENT.BODY, data.elements.Body.names, data.elements.Body.traits, data.elements.Body.positions);
 
         // //ADD DNA
         await dataContract.addDNA(address, 0, KEY_DNA, TRAITS_DNA);
