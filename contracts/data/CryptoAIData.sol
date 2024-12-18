@@ -295,23 +295,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint256 idx;
         uint8[] memory pos;
         for (uint256 i = 0; i < totalLength; i += 5) {
-            /*uint256 positionLength = uint16(data[0].length);
-            if (i < positionLength) {
-                pos = data[0];
-                idx = i;
-            } else if (i < positionLength + data[1].length) {
-                pos = data[1];
-                idx = i - positionLength;
-            } else if (i < positionLength + data[1].length + data[2].length) {
-                pos = data[2];
-                idx = i - positionLength - data[1].length;
-            } else if (i < positionLength + data[1].length + data[2].length + data[3].length) {
-                pos = data[3];
-                idx = i - positionLength - data[1].length - data[2].length;
-            } else {
-                pos = data[4];
-                idx = i - positionLength - data[1].length - data[2].length - data[3].length;
-            }*/
             uint256 offset = data[0].length;
             uint256 prevOffset = 0;
             for (uint256 j = 0; j < 5; j++) {
@@ -325,15 +308,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                     offset += data[j + 1].length;
                 }
             }
-            /*
             uint16 p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
 
             pixels[p] = bytes1(pos[idx + 2]);
             pixels[p + 1] = bytes1(pos[idx + 3]);
             pixels[p + 2] = bytes1(pos[idx + 4]);
             pixels[p + 3] = bytes1(0xFF);
-            */
-            assembly {
+            /*TODO:
+             assembly {
                 let posPtr := add(pos, 0x20)
                 let value1 := and(mload(add(posPtr, add(idx, 1))), 0xFF)
                 let value2 := and(mload(add(posPtr, idx)), 0xFF)
@@ -344,7 +326,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 mstore8(add(add(pixelsPtr, p), 1), and(mload(add(posPtr, add(idx, 3))), 0xFF))
                 mstore8(add(add(pixelsPtr, p), 2), and(mload(add(posPtr, add(idx, 4))), 0xFF))
                 mstore8(add(add(pixelsPtr, p), 3), 0xFF)
-            }
+            }*/
         }
 
         return pixels;
