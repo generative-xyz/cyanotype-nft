@@ -56,8 +56,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     modifier onlyAIAgentContract() {
         /* TODO: uncomment when deploy
-    require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_ADMIN_ALLOWED);
-    */
+        require(msg.sender == _cryptoAIAgentAddr, Errors.ONLY_AGENT_CONTRACT);
+        */
         _;
     }
 
@@ -289,11 +289,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             }
         }
         bytes memory pixels = new bytes(2304);
-        uint idx;
         uint256 totalLength = data[0].length + data[1].length + data[2].length + data[3].length + data[4].length;
+        uint256 idx;
         uint8[] memory pos;
-        uint16 positionLength = uint16(data[0].length);
-        for (uint i = 0; i < totalLength; i += 5) {
+        for (uint256 i = 0; i < totalLength; i += 5) {
+            /*uint256 positionLength = uint16(data[0].length);
             if (i < positionLength) {
                 pos = data[0];
                 idx = i;
@@ -309,6 +309,19 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             } else {
                 pos = data[4];
                 idx = i - positionLength - data[1].length - data[2].length - data[3].length;
+            }*/
+            uint256 offset = data[0].length;
+            uint256 prevOffset = 0;
+            for (uint256 j = 0; j < 5; j++) {
+                if (i < offset) {
+                    pos = data[j];
+                    idx = i - prevOffset;
+                    break;
+                }
+                prevOffset = offset;
+                if (j < 4) {
+                    offset += data[j + 1].length;
+                }
             }
             /*
             uint16 p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
