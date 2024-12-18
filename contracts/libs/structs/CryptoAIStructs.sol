@@ -24,11 +24,6 @@ library CryptoAIStructs {
         uint16[] rarities;
     }
 
-    struct Attribute {
-        string trait;
-        string value;
-    }
-
     struct Token {
         uint256 tokenID;
         uint256 weight;
