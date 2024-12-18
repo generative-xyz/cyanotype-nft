@@ -73,7 +73,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     function changeDeployer(address newAdm)
     external
-    unsealed {
+    onlyDeployer unsealed {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
