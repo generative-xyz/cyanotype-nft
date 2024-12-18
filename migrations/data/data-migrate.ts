@@ -42,7 +42,11 @@ const convertSvgToPositions = (svgContent: string, filePath: string): number[] =
 
       positions.push(x, y, r, g, b);
     } catch (error) {
-      errors.push(`Error processing rect in ${filePath}: ${error.message}`);
+      // Only store unique error messages for each file
+      const errorMsg = `Error processing rect in ${filePath}: ${error.message}`;
+      if (!errors.includes(errorMsg)) {
+        errors.push(errorMsg);
+      }
     }
   };
 
@@ -64,14 +68,21 @@ const convertSvgToPositions = (svgContent: string, filePath: string): number[] =
       if (fs.existsSync(PATH_OUTPUT_ERRORS)) {
         existingErrors = JSON.parse(fs.readFileSync(PATH_OUTPUT_ERRORS, 'utf-8'));
       }
+      
+      // Filter out duplicate errors before writing
+      const uniqueErrors = Array.from(new Set([...existingErrors, ...errors]));
+      
+      fs.writeFileSync(
+        PATH_OUTPUT_ERRORS, 
+        JSON.stringify(uniqueErrors, null, 2)
+      );
     } catch (e) {
-      // If file doesn't exist or is invalid JSON, start with empty array
+      // If file doesn't exist or is invalid JSON, write only new errors
+      fs.writeFileSync(
+        PATH_OUTPUT_ERRORS,
+        JSON.stringify(errors, null, 2) 
+      );
     }
-    
-    fs.writeFileSync(
-      PATH_OUTPUT_ERRORS, 
-      JSON.stringify([...existingErrors, ...errors], null, 2)
-    );
   }
 
   return positions;
