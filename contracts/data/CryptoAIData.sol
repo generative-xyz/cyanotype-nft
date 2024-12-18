@@ -142,7 +142,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
                 items[partsName[i]].rarities[i] -= items[partsName[i]].rarities[i] >> 1; // increase rarity of trait 50% after using
             }
-            pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
+            pairHash = keccak256(abi.encode(unlockedTokens[tokenId].traits));
         }
         while (usedPairs[pairHash] && attempt < maxAttempts);
         // require(!usedPairs[pairHash], Errors.USED_PAIRs);
@@ -242,11 +242,12 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         string memory traitName;
         string memory value;
         for (uint8 i = 0; i < partsName.length; i++) {
-            traitName = partsName[i];
-            value = items[partsName[i]].names[unlockedTokens[tokenId].traits[i]];
             if (i == 0) {
                 traitName = "DNA";
                 value = items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].names[unlockedTokens[tokenId].traits[i]];
+            } else {
+                traitName = partsName[i];
+                value = items[partsName[i]].names[unlockedTokens[tokenId].traits[i]];
             }
             if (bytes(value).length != 0) {
                 bytes memory objString = abi.encodePacked(
