@@ -130,8 +130,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].tokenID = tokenId;
         unlockedTokens[tokenId].weight = tokenId + 2000;
 
-        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.c_rarities, unlockedTokens[tokenId].weight, tokenId, 0);
-        DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] = MathUpgradeable.sqrt(DNA_TYPES.rarities[unlockedTokens[tokenId].dna]);
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
+        // DNA_TYPES.rarities[unlockedTokens[tokenId].dna] -= MathUpgradeable.sqrt(DNA_TYPES.rarities[unlockedTokens[tokenId].dna] >> 1);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
 
         bytes32 pairHash;
@@ -140,8 +140,13 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         do {
             attempt++;
             for (uint256 i = 0; i < partsName.length; i++) {
+                console.log(partsName[i]);
                 unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].c_rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
-                items[partsName[i]].c_rarities[i] = MathUpgradeable.sqrt(items[partsName[i]].rarities[i]);
+                items[partsName[i]].usageCount[unlockedTokens[tokenId].traits[i]] ++;
+                /*items[partsName[i]].c_rarities[i] = items[partsName[i]].rarities[i] / (1 + MathUpgradeable.sqrt(items[partsName[i]].usageCount[i]));
+                if (items[partsName[i]].c_rarities[i] == 0) {
+                    items[partsName[i]].c_rarities[i] = 1;
+                }*/
             }
             pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
             console.log("attempt", attempt, tokenId);
@@ -195,7 +200,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function addDNA(string[] memory _names, uint16[] memory rarities) public onlyDeployer unsealed {
         DNA_TYPES.names = _names;
         DNA_TYPES.rarities = rarities;
-        DNA_TYPES.c_rarities = rarities;
     }
 
     function getDNA() public view returns (CryptoAIStructs.DNA_TYPE memory) {
@@ -208,6 +212,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         items[_DNAType].rarities = _rarities;
         items[_DNAType].c_rarities = _rarities;
         items[_DNAType].positions = _positions;
+        items[_DNAType].usageCount = new uint256[](_rarities.length);
         emit CryptoAIStructs.DNAVariantAdded(_DNAType, _DNAName, _rarities, _positions);
     }
 
@@ -229,7 +234,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         items[_itemType].rarities = _rarities;
         items[_itemType].c_rarities = _rarities;
         items[_itemType].positions = _positions;
-
+        items[_itemType].usageCount = new uint256[](_rarities.length);
         emit CryptoAIStructs.ItemAdded(_itemType, _names, _rarities, _positions);
     }
 
@@ -406,7 +411,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function selectTrait(uint256[] memory c_rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
         uint256 totalTraits = 0;
         uint256[] memory adjustedRarity = new uint256[](c_rarities.length);
-
         for (uint256 i = 0; i < c_rarities.length; i++) {
             adjustedRarity[i] = weight / c_rarities[i];
             totalTraits += adjustedRarity[i];
