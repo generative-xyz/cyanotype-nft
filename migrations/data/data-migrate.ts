@@ -6,6 +6,7 @@ const { parseSync } = require('svgson');
 // Use absolute path to testAssets folder
 const PATH_ASSETS = path.join(__dirname, '../assets');
 const PATH_OUTPUT = 'migrations/data/datajson/data-compressed.json';
+const PATH_OUTPUT_ERRORS = 'migrations/data/datajson/data-errors.json';
 
 interface PixelData {
   name: string;
@@ -13,24 +14,35 @@ interface PixelData {
   positions: number[];
 }
 
-const convertSvgToPositions = (svgContent: string): number[] => {
+const convertSvgToPositions = (svgContent: string, filePath: string): number[] => {
   const parsed = parseSync(svgContent);
   const positions: number[] = [];
-
+  const errors: string[] = [];
+  
   const processRect = (rect: any) => {
-    const x = parseInt(rect.attributes.x);
-    const y = parseInt(rect.attributes.y);
+    try {
+      const x = parseInt(rect.attributes.x);
+      const y = parseInt(rect.attributes.y);
 
-    // Extract RGB values from fill color
-    const fill = rect.attributes.fill || '#000000';
-    const rgb = fill.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+      // Extract RGB values from fill color
+      const fill = rect.attributes.fill || '#000000';
+      const rgb = fill.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
 
-    if (rgb) {
+      if (!rgb) {
+        throw new Error('Invalid RGB color format');
+      }
+
       const r = parseInt(rgb[1], 16);
-      const g = parseInt(rgb[2], 16);
+      const g = parseInt(rgb[2], 16); 
       const b = parseInt(rgb[3], 16);
 
+      if (isNaN(x) || isNaN(y) || isNaN(r) || isNaN(g) || isNaN(b)) {
+        throw new Error('Invalid number values');
+      }
+
       positions.push(x, y, r, g, b);
+    } catch (error) {
+      errors.push(`Error processing rect in ${filePath}: ${error.message}`);
     }
   };
 
@@ -44,6 +56,24 @@ const convertSvgToPositions = (svgContent: string): number[] => {
   };
 
   findRects(parsed);
+
+  // Write errors to file if any occurred
+  if (errors.length > 0) {
+    let existingErrors = [];
+    try {
+      if (fs.existsSync(PATH_OUTPUT_ERRORS)) {
+        existingErrors = JSON.parse(fs.readFileSync(PATH_OUTPUT_ERRORS, 'utf-8'));
+      }
+    } catch (e) {
+      // If file doesn't exist or is invalid JSON, start with empty array
+    }
+    
+    fs.writeFileSync(
+      PATH_OUTPUT_ERRORS, 
+      JSON.stringify([...existingErrors, ...errors], null, 2)
+    );
+  }
+
   return positions;
 }
 
@@ -81,7 +111,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
         }
 
         const svgContent = fs.readFileSync(filePath, 'utf-8');
-        const positions = convertSvgToPositions(svgContent);
+        const positions = convertSvgToPositions(svgContent, filePath);
 
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
         const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolderTitle].traits.length + 1;
@@ -101,7 +131,7 @@ const convertAssetsToJson = (assetsPath: string): Record<string, Record<string, 
         }
 
         const svgContent = fs.readFileSync(filePath, 'utf-8');
-        const positions = convertSvgToPositions(svgContent);
+        const positions = convertSvgToPositions(svgContent, filePath);
 
         const [name, traitStr] = path.basename(filePath, '.svg').split('_');
         const trait = traitStr ? parseInt(traitStr) : allData[mainFolder][subFolder].traits.length + 1;
