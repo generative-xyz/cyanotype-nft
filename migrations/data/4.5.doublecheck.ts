@@ -10,28 +10,32 @@ async function main() {
 
     let config = await initConfig();
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
-    //ADD Element
     const address = config["dataContractAddress"];
 
-    // Render SVG
     const args = process.argv.slice(2);
     if (args.length == 0) {
         console.log("missing number")
         return;
     }
-    let images = "";
+
     const num = parseInt(args[0]);
     
+    // Keep original duplicate checking
     const attrsChecked = [];
     const attrsDuplicated = [];
 
-    for (var i = 1; i <= num; i++) {
+    // Add rarity tracking
+    const attributeCounts: Record<string, Record<string, number>> = {};
+    let totalTokens = 0;
+
+    for (let i = 1; i <= num; i++) {
         try {
-           
-            console.log(i, " checked");
+            console.log(i, " checking");
             const attr = await dataContract.getAttrData(address, i);
             const attrStr = JSON.stringify(attr);
+            totalTokens++;
             
+            // Original duplicate check
             if (attrsChecked.includes(attrStr)) {
                 const duplicateIndex = attrsChecked.indexOf(attrStr);
                 const duplicateId = duplicateIndex + 1;
@@ -47,16 +51,50 @@ async function main() {
                 console.log(`Duplicate of ID ${duplicateId}:`, JSON.parse(attrsChecked[duplicateIndex]));
             }
             attrsChecked.push(attrStr);
+
+            // Add rarity tracking
+            const attributes = JSON.parse(attr);
+            attributes.forEach((attribute: any) => {
+                const { trait, value } = attribute;
+                
+                if (!attributeCounts[trait]) {
+                    attributeCounts[trait] = {};
+                }
+                
+                if (!attributeCounts[trait][value]) {
+                    attributeCounts[trait][value] = 0;
+                }
+                
+                attributeCounts[trait][value]++;
+            });
+
         } catch (ex) {
             console.log(i, " failed");
             break;
         }
     }
-    const path = "./migrations/duplicates.json";
-    console.log("path", path);
+
+    // Write duplicates file
+    const duplicatesPath = "./migrations/datajson/duplicates.json";
+    console.log("Writing duplicates to:", duplicatesPath);
     console.log("Total items checked:", attrsChecked.length);
     console.log("Total duplicates found:", attrsDuplicated.length);
-    await fs.writeFile(path, JSON.stringify(attrsDuplicated, null, 2));
+    await fs.writeFile(duplicatesPath, JSON.stringify(attrsDuplicated, null, 2));
+
+    // Calculate and write rarity percentages
+    const rarityData: Record<string, Record<string, number>> = {};
+    
+    Object.entries(attributeCounts).forEach(([trait, values]) => {
+        rarityData[trait] = {};
+        Object.entries(values).forEach(([value, count]) => {
+            rarityData[trait][value] = Number(((count / totalTokens) * 100).toFixed(2));
+        });
+    });
+
+    const rarityPath = "./migrations/datajson/data-rarity.json";
+    console.log("Writing rarity data to:", rarityPath);
+    console.log("Total tokens analyzed:", totalTokens);
+    await fs.writeFile(rarityPath, JSON.stringify(rarityData, null, 2));
 }
 
 main().catch(error => {
