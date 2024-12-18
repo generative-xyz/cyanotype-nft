@@ -4,10 +4,10 @@ var data = JSON.parse(fs.readFileSync('./datajson/data-compressed.json', 'utf-8'
 import * as data from './datajson/data-compressed.json'
 
 export enum ELEMENT {
-    BODY = 'body',
-    MOUTH = 'mouth',
-    EYE = 'eye',
-    HEAD = 'head',
+    BODY = 'Body',
+    MOUTH = 'Mouth',
+    EYES = 'Eyes',
+    HEAD = 'Head',
 }
 
 const DATA_BODY = data.elements.Body
@@ -69,4 +69,4 @@ const DATA_DNA = [
 
 // export {DATA_EYE, DATA_DNA, DATA_MOUTH, DATA_HEAD, DATA_FROG_VARIANT, DATA_HUMAN_VARIANT, DATA_CAT_VARIANT, DATA_DOG_VARIANT, DATA_ROBOT_VARIANT, DATA_MONKEY_VARIANT, DATA_BODY}
 
-export {KEY_DNA, TRAITS_DNA}
+export { KEY_DNA, TRAITS_DNA }

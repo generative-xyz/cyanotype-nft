@@ -1,7 +1,7 @@
-import {CryptoAIData} from "./cryptoAIData";
-import {initConfig} from "../../index";
-import * as data from './datajson/data-compressed.json'
-import {DNA, ELEMENT, KEY_DNA, TRAITS_DNA} from "./data";
+import { initConfig } from "../../index";
+import { CryptoAIData } from "./cryptoAIData";
+import { DNA, ELEMENT, KEY_DNA, TRAITS_DNA } from "./data";
+import * as data from './datajson/data-compressed.json';
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -18,7 +18,7 @@ async function main() {
 
     await dataContract.addItem(address, 0,ELEMENT.MOUTH,  data.elements.Mouth.names,  data.elements.Mouth.traits,  data.elements.Mouth.positions);
     await dataContract.addItem(address, 0,ELEMENT.BODY,  data.elements.Body.names,  data.elements.Body.traits,  data.elements.Body.positions);
-    await dataContract.addItem(address, 0,ELEMENT.EYE,  data.elements.Eyes.names,  data.elements.Eyes.traits,  data.elements.Eyes.positions);
+    await dataContract.addItem(address, 0,ELEMENT.EYES,  data.elements.Eyes.names,  data.elements.Eyes.traits,  data.elements.Eyes.positions);
     await dataContract.addItem(address, 0,ELEMENT.HEAD,  data.elements.Head.names,  data.elements.Head.traits,  data.elements.Head.positions);
 
     //ADD DNA
