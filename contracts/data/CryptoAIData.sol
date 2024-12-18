@@ -27,7 +27,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     string private constant htmlDataType = 'data:text/html;base64,';
     string internal constant PLACEHOLDER_HEADER = "<script>let TokenID='";
     string internal constant PLACEHOLDER_FOOTER = "'</script>";
-    string[5] private partsName = ["dna", "Body", "Head", "Eye", "Mouth"];
+    string[5] private partsName = ["dna", "Body", "Head", "Eyes", "Mouth"];
 
     // deployer
     address public _deployer;
