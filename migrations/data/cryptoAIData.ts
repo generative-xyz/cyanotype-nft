@@ -19,8 +19,7 @@ class CryptoAIData {
         console.log("senderPublicKey", senderPublicKey);
     }
 
-    async deployUpgradeable(adminAddr: any,
-                            deployerAddr: any
+    async deployUpgradeable(deployerAddr: any
     ) {
         // if (this.network == "local") {
         //     console.log("not run local");
@@ -29,8 +28,8 @@ class CryptoAIData {
 
         const contract = await ethers.getContractFactory("CryptoAIData");
         console.log("CryptoAIData.deploying ...")
-        const proxy = await upgrades.deployProxy(contract, [adminAddr, deployerAddr], {
-            initializer: 'initialize(address, address)',
+        const proxy = await upgrades.deployProxy(contract, [deployerAddr], {
+            initializer: 'initialize(address)',
         });
         await proxy.waitForDeployment();
         const proxyAddr = await proxy.getAddress();
@@ -160,8 +159,8 @@ class CryptoAIData {
     }
 
     async addDNAVariant(contractAddress: any, gas: any, key: DNA, name: string[],
-    trait: number[],
-    positions: number[][]) {
+                        trait: number[],
+                        positions: number[][]) {
         let temp = this.getContract(contractAddress);
         const nonce = await temp?.web3.eth.getTransactionCount(this.senderPublicKey, "latest") //get latest nonce
 
