@@ -279,45 +279,57 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     returns (bytes memory) {
         /* TODO: uncomment when deploy
         require(unlockedTokens[tokenId].tokenID > 0 && unlockedTokens[tokenId].weight > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
-        uint256 weight = unlockedTokens[tokenId].weight;
         */
-        uint8[] memory dna_po = items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].positions[unlockedTokens[tokenId].traits[0]];
-        uint8[] memory body_po = items['body'].positions[unlockedTokens[tokenId].traits[1]];
-        uint8[] memory head_po = items['head'].positions[unlockedTokens[tokenId].traits[2]];
-        uint8[] memory eye_po = items['eye'].positions[unlockedTokens[tokenId].traits[3]];
-        uint8[] memory mouth_po = items['mouth'].positions[unlockedTokens[tokenId].traits[4]];
-
+        uint8[][] memory data = new uint8[][](5);
+        for (uint256 i = 0; i < partsName.length; i++) {
+            if (i == 0) {
+                data[i] = items[DNA_TYPES.names[unlockedTokens[tokenId].dna]].positions[unlockedTokens[tokenId].traits[i]];
+            } else {
+                data[i] = items[partsName[i]].positions[unlockedTokens[tokenId].traits[i]];
+            }
+        }
         bytes memory pixels = new bytes(2304);
         uint idx;
-        uint256 totalLength = dna_po.length + body_po.length + head_po.length + eye_po.length + mouth_po.length;
+        uint256 totalLength = data[0].length + data[1].length + data[2].length + data[3].length + data[4].length;
         uint8[] memory pos;
-        uint16 p;
-        uint16 positionLength = uint16(dna_po.length);
-
+        uint16 positionLength = uint16(data[0].length);
         for (uint i = 0; i < totalLength; i += 5) {
             if (i < positionLength) {
-                pos = dna_po;
+                pos = data[0];
                 idx = i;
-            } else if (i < positionLength + body_po.length) {
-                pos = body_po;
+            } else if (i < positionLength + data[1].length) {
+                pos = data[1];
                 idx = i - positionLength;
-            } else if (i < positionLength + body_po.length + head_po.length) {
-                pos = head_po;
-                idx = i - positionLength - body_po.length;
-            } else if (i < positionLength + body_po.length + head_po.length + eye_po.length) {
-                pos = eye_po;
-                idx = i - positionLength - body_po.length - head_po.length;
+            } else if (i < positionLength + data[1].length + data[2].length) {
+                pos = data[2];
+                idx = i - positionLength - data[1].length;
+            } else if (i < positionLength + data[1].length + data[2].length + data[3].length) {
+                pos = data[3];
+                idx = i - positionLength - data[1].length - data[2].length;
             } else {
-                pos = mouth_po;
-                idx = i - positionLength - body_po.length - head_po.length - eye_po.length;
+                pos = data[4];
+                idx = i - positionLength - data[1].length - data[2].length - data[3].length;
             }
-
-            p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
+            /*
+            uint16 p = (uint16(pos[idx + 1]) * GRID_SIZE + uint16(pos[idx])) << 2;
 
             pixels[p] = bytes1(pos[idx + 2]);
             pixels[p + 1] = bytes1(pos[idx + 3]);
             pixels[p + 2] = bytes1(pos[idx + 4]);
             pixels[p + 3] = bytes1(0xFF);
+            */
+            assembly {
+                let posPtr := add(pos, 0x20)
+                let value1 := and(mload(add(posPtr, add(idx, 1))), 0xFF)
+                let value2 := and(mload(add(posPtr, idx)), 0xFF)
+                let p := shl(2, add(mul(value1, GRID_SIZE), value2))
+
+                let pixelsPtr := add(pixels, 0x20)
+                mstore8(add(pixelsPtr, p), and(mload(add(posPtr, add(idx, 2))), 0xFF))
+                mstore8(add(add(pixelsPtr, p), 1), and(mload(add(posPtr, add(idx, 3))), 0xFF))
+                mstore8(add(add(pixelsPtr, p), 2), and(mload(add(posPtr, add(idx, 4))), 0xFF))
+                mstore8(add(add(pixelsPtr, p), 3), 0xFF)
+            }
         }
 
         return pixels;
