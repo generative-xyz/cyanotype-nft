@@ -24,6 +24,7 @@ library CryptoAIStructs {
     struct DNA_TYPE {
         string[] names;
         uint256[] rarities;
+        uint256[] usageCount;
     }
 
     struct Token {

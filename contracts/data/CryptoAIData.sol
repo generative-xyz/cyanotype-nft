@@ -130,26 +130,31 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         unlockedTokens[tokenId].tokenID = tokenId;
         unlockedTokens[tokenId].weight = tokenId + 2000;
 
-        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
-        // DNA_TYPES.rarities[unlockedTokens[tokenId].dna] -= MathUpgradeable.sqrt(DNA_TYPES.rarities[unlockedTokens[tokenId].dna] >> 1);
+        unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.rarities, DNA_TYPES.usageCount, DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
+        if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] <= 300) {
+            DNA_TYPES.rarities[unlockedTokens[tokenId].dna] -= MathUpgradeable.sqrt(DNA_TYPES.rarities[unlockedTokens[tokenId].dna] >> 1);
+        }
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
 
         bytes32 pairHash;
-        uint256 maxAttempts = 5;
+        uint256 maxAttempts = 10;
         uint256 attempt = 0;
         do {
             attempt++;
+
             for (uint256 i = 0; i < partsName.length; i++) {
-                console.log(partsName[i]);
-                unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].c_rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
+                bool temp = false;
+                unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].c_rarities, items[partsName[i]].usageCount, items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
                 items[partsName[i]].usageCount[unlockedTokens[tokenId].traits[i]] ++;
-                /*items[partsName[i]].c_rarities[i] = items[partsName[i]].rarities[i] / (1 + MathUpgradeable.sqrt(items[partsName[i]].usageCount[i]));
-                if (items[partsName[i]].c_rarities[i] == 0) {
-                    items[partsName[i]].c_rarities[i] = 1;
-                }*/
+                if (items[partsName[i]].rarities[i] <= 300 && !temp) {
+                    items[partsName[i]].c_rarities[i] = items[partsName[i]].rarities[i] / (1 + MathUpgradeable.sqrt(items[partsName[i]].usageCount[i]));
+                    if (items[partsName[i]].c_rarities[i] == 0) {
+                        items[partsName[i]].c_rarities[i] = 1;
+                    }
+                    temp = true;
+                }
             }
             pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
-            console.log("attempt", attempt, tokenId);
         }
         while (usedPairs[pairHash] && attempt < maxAttempts);
         // require(!usedPairs[pairHash], Errors.USED_PAIRs);
@@ -200,6 +205,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     function addDNA(string[] memory _names, uint16[] memory rarities) public onlyDeployer unsealed {
         DNA_TYPES.names = _names;
         DNA_TYPES.rarities = rarities;
+        DNA_TYPES.usageCount = new uint256[](rarities.length);
     }
 
     function getDNA() public view returns (CryptoAIStructs.DNA_TYPE memory) {
@@ -408,20 +414,17 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
-    function selectTrait(uint256[] memory c_rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
+    function selectTrait(uint256[] memory c_rarities, uint256[] memory usageCount, uint256[] memory rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
         uint256 totalTraits = 0;
         uint256[] memory adjustedRarity = new uint256[](c_rarities.length);
         for (uint256 i = 0; i < c_rarities.length; i++) {
-            adjustedRarity[i] = weight / c_rarities[i];
-            totalTraits += adjustedRarity[i];
+            totalTraits += weight / (c_rarities[i] * (usageCount[i] + 1)) + rarities[i];
+            adjustedRarity[i] = totalTraits;
         }
 
         uint256 randomValue = uint256(keccak256(abi.encodePacked(msg.sender, block.timestamp, tokenId, attempt))) % totalTraits;
-        uint256 cumulativeWeight = 0;
-
-        for (uint256 i = 0; i < c_rarities.length; i++) {
-            cumulativeWeight += adjustedRarity[i];
-            if (randomValue < cumulativeWeight) {
+        for (uint256 i = 0; i < adjustedRarity.length; i++) {
+            if (randomValue < adjustedRarity[i]) {
                 return i;
             }
         }
