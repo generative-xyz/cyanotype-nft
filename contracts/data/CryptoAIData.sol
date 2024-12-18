@@ -240,7 +240,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         uint count = 0;
         string memory traitName;
         string memory value;
-        for (uint8 i = 0; i < 5; i++) {
+        for (uint8 i = 0; i < partsName.length; i++) {
             traitName = partsName[i];
             value = items[partsName[i]].names[unlockedTokens[tokenId].traits[i]];
             if (i == 0) {
