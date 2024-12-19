@@ -137,7 +137,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] < 300) {
             uint256 dnaIndex = unlockedTokens[tokenId].dna;
             uint256 rarity = DNA_TYPES.c_rarities[dnaIndex];
-            rarity = rarity * 95 / 100;
+            rarity = rarity * 99 / 100;
             DNA_TYPES.c_rarities[dnaIndex] = rarity > 0 ? rarity : 1;
         }
 
@@ -153,7 +153,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 uint256 trait = selectTrait(c_rarities, rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
                 unlockedTokens[tokenId].traits[i] = trait;
                 if (rarities[trait] < 300) {
-                    uint256 rarity = c_rarities[trait] * 95 / 100;
+                    uint256 rarity = c_rarities[trait] * 99 / 100;
                     c_rarities[trait] = rarity > 0 ? rarity : 1;
                 }
             }
