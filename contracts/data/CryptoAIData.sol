@@ -402,16 +402,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function selectTrait(uint256[] memory c_rarities, uint256[] memory rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
-        require(weight >= 1511 && weight <= 10000, "Weight out of range");
+        // require(weight >= 1511 && weight <= 10000, "Weight out of range");
 
         uint256 totalRarity = 0;
-        uint256[] memory cumulativeRarity = new uint256[](c_rarities.length);
         uint256 normalizedWeight = (weight - 1511) * 1e18 / 8489;
-        uint256 adjustedRarity;
+
+        uint256[] memory cumulativeRarity = new uint256[](c_rarities.length);
         for (uint256 i = 0; i < c_rarities.length; i++) {
-            // adjustedRarity = (normalizedWeight * c_rarities[i]) + rarities[i];
-            adjustedRarity = (rarities[i] * 1e18) / (normalizedWeight / c_rarities[i]);
-            totalRarity += adjustedRarity;
+            totalRarity += (rarities[i] * 1e18) / (normalizedWeight / c_rarities[i]);
             cumulativeRarity[i] = totalRarity;
         }
 
