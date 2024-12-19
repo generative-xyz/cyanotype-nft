@@ -18,12 +18,14 @@ library CryptoAIStructs {
         uint256[] rarities;  // 0-200
         uint256[] c_rarities;
         uint8[][] positions; // x,y,r,g,b stored sequentially
+        uint256[] usageCount;
     }
 
     struct DNA_TYPE {
         string[] names;
         uint256[] rarities;
         uint256[] c_rarities;
+        uint256[] usageCount;
     }
 
     struct Token {
