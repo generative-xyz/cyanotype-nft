@@ -1,6 +1,6 @@
-import { promises as fs } from "fs";
-import { initConfig } from "../../index";
-import { CryptoAIData } from "./cryptoAIData";
+import {promises as fs} from "fs";
+import {initConfig} from "../../index";
+import {CryptoAIData} from "./cryptoAIData";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -19,13 +19,13 @@ async function main() {
     }
 
     const num = parseInt(args[0]);
-    
+
     // Keep original duplicate checking
     const attrsChecked = [];
     const attrsDuplicated = [];
 
     // Add rarity tracking
-    const attributeCounts: Record<string, Record<string, number>> = {};
+    const attributeCounts: { [key: string]: { [key: string]: { counter: number; percent: number } } } = {};
     let totalTokens = 0;
 
     for (let i = 1; i <= num; i++) {
@@ -34,7 +34,7 @@ async function main() {
             const attr = await dataContract.getAttrData(address, i);
             const attrStr = JSON.stringify(attr);
             totalTokens++;
-            
+
             // Original duplicate check
             if (attrsChecked.includes(attrStr)) {
                 const duplicateIndex = attrsChecked.indexOf(attrStr);
@@ -55,17 +55,21 @@ async function main() {
             // Add rarity tracking
             const attributes = JSON.parse(attr);
             attributes.forEach((attribute: any) => {
-                const { trait, value } = attribute;
-                
+                const {trait, value} = attribute;
+
                 if (!attributeCounts[trait]) {
                     attributeCounts[trait] = {};
                 }
-                
+
                 if (!attributeCounts[trait][value]) {
-                    attributeCounts[trait][value] = 0;
+                    attributeCounts[trait][value] = {
+                        counter: 0,
+                        percent: 0
+                    };
                 }
-                
-                attributeCounts[trait][value]++;
+
+                attributeCounts[trait][value].counter++;
+                attributeCounts[trait][value].percent = Number(((attributeCounts[trait][value].counter / totalTokens) * 100).toFixed(2));
             });
 
         } catch (ex) {
@@ -82,12 +86,15 @@ async function main() {
     await fs.writeFile(duplicatesPath, JSON.stringify(attrsDuplicated, null, 2));
 
     // Calculate and write rarity percentages
-    const rarityData: Record<string, Record<string, number>> = {};
+    const rarityData: { [key: string]: { [key: string]: { percent: number, counter: number } } } = {};
     
     Object.entries(attributeCounts).forEach(([trait, values]) => {
         rarityData[trait] = {};
-        Object.entries(values).forEach(([value, count]) => {
-            rarityData[trait][value] = Number(((count / totalTokens) * 100).toFixed(2));
+        Object.entries(values).forEach(([value, data]) => {
+            rarityData[trait][value] = {
+                percent: data.percent,
+                counter: data.counter
+            };
         });
     });
 
@@ -101,4 +108,3 @@ main().catch(error => {
     console.error(error);
     process.exitCode = 1;
 });
-

@@ -12,7 +12,9 @@ async function main() {
     const dataContract = new CryptoAIData(process.env.NETWORK, process.env.PRIVATE_KEY, process.env.PUBLIC_KEY);
     //ADD Element
     const address = config["dataContractAddress"];
-
+    // console.log(await dataContract.getDNA(address));
+    // console.log(await dataContract.getItem(address, "Body"));
+    // return;
     // Render SVG
     const args = process.argv.slice(2);
     if (args.length == 0) {
