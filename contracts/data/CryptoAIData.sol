@@ -405,15 +405,48 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         // require(weight >= 1511 && weight <= 10000, "Weight out of range");
 
         uint256 totalRarity = 0;
-        uint256 normalizedWeight = (weight - 1511) * 1e18 / 8489;
+        uint256 normalizedWeight;
+        assembly {
+            let constant_1511 := 1511
+            let constant_1e18 := exp(10, 18) // 10^18
+            let constant_8489 := 8489
+            let difference := sub(weight, constant_1511)
+            if slt(difference, 0) {revert(0, 0)}
+            let scaled := mul(difference, constant_1e18)
+            if iszero(eq(div(scaled, constant_1e18), difference)) {revert(0, 0)}
+            let normalizedWeight := div(scaled, constant_8489)
+            mstore(0x0, normalizedWeight)
+        }
 
         uint256[] memory cumulativeRarity = new uint256[](c_rarities.length);
         for (uint256 i = 0; i < c_rarities.length; i++) {
-            totalRarity += (rarities[i] * 1e18) / (normalizedWeight / c_rarities[i]);
+            assembly {
+                let rarity := mload(add(rarities, mul(add(i, 1), 0x20)))
+                let c_rarity := mload(add(c_rarities, mul(add(i, 1), 0x20)))
+                let adjustedRarity := div(mul(mul(rarity, exp(10, 18)), c_rarity), normalizedWeight)
+                totalRarity := add(totalRarity, adjustedRarity)
+            }
             cumulativeRarity[i] = totalRarity;
         }
 
-        uint256 randomValue = uint256(keccak256(abi.encodePacked(msg.sender, block.timestamp, tokenId, attempt))) % totalRarity;
+        uint256 randomValue;
+        assembly {
+            let size := add(20, add(32, add(32, 32)))
+            let result := mload(0x40)
+            mstore(0x40, add(result, and(add(size, 31), not(31))))
+            mstore(result, size)
+            mstore(add(result, 0x20), shl(96, caller()))
+            mstore(add(result, 0x34), timestamp())
+            mstore(add(result, 0x54), tokenId)
+            mstore(add(result, 0x74), attempt)
+
+            let hash := keccak256(add(result, 0x20), mload(result))
+            if iszero(totalRarity) {revert(0, 0)}
+            let random := mod(hash, totalRarity)
+            mstore(0x0, random)
+
+            randomValue := random
+        }
         for (uint256 i = 0; i < cumulativeRarity.length; i++) {
             if (randomValue < cumulativeRarity[i]) {
                 return i;
