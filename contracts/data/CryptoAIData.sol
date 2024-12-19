@@ -212,6 +212,16 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         emit CryptoAIStructs.DNAVariantAdded(_DNAType, _DNAName, _rarities, _positions);
     }
 
+    function addBatchDNAVariant(CryptoAIStructs.ItemDetailAdd[] memory dna) public
+    onlyDeployer unsealed {
+        for(uint i = 0  ; i < dna.length; i++) {
+            items[dna[i].ele_type].names = dna[i].names;
+            items[dna[i].ele_type].rarities = dna[i].rarities;
+            items[dna[i].ele_type].c_rarities = dna[i].rarities;
+            items[dna[i].ele_type].positions = dna[i].positions;
+        }
+    }
+
     /*function getDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail memory) {
         CryptoAIStructs.ItemDetail memory item = items[_DNAType];
         return item;
@@ -237,6 +247,20 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         CryptoAIStructs.ItemDetail memory item = items[_itemType];
         return item;
     }*/
+
+    function addBatchItem(
+        CryptoAIStructs.ItemDetailAdd[] memory elements
+    ) public
+    onlyDeployer unsealed
+    {
+        for(uint i = 0 ; i < elements.length ; i++) {
+            items[elements[i].ele_type].names = elements[i].names;
+            items[elements[i].ele_type].rarities = elements[i].rarities;
+            items[elements[i].ele_type].c_rarities = elements[i].rarities;
+            items[elements[i].ele_type].positions = elements[i].positions;
+        }
+    }
+
 
     function cryptoAIAttributes(uint256 tokenId)
     public view
