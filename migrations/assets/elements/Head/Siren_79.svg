@@ -1,30 +1,30 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="9" y="2" width="1" height="1" fill="#FF8181"/>
-  <rect x="12" y="2" width="1" height="1" fill="#BC0000"/>
-  <rect x="13" y="2" width="1" height="1" fill="#BC0000"/>
-  <rect x="14" y="2" width="1" height="1" fill="#BC0000"/>
-  <rect x="15" y="2" width="1" height="1" fill="#BC0000"/>
-  <rect x="18" y="2" width="1" height="1" fill="#FF8181"/>
-  <rect x="10" y="3" width="1" height="1" fill="#FF8181"/>
-  <rect x="12" y="3" width="1" height="1" fill="#BC0000"/>
-  <rect x="13" y="3" width="1" height="1" fill="#BC0000"/>
-  <rect x="14" y="3" width="1" height="1" fill="#FF8181"/>
-  <rect x="15" y="3" width="1" height="1" fill="#BC0000"/>
-  <rect x="17" y="3" width="1" height="1" fill="#FF8181"/>
-  <rect x="9" y="4" width="1" height="1" fill="#FF8181"/>
-  <rect x="12" y="4" width="1" height="1" fill="#BC0000"/>
-  <rect x="13" y="4" width="1" height="1" fill="#BC0000"/>
-  <rect x="14" y="4" width="1" height="1" fill="#FF8181"/>
-  <rect x="15" y="4" width="1" height="1" fill="#BC0000"/>
-  <rect x="18" y="4" width="1" height="1" fill="#FF8181"/>
-  <rect x="12" y="5" width="1" height="1" fill="#BC0000"/>
-  <rect x="13" y="5" width="1" height="1" fill="#BC0000"/>
-  <rect x="14" y="5" width="1" height="1" fill="#BC0000"/>
-  <rect x="15" y="5" width="1" height="1" fill="#BC0000"/>
-  <rect x="11" y="6" width="1" height="1" fill="#464646"/>
-  <rect x="12" y="6" width="1" height="1" fill="#464646"/>
-  <rect x="13" y="6" width="1" height="1" fill="#464646"/>
-  <rect x="14" y="6" width="1" height="1" fill="#464646"/>
-  <rect x="15" y="6" width="1" height="1" fill="#464646"/>
-  <rect x="16" y="6" width="1" height="1" fill="#464646"/>
+<path d="M9 2H8V3H9V2Z" fill="#FF8181"/>
+<path d="M12 2H11V3H12V2Z" fill="#BC0000"/>
+<path d="M13 2H12V3H13V2Z" fill="#BC0000"/>
+<path d="M14 2H13V3H14V2Z" fill="#BC0000"/>
+<path d="M15 2H14V3H15V2Z" fill="#BC0000"/>
+<path d="M18 2H17V3H18V2Z" fill="#FF8181"/>
+<path d="M10 3H9V4H10V3Z" fill="#FF8181"/>
+<path d="M12 3H11V4H12V3Z" fill="#BC0000"/>
+<path d="M13 3H12V4H13V3Z" fill="#BC0000"/>
+<path d="M14 3H13V4H14V3Z" fill="#FF8181"/>
+<path d="M15 3H14V4H15V3Z" fill="#BC0000"/>
+<path d="M17 3H16V4H17V3Z" fill="#FF8181"/>
+<path d="M9 4H8V5H9V4Z" fill="#FF8181"/>
+<path d="M12 4H11V5H12V4Z" fill="#BC0000"/>
+<path d="M13 4H12V5H13V4Z" fill="#BC0000"/>
+<path d="M14 4H13V5H14V4Z" fill="#FF8181"/>
+<path d="M15 4H14V5H15V4Z" fill="#BC0000"/>
+<path d="M18 4H17V5H18V4Z" fill="#FF8181"/>
+<path d="M12 5H11V6H12V5Z" fill="#BC0000"/>
+<path d="M13 5H12V6H13V5Z" fill="#BC0000"/>
+<path d="M14 5H13V6H14V5Z" fill="#BC0000"/>
+<path d="M15 5H14V6H15V5Z" fill="#BC0000"/>
+<path d="M11 6H10V7H11V6Z" fill="#464646"/>
+<path d="M12 6H11V7H12V6Z" fill="#464646"/>
+<path d="M13 6H12V7H13V6Z" fill="#464646"/>
+<path d="M14 6H13V7H14V6Z" fill="#464646"/>
+<path d="M15 6H14V7H15V6Z" fill="#464646"/>
+<path d="M16 6H15V7H16V6Z" fill="#464646"/>
 </svg>
