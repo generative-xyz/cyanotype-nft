@@ -132,12 +132,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             unlockedTokens[tokenId].weight = 10000;
         }
 
-        uint256 rarity;
         unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.c_rarities, DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
         if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] <= 300) {
             uint256 dnaIndex = unlockedTokens[tokenId].dna;
-            rarity = DNA_TYPES.c_rarities[dnaIndex];
+            uint256 rarity = DNA_TYPES.c_rarities[dnaIndex];
             rarity = rarity * 95 / 100;
             DNA_TYPES.c_rarities[dnaIndex] = rarity > 0 ? rarity : 1;
         }
@@ -148,11 +147,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         do {
             attempt++;
             for (uint256 i = 0; i < partsName.length; i++) {
-                unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].c_rarities, items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
-                if (i > 0 && items[partsName[i]].rarities[i] <= 300) {
-                    rarity = items[partsName[i]].c_rarities[i];
-                    rarity = rarity * 95 / 100;
-                    items[partsName[i]].c_rarities[i] = rarity > 0 ? rarity : 1;
+                uint256[] storage c_rarities = items[partsName[i]].c_rarities;
+                uint256[] storage rarities = items[partsName[i]].rarities;
+
+                uint256 trait = selectTrait(c_rarities, rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
+                unlockedTokens[tokenId].traits[i] = trait;
+                if (rarities[trait] <= 300) {
+                    uint256 rarity = c_rarities[trait] * 95 / 100;
+                    c_rarities[trait] = rarity > 0 ? rarity : 1;
                 }
             }
             pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
