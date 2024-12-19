@@ -16,7 +16,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     uint256 public constant TOKEN_LIMIT = 0x3E8; // 0x2710
     uint8 internal constant GRID_SIZE = 0x18;
     bytes16 internal constant _HEX_SYMBOLS = "0123456789abcdef";
-    string private constant jsonDataType = "data:application/json;base64,";
     string private constant svgDataType = 'data:image/svg+xml;utf8,';
     string internal constant SVG_HEADER = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>";
     string internal constant SVG_FOOTER = '</svg>';
@@ -182,23 +181,11 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         if (unlockedTokens[tokenId].weight == 0) {
             result = string(abi.encodePacked(
-                jsonDataType,
-                Base64.encode(abi.encodePacked(
-                    '{"animation_url": "',
-                    cryptoAIImageHtml(tokenId),
-                    '"}'
-                )
-                ))
-            );
+                '{"animation_url": "',
+                cryptoAIImageHtml(tokenId),
+                '"}'
+            ));
         } else {
-            /*result = string(abi.encodePacked(
-                jsonDataType,
-                Base64.encode(abi.encodePacked(
-                    '{"image": "', cryptoAIImageSvg(tokenId),
-                    '", "attributes": ', cryptoAIAttributes(tokenId), '}'
-                )
-                ))
-            );*/
             result = string(abi.encodePacked(
                 '{"image": "', cryptoAIImageSvg(tokenId),
                 '", "attributes": ', cryptoAIAttributes(tokenId), '}'
@@ -413,7 +400,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
                 }
             }
         }
-        // result = string(abi.encodePacked(svgDataType, Base64.encode(abi.encodePacked(SVG_HEADER, svg, SVG_FOOTER))));
         result = string(abi.encodePacked(svgDataType, SVG_HEADER, svg, SVG_FOOTER));
     }
 
