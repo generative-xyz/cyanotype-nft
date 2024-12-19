@@ -132,13 +132,14 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             unlockedTokens[tokenId].weight = 10000;
         }
 
+        uint256 rarity;
         unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.c_rarities, DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
         if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] <= 300) {
-            DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] = DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] * 95 / 100;
-            if (DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] == 0) {
-                DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] = 1;
-            }
+            uint256 dnaIndex = unlockedTokens[tokenId].dna;
+            rarity = DNA_TYPES.c_rarities[dnaIndex];
+            rarity = rarity * 95 / 100;
+            DNA_TYPES.c_rarities[dnaIndex] = rarity > 0 ? rarity : 1;
         }
 
         bytes32 pairHash;
@@ -149,16 +150,15 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             for (uint256 i = 0; i < partsName.length; i++) {
                 unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].c_rarities, items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
                 if (i > 0 && items[partsName[i]].rarities[i] <= 300) {
-                    items[partsName[i]].c_rarities[i] = items[partsName[i]].c_rarities[i] * 95 / 100;
-                    if (items[partsName[i]].c_rarities[i] == 0) {
-                        items[partsName[i]].c_rarities[i] = 1;
-                    }
+                    rarity = items[partsName[i]].c_rarities[i];
+                    rarity = rarity * 95 / 100;
+                    items[partsName[i]].c_rarities[i] = rarity > 0 ? rarity : 1;
                 }
             }
             pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
         }
         while (usedPairs[pairHash] && attempt < maxAttempts);
-        // require(!usedPairs[pairHash], Errors.USED_PAIRs);
+        require(!usedPairs[pairHash] && attempt <= maxAttempts, Errors.USED_PAIRs);
         if (!usedPairs[pairHash]) {
             usedPairs[pairHash] = true;
         }
