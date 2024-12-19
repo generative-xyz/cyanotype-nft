@@ -20,6 +20,13 @@ library CryptoAIStructs {
         uint8[][] positions; // x,y,r,g,b stored sequentially
     }
 
+    struct ItemDetailAdd {
+        string ele_type;
+        string[] names;
+        uint16[] rarities;  // 0-200
+        uint8[][] positions; // x,y,r,g,b stored sequentially
+    }
+
     struct DNA_TYPE {
         string[] names;
         uint256[] rarities;

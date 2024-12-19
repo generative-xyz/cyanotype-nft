@@ -10,10 +10,35 @@ export enum ELEMENT {
     HEAD = 'Head',
 }
 
-const DATA_BODY = data.elements.Body
-const DATA_MOUTH = data.elements.Mouth
-const DATA_HEAD = data.elements.Head
-const DATA_EYE =  data.elements.Eyes
+const DATA_ELEMENTS_1 = [
+    {
+        ele_type: ELEMENT.BODY,
+        names: data.elements.Body.names,
+        rarities: data.elements.Body.traits,
+        positions: data.elements.Body.positions,
+    },
+    {
+        ele_type: ELEMENT.MOUTH,
+        names: data.elements.Mouth.names,
+        rarities: data.elements.Mouth.traits,
+        positions: data.elements.Mouth.positions,
+    },
+    {
+        ele_type: ELEMENT.EYES,
+        names: data.elements.Eyes.names,
+        rarities: data.elements.Eyes.traits,
+        positions: data.elements.Eyes.positions,
+    },
+]
+
+const DATA_ELEMENTS_2 = [
+    {
+        ele_type: ELEMENT.HEAD,
+        names: data.elements.Head.names,
+        rarities: data.elements.Head.traits,
+        positions: data.elements.Head.positions,
+    },
+]
 
 export enum DNA {
     MONKEY = 'Monkey',
@@ -27,46 +52,50 @@ export enum DNA {
 const KEY_DNA = [DNA.CAT, DNA.DOG, DNA.FROG, DNA.ROBOT, DNA.HUMAN, DNA.MONKEY]
 const TRAITS_DNA = [data.DNA.Cat.trait, data.DNA.Dog.trait, data.DNA.Frog.trait, data.DNA.Robot.trait, data.DNA.Human.trait,data.DNA.Monkey.trait].map((item) => Number(item))
 
-const DATA_DNA = [
+const DATA_DNA_VARIANT_1 = [
     {
-        key: DNA.CAT,
-        trait: data.DNA.Cat.trait,
+        ele_type: DNA.DOG,
+        names: data.DNA.Dog.names,
+        rarities: data.DNA.Dog.traits,
+        positions: data.DNA.Dog.positions,
     },
     {
-        key: DNA.DOG,
-        trait: data.DNA.Dog.trait,
-    },
-    {
-        key: DNA.FROG,
-        trait: data.DNA.Frog.trait,
-    },
-    {
-        key: DNA.ROBOT,
-        trait: data.DNA.Robot.trait,
-    },
-    {
-        key: DNA.HUMAN,
-        trait: data.DNA.Human.trait,
-    },
-    {
-        key: DNA.MONKEY,
-        trait: data.DNA.Monkey.trait,
+        ele_type: DNA.CAT,
+        names: data.DNA.Cat.names,
+        rarities: data.DNA.Cat.traits,
+        positions: data.DNA.Cat.positions,
     },
 ]
 
-// const DATA_FROG_VARIANT =  data.DNA.Frog.items
-//
-// const DATA_HUMAN_VARIANT =  data.DNA.Human.items
-//
-// const DATA_CAT_VARIANT = data.DNA.Cat.items
-//
-// const DATA_DOG_VARIANT =  data.DNA.Dog.items
-//
-// const DATA_ROBOT_VARIANT = data.DNA.Robot.items
-//
-// const DATA_MONKEY_VARIANT = data.DNA.Monkey.items
+const DATA_DNA_VARIANT_2 = [
+    {
+        ele_type: DNA.ROBOT,
+        names: data.DNA.Robot.names,
+        rarities: data.DNA.Robot.traits,
+        positions: data.DNA.Robot.positions,
+    },
+    {
+        ele_type: DNA.FROG,
+        names: data.DNA.Frog.names,
+        rarities: data.DNA.Frog.traits,
+        positions: data.DNA.Frog.positions,
+    },
+]
 
 
-// export {DATA_EYE, DATA_DNA, DATA_MOUTH, DATA_HEAD, DATA_FROG_VARIANT, DATA_HUMAN_VARIANT, DATA_CAT_VARIANT, DATA_DOG_VARIANT, DATA_ROBOT_VARIANT, DATA_MONKEY_VARIANT, DATA_BODY}
+const DATA_DNA_VARIANT_3 = [
+    {
+        ele_type: DNA.HUMAN,
+        names: data.DNA.Human.names,
+        rarities: data.DNA.Human.traits,
+        positions: data.DNA.Human.positions,
+    },
+    {
+        ele_type: DNA.MONKEY,
+        names: data.DNA.Monkey.names,
+        rarities: data.DNA.Monkey.traits,
+        positions: data.DNA.Monkey.positions,
+    },
+]
 
-export { KEY_DNA, TRAITS_DNA }
+export { KEY_DNA, TRAITS_DNA, DATA_ELEMENTS_1, DATA_ELEMENTS_2, DATA_DNA_VARIANT_1, DATA_DNA_VARIANT_2, DATA_DNA_VARIANT_3 }
