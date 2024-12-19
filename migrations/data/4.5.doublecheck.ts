@@ -86,12 +86,15 @@ async function main() {
     await fs.writeFile(duplicatesPath, JSON.stringify(attrsDuplicated, null, 2));
 
     // Calculate and write rarity percentages
-    const rarityData: { [key: string]: { [key: string]: number } } = {};
+    const rarityData: { [key: string]: { [key: string]: { percent: number, counter: number } } } = {};
     
     Object.entries(attributeCounts).forEach(([trait, values]) => {
         rarityData[trait] = {};
         Object.entries(values).forEach(([value, data]) => {
-            rarityData[trait][value] = data.percent;
+            rarityData[trait][value] = {
+                percent: data.percent,
+                counter: data.counter
+            };
         });
     });
 
