@@ -1,6 +1,6 @@
-import { promises as fs } from "fs";
-import { initConfig } from "../../index";
-import { CryptoAIData } from "./cryptoAIData";
+import {promises as fs} from "fs";
+import {initConfig} from "../../index";
+import {CryptoAIData} from "./cryptoAIData";
 
 async function main() {
     if (process.env.NETWORK != "local") {
@@ -19,7 +19,7 @@ async function main() {
     }
 
     const num = parseInt(args[0]);
-    
+
     // Keep original duplicate checking
     const attrsChecked = [];
     const attrsDuplicated = [];
@@ -34,7 +34,7 @@ async function main() {
             const attr = await dataContract.getAttrData(address, i);
             const attrStr = JSON.stringify(attr);
             totalTokens++;
-            
+
             // Original duplicate check
             if (attrsChecked.includes(attrStr)) {
                 const duplicateIndex = attrsChecked.indexOf(attrStr);
@@ -55,19 +55,19 @@ async function main() {
             // Add rarity tracking
             const attributes = JSON.parse(attr);
             attributes.forEach((attribute: any) => {
-                const { trait, value } = attribute;
-                
+                const {trait, value} = attribute;
+
                 if (!attributeCounts[trait]) {
                     attributeCounts[trait] = {};
                 }
-                
+
                 if (!attributeCounts[trait][value]) {
                     attributeCounts[trait][value] = {
                         counter: 0,
                         percent: 0
                     };
                 }
-                
+
                 attributeCounts[trait][value].counter++;
                 attributeCounts[trait][value].percent = Number(((attributeCounts[trait][value].counter / totalTokens) * 100).toFixed(2));
             });
