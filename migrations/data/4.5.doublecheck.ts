@@ -25,7 +25,7 @@ async function main() {
     const attrsDuplicated = [];
 
     // Add rarity tracking
-    const attributeCounts: Record<string, Record<string, number>> = {};
+    const attributeCounts: { [key: string]: { [key: string]: { counter: number; percent: number } } } = {};
     let totalTokens = 0;
 
     for (let i = 1; i <= num; i++) {
@@ -62,10 +62,14 @@ async function main() {
                 }
 
                 if (!attributeCounts[trait][value]) {
-                    attributeCounts[trait][value] = 0;
+                    attributeCounts[trait][value] = {
+                        counter: 0,
+                        percent: 0
+                    };
                 }
 
-                attributeCounts[trait][value]++;
+                attributeCounts[trait][value].counter++;
+                attributeCounts[trait][value].percent = Number(((attributeCounts[trait][value].counter / totalTokens) * 100).toFixed(2));
             });
 
         } catch (ex) {
@@ -82,12 +86,12 @@ async function main() {
     await fs.writeFile(duplicatesPath, JSON.stringify(attrsDuplicated, null, 2));
 
     // Calculate and write rarity percentages
-    const rarityData: Record<string, Record<string, string>> = {};
-
+    const rarityData: { [key: string]: { [key: string]: number } } = {};
+    
     Object.entries(attributeCounts).forEach(([trait, values]) => {
         rarityData[trait] = {};
-        Object.entries(values).forEach(([value, count]) => {
-            rarityData[trait][value] = Number(((count / totalTokens) * 100).toFixed(2)) + "%";
+        Object.entries(values).forEach(([value, data]) => {
+            rarityData[trait][value] = data.percent;
         });
     });
 
@@ -101,4 +105,3 @@ main().catch(error => {
     console.error(error);
     process.exitCode = 1;
 });
-
