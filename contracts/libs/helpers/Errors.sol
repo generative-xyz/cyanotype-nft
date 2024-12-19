@@ -24,4 +24,5 @@ library Errors {
     string public constant TOKEN_ID_NOT_UNLOCKED = "201"; // agent not really minted on AI agent contract -> still in queue because not reach threadhold
     string public constant TOKEN_ID_UNLOCKED = "202";
     string public constant USED_PAIRs = "203";
+    string public constant TOKEN_ID_NOT_EXISTED = "204";
 }
