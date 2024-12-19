@@ -134,7 +134,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.c_rarities, DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
-        if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] <= 300) {
+        if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] < 300) {
             uint256 dnaIndex = unlockedTokens[tokenId].dna;
             uint256 rarity = DNA_TYPES.c_rarities[dnaIndex];
             rarity = rarity * 95 / 100;
@@ -152,7 +152,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
                 uint256 trait = selectTrait(c_rarities, rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
                 unlockedTokens[tokenId].traits[i] = trait;
-                if (rarities[trait] <= 300) {
+                if (rarities[trait] < 300) {
                     uint256 rarity = c_rarities[trait] * 95 / 100;
                     c_rarities[trait] = rarity > 0 ? rarity : 1;
                 }
@@ -403,9 +403,8 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
     function selectTrait(uint256[] memory c_rarities, uint256[] memory rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
         // require(weight >= 1511 && weight <= 10000, "Weight out of range");
-
-        uint256 totalRarity = 0;
         uint256 normalizedWeight;
+        uint256[] memory cumulativeRarity = new uint256[](c_rarities.length);
         assembly {
             let constant_1511 := 1511
             let constant_1e18 := exp(10, 18) // 10^18
@@ -414,11 +413,10 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             if slt(difference, 0) {revert(0, 0)}
             let scaled := mul(difference, constant_1e18)
             if iszero(eq(div(scaled, constant_1e18), difference)) {revert(0, 0)}
-            let normalizedWeight := div(scaled, constant_8489)
-            mstore(0x0, normalizedWeight)
+            let normalizedWeightT := div(scaled, constant_8489)
+            normalizedWeight := normalizedWeightT
         }
-
-        uint256[] memory cumulativeRarity = new uint256[](c_rarities.length);
+        uint256 totalRarity = 0;
         for (uint256 i = 0; i < c_rarities.length; i++) {
             assembly {
                 let rarity := mload(add(rarities, mul(add(i, 1), 0x20)))
@@ -428,7 +426,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             }
             cumulativeRarity[i] = totalRarity;
         }
-
         uint256 randomValue;
         assembly {
             let size := add(20, add(32, add(32, 32)))
@@ -443,8 +440,6 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
             let hash := keccak256(add(result, 0x20), mload(result))
             if iszero(totalRarity) {revert(0, 0)}
             let random := mod(hash, totalRarity)
-            mstore(0x0, random)
-
             randomValue := random
         }
         for (uint256 i = 0; i < cumulativeRarity.length; i++) {
