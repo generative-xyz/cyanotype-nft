@@ -19,35 +19,15 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     uint256 public constant TOKEN_LIMIT = 10000; // Changed to 10000
     uint256 public constant MINT_PRINT = 1 ** 18; // Changed to 10000
 
-    // super admin
-    address public _admin;
-    // parameter control address
-    address public _paramsAddress;
-    // randomizer
-    address public _randomizerAddr;
     // deployer
     address public _deployer;
     // CryptoAIData
     address public _cryptoAiDataAddr;
 
-    bool private _contractSealed;
     uint256 public _indexMint;
-    mapping(address => uint256) public _allowList;
-
-    mapping(uint256 => uint256) public seedTokenId;
-
-    modifier unsealed() {
-        require(!_contractSealed, Errors.CONTRACT_SEALED);
-        _;
-    }
 
     modifier onlyDeployer() {
         require(msg.sender == _deployer, Errors.ONLY_DEPLOYER);
-        _;
-    }
-
-    modifier onlyAdmin() {
-        require(msg.sender == _deployer, Errors.ONLY_ADMIN_ALLOWED);
         _;
     }
 
@@ -60,12 +40,8 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         address random,
         address cryptoAiData
     ) initializer public {
-        _admin = admin;
         _deployer = deployer;
         _cryptoAiDataAddr = cryptoAiData;
-        _randomizerAddr = random;
-        _paramsAddress = paramsAddress;
-        _contractSealed = false;
         _indexMint = 1;
 
         __ERC721_init(name, symbol);
@@ -73,42 +49,18 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         __Ownable_init();
     }
 
-    function changeAdmin(address newAdm) external onlyAdmin {
-        require(msg.sender == _admin && newAdm != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
-        if (_admin != newAdm) {
-            address _previousAdmin = _admin;
-            _admin = newAdm;
-        }
-    }
-
-    function changeDeployer(address newAdm) external onlyAdmin {
+    function changeDeployer(address newAdm) external onlyDeployer {
         require(newAdm != Errors.ZERO_ADDR, Errors.INV_ADD);
         if (_deployer != newAdm) {
             _deployer = newAdm;
         }
     }
 
-    function changeParamAddr(address newAddr) external onlyAdmin {
-        require(msg.sender == _admin && newAddr != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
-
-        // change
-        if (_paramsAddress != newAddr) {
-            _paramsAddress = newAddr;
-        }
-    }
-
-    function changeCryptoAiDataAddress(address newAddr) external onlyAdmin {
+    function changeCryptoAiDataAddress(address newAddr) external onlyDeployer {
         require(newAddr != Errors.ZERO_ADDR, Errors.ONLY_ADMIN_ALLOWED);
 
         if (_cryptoAiDataAddr != newAddr) {
             _cryptoAiDataAddr = newAddr;
-        }
-    }
-
-    function setAllowList(address[] memory allowList) public onlyDeployer unsealed {
-        for (uint256 i = 0; i < allowList.length; i++) {
-            require(_allowList[allowList[i]] == 0);
-            _allowList[allowList[i]] = 1;
         }
     }
 
@@ -125,14 +77,11 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         require(to != Errors.ZERO_ADDR, Errors.INV_ADD);
         require(_indexMint <= TOKEN_LIMIT);
         _safeMint(to, _indexMint);
-        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, to, _indexMint)));
-        seedTokenId[_indexMint] = seed;
-        emit CryptoAIStructs.TokenMinted(_indexMint);
         _indexMint += 1;
     }
 
     function isUnlockedAgent(uint256 _agentId) public view returns (bool) {
-        return _agentId % 2 == 0;
+        return true;
     }
 
     function getAgentRating(uint256 _agentId) external view returns (uint256, uint256) {
@@ -140,7 +89,7 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     }
 
     function getAgentRarity(uint256 _agentId) external view returns (uint256) {
-        return 0;
+        return _agentId;
     }
 
     function _burn(uint256 tokenId) internal override(ERC721Upgradeable, ERC721URIStorageUpgradeable) {
@@ -166,10 +115,5 @@ contract CryptoAI is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     returns (address receiver, uint256 royaltyAmount) {
         receiver = this.owner();
         royaltyAmount = _salePrice * 0 / 10000;
-    }
-
-    /* @CryptoAI */
-    function sealContract() external onlyDeployer unsealed {
-        _contractSealed = true;
     }
 }
