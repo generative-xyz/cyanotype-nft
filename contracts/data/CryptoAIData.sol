@@ -122,7 +122,7 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         IMintableAgent nft = IMintableAgent(_cryptoAIAgentAddr);
         /* TODO: uncomment when deploy
         require(_cryptoAIAgentAddr != Errors.ZERO_ADDR, Errors.INV_ADD);
-        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_EXISTED);
         require(unlockedTokens[tokenId].weight == 0, Errors.TOKEN_ID_UNLOCKED);
         unlockedTokens[tokenId].weight = nft.getAgentRarity(tokenId);
         */
@@ -134,51 +134,50 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
 
         unlockedTokens[tokenId].dna = selectTrait(DNA_TYPES.c_rarities, DNA_TYPES.rarities, unlockedTokens[tokenId].weight, tokenId, 0);
         partsName[0] = DNA_TYPES.names[unlockedTokens[tokenId].dna];
-        if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] <= 20) {
-            // DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] = DNA_TYPES.rarities[unlockedTokens[tokenId].dna] / (1 + MathUpgradeable.sqrt(DNA_TYPES.usageCount[unlockedTokens[tokenId].dna]));
-            DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] = DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] * 95 / 100;
-            if (DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] == 0) {
-                DNA_TYPES.c_rarities[unlockedTokens[tokenId].dna] = 1;
-            }
+        if (DNA_TYPES.rarities[unlockedTokens[tokenId].dna] < 300) {
+            uint256 dnaIndex = unlockedTokens[tokenId].dna;
+            uint256 rarity = DNA_TYPES.c_rarities[dnaIndex];
+            rarity = rarity * 99 / 100;
+            DNA_TYPES.c_rarities[dnaIndex] = rarity > 0 ? rarity : 1;
         }
 
         bytes32 pairHash;
-        uint256 maxAttempts = 10;
+        uint256 maxAttempts = 5;
         uint256 attempt = 0;
         do {
             attempt++;
             for (uint256 i = 0; i < partsName.length; i++) {
-                bool temp = false;
-                unlockedTokens[tokenId].traits[i] = selectTrait(items[partsName[i]].c_rarities, items[partsName[i]].rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
-                if (i > 0 && items[partsName[i]].rarities[i] <= 300 && !temp) {
-                    items[partsName[i]].c_rarities[i] = items[partsName[i]].c_rarities[i] * 95 / 100;
-                    if (items[partsName[i]].c_rarities[i] == 0) {
-                        items[partsName[i]].c_rarities[i] = 1;
-                    }
-                    temp = true;
+                uint256[] storage c_rarities = items[partsName[i]].c_rarities;
+                uint256[] storage rarities = items[partsName[i]].rarities;
+
+                uint256 trait = selectTrait(c_rarities, rarities, unlockedTokens[tokenId].weight, tokenId, attempt);
+                unlockedTokens[tokenId].traits[i] = trait;
+                if (rarities[trait] < 300) {
+                    uint256 rarity = c_rarities[trait] * 99 / 100;
+                    c_rarities[trait] = rarity > 0 ? rarity : 1;
                 }
             }
             pairHash = keccak256(abi.encodePacked(unlockedTokens[tokenId].traits));
         }
         while (usedPairs[pairHash] && attempt < maxAttempts);
-        // require(!usedPairs[pairHash], Errors.USED_PAIRs);
+        require(!usedPairs[pairHash] && attempt <= maxAttempts, Errors.USED_PAIRs);
         if (!usedPairs[pairHash]) {
             usedPairs[pairHash] = true;
         }
     }
 
-    function getTokenRarity(uint256 tokenId) external
+    /*function getTokenRarity(uint256 tokenId) public
     view returns
     (uint256) {
         require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
         return unlockedTokens[tokenId].weight;
-    }
+    }*/
 
     function tokenURI(uint256 tokenId)
     external view
     returns (string memory result) {
 //        require(tokenId < TOKEN_LIMIT, "Token ID out of bounds");
-        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_UNLOCKED);
+        require(unlockedTokens[tokenId].tokenID > 0, Errors.TOKEN_ID_NOT_EXISTED);
         if (unlockedTokens[tokenId].weight == 0) {
             result = string(abi.encodePacked(
                 '{"animation_url": "',
@@ -200,9 +199,9 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         DNA_TYPES.c_rarities = rarities;
     }
 
-    function getDNA() public view returns (CryptoAIStructs.DNA_TYPE memory) {
+    /*function getDNA() public view returns (CryptoAIStructs.DNA_TYPE memory) {
         return DNA_TYPES;
-    }
+    }*/
 
     function addDNAVariant(string memory _DNAType, string[] memory _DNAName, uint16[] memory _rarities, uint8[][] memory _positions) public
     onlyDeployer unsealed {
@@ -213,11 +212,20 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         emit CryptoAIStructs.DNAVariantAdded(_DNAType, _DNAName, _rarities, _positions);
     }
 
+    function addBatchDNAVariant(CryptoAIStructs.ItemDetailAdd[] memory dna) public
+    onlyDeployer unsealed {
+        for(uint i = 0  ; i < dna.length; i++) {
+            items[dna[i].ele_type].names = dna[i].names;
+            items[dna[i].ele_type].rarities = dna[i].rarities;
+            items[dna[i].ele_type].c_rarities = dna[i].rarities;
+            items[dna[i].ele_type].positions = dna[i].positions;
+        }
+    }
 
-    function getDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail memory) {
+    /*function getDNAVariant(string memory _DNAType) public view returns (CryptoAIStructs.ItemDetail memory) {
         CryptoAIStructs.ItemDetail memory item = items[_DNAType];
         return item;
-    }
+    }*/
 
     function addItem(
         string memory _itemType,
@@ -234,11 +242,25 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
         emit CryptoAIStructs.ItemAdded(_itemType, _names, _rarities, _positions);
     }
 
-    function getItem(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail memory) {
+    /*function getItem(string memory _itemType) public view returns (CryptoAIStructs.ItemDetail memory) {
         //        require(_itemId < itemCounts[_itemType], Errors.ITEM_NOT_EXIST);
         CryptoAIStructs.ItemDetail memory item = items[_itemType];
         return item;
+    }*/
+
+    function addBatchItem(
+        CryptoAIStructs.ItemDetailAdd[] memory elements
+    ) public
+    onlyDeployer unsealed
+    {
+        for(uint i = 0 ; i < elements.length ; i++) {
+            items[elements[i].ele_type].names = elements[i].names;
+            items[elements[i].ele_type].rarities = elements[i].rarities;
+            items[elements[i].ele_type].c_rarities = elements[i].rarities;
+            items[elements[i].ele_type].positions = elements[i].positions;
+        }
     }
+
 
     function cryptoAIAttributes(uint256 tokenId)
     public view
@@ -404,20 +426,46 @@ contract CryptoAIData is OwnableUpgradeable, ICryptoAIData {
     }
 
     function selectTrait(uint256[] memory c_rarities, uint256[] memory rarities, uint256 weight, uint256 tokenId, uint256 attempt) internal view returns (uint256 index) {
-        require(weight >= 1511 && weight <= 10000, "Weight out of range");
-
-        uint256 totalRarity = 0;
+        // require(weight >= 1511 && weight <= 10000, "Weight out of range");
+        uint256 normalizedWeight;
         uint256[] memory cumulativeRarity = new uint256[](c_rarities.length);
-        uint256 normalizedWeight = (weight - 1511) * 1e18 / 8489;
-        uint256 adjustedRarity;
+        assembly {
+            let constant_1511 := 1511
+            let constant_1e18 := exp(10, 18) // 10^18
+            let constant_8489 := 8489
+            let difference := sub(weight, constant_1511)
+            if slt(difference, 0) {revert(0, 0)}
+            let scaled := mul(difference, constant_1e18)
+            if iszero(eq(div(scaled, constant_1e18), difference)) {revert(0, 0)}
+            let normalizedWeightT := div(scaled, constant_8489)
+            normalizedWeight := normalizedWeightT
+        }
+        uint256 totalRarity = 0;
         for (uint256 i = 0; i < c_rarities.length; i++) {
-            // adjustedRarity = (normalizedWeight * c_rarities[i]) + rarities[i];
-            adjustedRarity = (rarities[i] * 1e18) / (normalizedWeight / c_rarities[i]);
-            totalRarity += adjustedRarity;
+            assembly {
+                let rarity := mload(add(rarities, mul(add(i, 1), 0x20)))
+                let c_rarity := mload(add(c_rarities, mul(add(i, 1), 0x20)))
+                let adjustedRarity := div(mul(mul(rarity, exp(10, 18)), c_rarity), normalizedWeight)
+                totalRarity := add(totalRarity, adjustedRarity)
+            }
             cumulativeRarity[i] = totalRarity;
         }
+        uint256 randomValue;
+        assembly {
+            let size := add(20, add(32, add(32, 32)))
+            let result := mload(0x40)
+            mstore(0x40, add(result, and(add(size, 31), not(31))))
+            mstore(result, size)
+            mstore(add(result, 0x20), shl(96, caller()))
+            mstore(add(result, 0x34), timestamp())
+            mstore(add(result, 0x54), tokenId)
+            mstore(add(result, 0x74), attempt)
 
-        uint256 randomValue = uint256(keccak256(abi.encodePacked(msg.sender, block.timestamp, tokenId, attempt))) % totalRarity;
+            let hash := keccak256(add(result, 0x20), mload(result))
+            if iszero(totalRarity) {revert(0, 0)}
+            let random := mod(hash, totalRarity)
+            randomValue := random
+        }
         for (uint256 i = 0; i < cumulativeRarity.length; i++) {
             if (randomValue < cumulativeRarity[i]) {
                 return i;

@@ -20,10 +20,7 @@ class CryptoAI {
 
     async deployUpgradeable(name: string,
                             symbol: string,
-                            adminAddr: any,
                             deployerAddr: any,
-                            paramsAddress: any,
-                            random: any,
                             cryptoAiData: any,
     ) {
         // if (this.network == "local") {
@@ -33,8 +30,8 @@ class CryptoAI {
 
         const contract = await ethers.getContractFactory("CryptoAI");
         console.log("CryptoAIData.deploying ...")
-        const proxy = await upgrades.deployProxy(contract, [name, symbol, adminAddr, deployerAddr, paramsAddress, random, cryptoAiData], {
-            initializer: 'initialize(string, string, address, address, address, address, address)',
+        const proxy = await upgrades.deployProxy(contract, [name, symbol, deployerAddr, cryptoAiData], {
+            initializer: 'initialize(string, string, address, address)',
         });
         await proxy.waitForDeployment();
         const proxyAddr = await proxy.getAddress();

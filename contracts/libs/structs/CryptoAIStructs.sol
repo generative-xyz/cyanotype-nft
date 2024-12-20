@@ -5,7 +5,6 @@ library CryptoAIStructs {
     event SVGGenerated(address indexed creator, uint timestamp);
     event ItemAdded(string itemType, string[] name, uint16[] traits, uint8[][] positions);
     event DNAVariantAdded(string itemType, string[] name, uint16[] traits, uint8[][] positions);
-    event TokenMinted(uint256 tokenId);
 
     struct PositionDetail {
         uint8 x;      // 0-24
@@ -17,6 +16,13 @@ library CryptoAIStructs {
         string[] names;
         uint256[] rarities;  // 0-200
         uint256[] c_rarities;
+        uint8[][] positions; // x,y,r,g,b stored sequentially
+    }
+
+    struct ItemDetailAdd {
+        string ele_type;
+        string[] names;
+        uint16[] rarities;  // 0-200
         uint8[][] positions; // x,y,r,g,b stored sequentially
     }
 
